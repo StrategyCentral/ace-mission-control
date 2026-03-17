@@ -7,230 +7,257 @@
 <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
-:root{
-  --bg:#030912;--bg2:#050f20;
-  --glass:rgba(8,22,50,0.72);
-  --gb:rgba(25,159,216,0.18);--gbh:rgba(25,159,216,0.5);
-  --blue:#199FD8;--blue-g:rgba(25,159,216,0.3);
-  --yellow:#FCC82E;--yellow-g:rgba(252,200,46,0.3);
-  --pink:#FF2D9B;--pink-g:rgba(255,45,155,0.3);
-  --purple:#9B59B6;--green:#00E676;--orange:#FF6B35;--red:#FF3355;
-  --text:#C8E8F8;--textd:rgba(200,232,248,0.45);--textb:#EAF6FF;
-  --D:'Orbitron',monospace;--M:'Share Tech Mono',monospace;--B:'Rajdhani',sans-serif;
-}
+:root{--bg:#030912;--glass:rgba(8,22,50,0.72);--gb:rgba(25,159,216,0.18);--gbh:rgba(25,159,216,0.5);--blue:#199FD8;--blue-g:rgba(25,159,216,0.3);--yellow:#FCC82E;--pink:#FF2D9B;--purple:#9B59B6;--green:#00E676;--orange:#FF6B35;--red:#FF3355;--teal:#00BCD4;--text:#C8E8F8;--textd:rgba(200,232,248,0.45);--textb:#EAF6FF;--D:'Orbitron',monospace;--M:'Share Tech Mono',monospace;--B:'Rajdhani',sans-serif;}
 html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--M);font-size:13px;overflow:hidden;}
-body::before{content:'';position:fixed;inset:0;z-index:0;
-  background-image:
-    radial-gradient(ellipse at 20% 25%,rgba(25,159,216,0.09) 0%,transparent 55%),
-    radial-gradient(ellipse at 80% 75%,rgba(255,45,155,0.06) 0%,transparent 45%),
-    linear-gradient(rgba(25,159,216,0.022) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(25,159,216,0.022) 1px,transparent 1px);
-  background-size:100% 100%,100% 100%,50px 50px,50px 50px;pointer-events:none;}
-body::after{content:'';position:fixed;inset:0;z-index:0;
-  background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,0.06) 3px,rgba(0,0,0,0.06) 6px);
-  pointer-events:none;}
+body::before{content:'';position:fixed;inset:0;z-index:0;background-image:radial-gradient(ellipse at 20% 25%,rgba(25,159,216,0.09) 0%,transparent 55%),radial-gradient(ellipse at 80% 75%,rgba(255,45,155,0.06) 0%,transparent 45%),linear-gradient(rgba(25,159,216,0.022) 1px,transparent 1px),linear-gradient(90deg,rgba(25,159,216,0.022) 1px,transparent 1px);background-size:100% 100%,100% 100%,50px 50px,50px 50px;pointer-events:none;}
+body::after{content:'';position:fixed;inset:0;z-index:0;background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,0.06) 3px,rgba(0,0,0,0.06) 6px);pointer-events:none;}
 #root{position:relative;z-index:1;height:100vh;display:flex;flex-direction:column;}
-
-/* TOP BAR */
-.tb{display:flex;align-items:center;height:48px;flex-shrink:0;
-  background:rgba(3,9,18,0.95);border-bottom:1px solid var(--gb);
-  padding:0 18px;gap:14px;position:relative;overflow:hidden;}
-.tb::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
-  background:linear-gradient(90deg,transparent,var(--blue),var(--pink),var(--blue),transparent);
-  animation:tl 6s ease-in-out infinite;}
-@keyframes tl{0%,100%{opacity:0.35}50%{opacity:0.85}}
-.logo{font-family:var(--D);font-size:16px;font-weight:900;letter-spacing:5px;color:var(--blue);
-  text-shadow:0 0 20px var(--blue-g),0 0 50px rgba(25,159,216,0.15);cursor:pointer;flex-shrink:0;}
+.tb{display:flex;align-items:center;height:48px;flex-shrink:0;background:rgba(3,9,18,0.95);border-bottom:1px solid var(--gb);padding:0 18px;gap:14px;position:relative;overflow:hidden;}
+.tb::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--blue),var(--pink),var(--blue),transparent);animation:tl 6s ease-in-out infinite;}
+@keyframes tl{0%,100%{opacity:.35}50%{opacity:.85}}
+.logo{font-family:var(--D);font-size:16px;font-weight:900;letter-spacing:5px;color:var(--blue);text-shadow:0 0 20px var(--blue-g);cursor:pointer;flex-shrink:0;}
 .logo span{color:var(--yellow);}
 .tb-sep{width:1px;height:20px;background:var(--gb);}
-.tb-m{display:flex;gap:20px;}
-.met{display:flex;flex-direction:column;gap:1px;min-width:72px;}
+.tb-m{display:flex;gap:18px;}
+.met{display:flex;flex-direction:column;gap:1px;min-width:65px;}
 .met-l{font-size:8px;letter-spacing:2px;color:var(--textd);text-transform:uppercase;}
 .met-v{font-family:var(--D);font-size:12px;font-weight:700;}
-.met-v.y{color:var(--yellow);text-shadow:0 0 8px var(--yellow-g);}
-.met-v.b{color:var(--blue);text-shadow:0 0 8px var(--blue-g);}
+.met-v.y{color:var(--yellow);}
+.met-v.b{color:var(--blue);}
 .met-v.g{color:var(--green);}
 .met-v.o{color:var(--orange);}
 .sp{flex:1;}
 .sys-st{display:flex;align-items:center;gap:7px;font-size:10px;letter-spacing:2px;text-transform:uppercase;}
 .dot{width:8px;height:8px;border-radius:50%;animation:pd 2s ease infinite;}
 .dot.g{background:var(--green);box-shadow:0 0 8px var(--green);}
-.dot.y{background:var(--yellow);box-shadow:0 0 8px var(--yellow);}
-.dot.r{background:var(--red);box-shadow:0 0 8px var(--red);}
-@keyframes pd{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.4;transform:scale(0.8)}}
-.clk{font-family:var(--D);font-size:11px;color:rgba(200,232,248,0.38);letter-spacing:2px;margin-left:10px;}
-
-/* MAIN */
+@keyframes pd{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.8)}}
+.clk{font-family:var(--D);font-size:11px;color:rgba(200,232,248,.38);letter-spacing:2px;margin-left:10px;}
 .ml{flex:1;display:flex;overflow:hidden;}
-
-/* GLASS PANEL */
-.gp{background:var(--glass);border:1px solid var(--gb);border-radius:3px;
-  backdrop-filter:blur(14px);position:relative;overflow:hidden;}
-.gp::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;
-  background:linear-gradient(90deg,transparent,var(--blue-g),transparent);}
-.ph{font-family:var(--D);font-size:8px;letter-spacing:3px;color:rgba(200,232,248,0.45);
-  text-transform:uppercase;display:flex;align-items:center;gap:7px;margin-bottom:11px;}
+.gp{background:var(--glass);border:1px solid var(--gb);border-radius:3px;backdrop-filter:blur(14px);position:relative;overflow:hidden;}
+.gp::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--blue-g),transparent);}
+.ph{font-family:var(--D);font-size:8px;letter-spacing:3px;color:rgba(200,232,248,.45);text-transform:uppercase;display:flex;align-items:center;gap:7px;margin-bottom:11px;}
 .ph::before{content:'//';color:var(--blue);font-size:9px;}
-
-/* PANELS */
-.lp{width:222px;flex-shrink:0;padding:11px;display:flex;flex-direction:column;gap:9px;
-  border-right:1px solid var(--gb);background:rgba(3,8,20,0.65);overflow-y:auto;}
-.rp{width:222px;flex-shrink:0;padding:11px;display:flex;flex-direction:column;gap:9px;
-  border-left:1px solid var(--gb);background:rgba(3,8,20,0.65);overflow-y:auto;}
-.cp{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
-  padding:10px;gap:6px;position:relative;}
-
-/* METERS */
+.lp{width:220px;flex-shrink:0;padding:11px;display:flex;flex-direction:column;gap:9px;border-right:1px solid var(--gb);background:rgba(3,8,20,.65);overflow-y:auto;}
+.rp{width:220px;flex-shrink:0;padding:11px;display:flex;flex-direction:column;gap:9px;border-left:1px solid var(--gb);background:rgba(3,8,20,.65);overflow-y:auto;}
+.cp{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:10px;gap:6px;}
 .mr{margin-bottom:8px;}
 .mh{display:flex;justify-content:space-between;font-size:10px;margin-bottom:3px;}
 .mk{color:var(--textd);text-transform:uppercase;letter-spacing:1px;}
-.mv{color:var(--blue);}
-.mb{height:3px;background:rgba(25,159,216,0.1);overflow:hidden;}
+.mb{height:3px;background:rgba(25,159,216,.1);overflow:hidden;}
 .mf{height:100%;position:relative;transition:width 1.2s ease;}
-.mf::after{content:'';position:absolute;right:0;top:0;bottom:0;width:4px;background:rgba(255,255,255,0.7);}
-
-/* KV */
-.kv{display:flex;justify-content:space-between;align-items:center;font-size:10px;padding:3px 0;
-  border-bottom:1px solid rgba(25,159,216,0.06);}
+.mf::after{content:'';position:absolute;right:0;top:0;bottom:0;width:4px;background:rgba(255,255,255,.7);}
+.kv{display:flex;justify-content:space-between;align-items:center;font-size:10px;padding:3px 0;border-bottom:1px solid rgba(25,159,216,.06);}
 .kv:last-child{border-bottom:none;}
 .kk{color:var(--textd);text-transform:uppercase;letter-spacing:1px;}
-.vv{color:var(--text);}
 .vv.b{color:var(--blue);}
 .vv.g{color:var(--green);}
 .vv.y{color:var(--yellow);}
 .vv.o{color:var(--orange);}
 .vv.p{color:var(--pink);}
+.vv.r{color:var(--red);}
 .vv.pu{color:var(--purple);}
-
-/* LOG */
-.le{display:flex;gap:5px;font-size:10px;padding:5px 0;
-  border-bottom:1px solid rgba(25,159,216,0.05);animation:fi 0.3s ease;}
+.vv.t{color:var(--teal);}
+.le{display:flex;gap:5px;font-size:10px;padding:5px 0;border-bottom:1px solid rgba(25,159,216,.05);animation:fi .3s ease;}
 @keyframes fi{from{opacity:0;transform:translateY(-3px)}to{opacity:1;transform:translateY(0)}}
 .lts{color:var(--yellow);flex-shrink:0;font-size:9px;}
 .lm{flex:1;color:var(--text);line-height:1.4;}
 .lt{font-size:8px;padding:1px 5px;border-radius:2px;flex-shrink:0;align-self:flex-start;}
-.lt.sys{background:rgba(25,159,216,0.15);color:var(--blue);}
-.lt.ok{background:rgba(0,230,118,0.12);color:var(--green);}
-.lt.warn{background:rgba(255,107,53,0.14);color:var(--orange);}
-.lt.trade{background:rgba(252,200,46,0.12);color:var(--yellow);}
-.lt.mkt{background:rgba(255,45,155,0.12);color:var(--pink);}
-
-/* ORB */
+.lt.sys{background:rgba(25,159,216,.15);color:var(--blue);}
+.lt.ok{background:rgba(0,230,118,.12);color:var(--green);}
+.lt.warn{background:rgba(255,107,53,.14);color:var(--orange);}
+.lt.trade{background:rgba(252,200,46,.12);color:var(--yellow);}
+.lt.mkt{background:rgba(255,45,155,.12);color:var(--pink);}
 .oc{display:flex;flex-direction:column;align-items:center;}
-.oname{font-family:var(--D);font-size:24px;font-weight:900;letter-spacing:8px;
-  color:var(--textb);text-shadow:0 0 30px var(--blue-g);margin-bottom:2px;}
-.ost{font-family:var(--D);font-size:9px;letter-spacing:4px;text-transform:uppercase;
-  margin-top:4px;height:16px;transition:color 0.3s;}
-
-/* COMMAND */
-.ca{display:flex;flex-direction:column;align-items:center;gap:7px;width:100%;max-width:400px;}
+.oname{font-family:var(--D);font-size:22px;font-weight:900;letter-spacing:8px;color:var(--textb);text-shadow:0 0 30px var(--blue-g);margin-bottom:2px;}
+.ost{font-family:var(--D);font-size:9px;letter-spacing:4px;text-transform:uppercase;margin-top:4px;height:16px;}
+.ca{display:flex;flex-direction:column;align-items:center;gap:7px;width:100%;max-width:380px;}
 .cir{display:flex;gap:7px;width:100%;}
-.ci{flex:1;background:rgba(25,159,216,0.06);border:1px solid var(--gb);border-radius:3px;
-  color:var(--text);font-family:var(--M);font-size:12px;padding:8px 12px;outline:none;
-  transition:border-color 0.2s,box-shadow 0.2s;}
-.ci:focus{border-color:var(--blue);box-shadow:0 0 14px rgba(25,159,216,0.2);}
+.ci{flex:1;background:rgba(25,159,216,.06);border:1px solid var(--gb);border-radius:3px;color:var(--text);font-family:var(--M);font-size:12px;padding:8px 12px;outline:none;}
+.ci:focus{border-color:var(--blue);}
 .ci::placeholder{color:var(--textd);}
-.mb-btn{width:38px;height:38px;border-radius:50%;border:1px solid var(--gb);
-  background:rgba(25,159,216,0.1);color:var(--blue);cursor:pointer;
-  display:flex;align-items:center;justify-content:center;font-size:15px;
-  transition:all 0.2s;flex-shrink:0;}
-.mb-btn:hover{border-color:var(--blue);box-shadow:0 0 18px var(--blue-g);}
-.mb-btn.on{border-color:var(--pink);color:var(--pink);background:rgba(255,45,155,0.15);
-  box-shadow:0 0 22px var(--pink-g);animation:mp 1s ease infinite;}
-@keyframes mp{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
-.qa{display:flex;gap:7px;}
-.qb{padding:5px 13px;background:transparent;border:1px solid var(--gb);border-radius:2px;
-  color:var(--textd);font-family:var(--M);font-size:10px;letter-spacing:1px;
-  text-transform:uppercase;cursor:pointer;transition:all 0.2s;}
-.qb:hover{border-color:var(--blue);color:var(--blue);box-shadow:0 0 10px var(--blue-g);}
-.qb.y:hover{border-color:var(--yellow);color:var(--yellow);box-shadow:0 0 10px var(--yellow-g);}
-.qb.pk:hover{border-color:var(--pink);color:var(--pink);box-shadow:0 0 10px var(--pink-g);}
-
+.mb-btn{width:38px;height:38px;border-radius:50%;border:1px solid var(--gb);background:rgba(25,159,216,.1);color:var(--blue);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:15px;transition:all .2s;flex-shrink:0;}
+.mb-btn.on{border-color:var(--pink);color:var(--pink);background:rgba(255,45,155,.15);}
+.qa{display:flex;gap:7px;flex-wrap:wrap;justify-content:center;}
+.qb{padding:5px 12px;background:transparent;border:1px solid var(--gb);border-radius:2px;color:var(--textd);font-family:var(--M);font-size:10px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;transition:all .2s;}
+.qb:hover{border-color:var(--blue);color:var(--blue);}
+.tbox{font-size:11px;color:var(--textd);text-align:center;font-style:italic;min-height:16px;max-width:340px;}
+.rbox{font-size:11px;color:var(--text);text-align:center;max-width:360px;line-height:1.55;background:rgba(25,159,216,.05);padding:8px 12px;border:1px solid rgba(25,159,216,.15);border-radius:3px;margin-top:4px;}
+/* FOREX */
+.fx-item{display:flex;align-items:flex-start;gap:6px;padding:5px 0;border-bottom:1px solid rgba(25,159,216,.06);font-size:10px;}
+.fx-folder{font-size:14px;flex-shrink:0;margin-top:1px;}
+.fx-folder.red{filter:drop-shadow(0 0 5px rgba(255,51,85,.9));}
+.fx-folder.orange{filter:drop-shadow(0 0 4px rgba(255,107,53,.7));}
+.fx-folder.yellow{filter:drop-shadow(0 0 3px rgba(252,200,46,.5));}
+.fx-body{flex:1;}
+.fx-time{color:var(--yellow);font-size:9px;}
+.fx-curr{color:var(--blue);font-size:9px;margin-left:4px;}
+.fx-title{color:var(--text);margin-top:1px;line-height:1.3;}
+.fx-prev{color:var(--textd);font-size:9px;margin-top:1px;}
 /* BOTTOM NAV */
-.bn{height:54px;flex-shrink:0;background:rgba(3,9,18,0.96);border-top:1px solid var(--gb);
-  display:flex;align-items:center;justify-content:center;gap:3px;padding:0 16px;}
-.nb{display:flex;flex-direction:column;align-items:center;gap:2px;padding:5px 13px;
-  background:transparent;border:1px solid transparent;border-radius:3px;cursor:pointer;
-  transition:all 0.2s;color:var(--textd);font-family:var(--M);font-size:8px;letter-spacing:1.5px;text-transform:uppercase;}
+.bn{height:54px;flex-shrink:0;background:rgba(3,9,18,.96);border-top:1px solid var(--gb);display:flex;align-items:center;padding:0 10px;gap:2px;overflow-x:auto;}
+.bn::-webkit-scrollbar{height:2px;}
+.bn::-webkit-scrollbar-thumb{background:rgba(25,159,216,.2);}
+.nb{display:flex;flex-direction:column;align-items:center;gap:2px;padding:5px 10px;background:transparent;border:1px solid transparent;border-radius:3px;cursor:pointer;transition:all .2s;color:var(--textd);font-family:var(--M);font-size:8px;letter-spacing:1.5px;text-transform:uppercase;flex-shrink:0;white-space:nowrap;}
 .nb:hover{border-color:var(--gb);color:var(--blue);}
-.nb.act{border-color:var(--blue);color:var(--blue);background:rgba(25,159,216,0.09);
-  box-shadow:0 0 14px rgba(25,159,216,0.18);}
-.ni{font-size:15px;}
-
+.nb.act{border-color:var(--blue);color:var(--blue);background:rgba(25,159,216,.09);box-shadow:0 0 14px rgba(25,159,216,.18);}
+.ni{font-size:14px;}
+.bn-sep{width:1px;height:28px;background:var(--gb);flex-shrink:0;margin:0 4px;}
+/* FULL VIEWS */
+.fv{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:14px;animation:vf .25s ease;}
+@keyframes vf{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+.vt{font-family:var(--D);font-size:9px;letter-spacing:4px;color:var(--blue);opacity:.55;text-transform:uppercase;padding-bottom:12px;border-bottom:1px solid var(--gb);}
 /* AGENTS */
-.av{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:14px;}
 .ag{display:grid;grid-template-columns:repeat(auto-fill,minmax(195px,1fr));gap:11px;}
-.ac{background:var(--glass);border:1px solid var(--gb);border-radius:3px;padding:13px;
-  cursor:pointer;position:relative;overflow:hidden;transition:all 0.28s;
-  backdrop-filter:blur(14px);}
-.ac::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;opacity:0;transition:opacity 0.3s;}
-.ac:hover{transform:translateY(-3px);border-color:var(--gbh);
-  box-shadow:0 10px 36px rgba(0,0,0,0.45),0 0 24px rgba(25,159,216,0.1);}
+.ac{background:var(--glass);border:1px solid var(--gb);border-radius:3px;padding:13px;cursor:pointer;position:relative;overflow:hidden;transition:all .28s;backdrop-filter:blur(14px);}
+.ac::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;opacity:0;transition:opacity .3s;}
+.ac:hover{transform:translateY(-3px);border-color:var(--gbh);}
 .ac:hover::before{opacity:1;}
 .ac.active::before{background:linear-gradient(90deg,transparent,var(--green),transparent);}
 .ac.working::before{background:linear-gradient(90deg,transparent,var(--blue),transparent);}
-.ac.idle::before{background:linear-gradient(90deg,transparent,rgba(200,232,248,0.18),transparent);}
-.ac.active{border-color:rgba(0,230,118,0.2);}
-.ac.active:hover{box-shadow:0 10px 36px rgba(0,0,0,0.45),0 0 28px rgba(0,230,118,0.12);}
-.ac.working{border-color:rgba(25,159,216,0.22);}
+.ac.active{border-color:rgba(0,230,118,.2);}
+.ac.working{border-color:rgba(25,159,216,.22);}
 .ach{display:flex;align-items:center;gap:9px;margin-bottom:9px;}
-.aa{width:40px;height:40px;border-radius:3px;display:flex;align-items:center;justify-content:center;
-  font-family:var(--D);font-size:12px;font-weight:700;flex-shrink:0;position:relative;
-  border:1px solid currentColor;}
-.ai{flex:1;min-width:0;}
+.aa{width:40px;height:40px;border-radius:3px;display:flex;align-items:center;justify-content:center;font-family:var(--D);font-size:12px;font-weight:700;flex-shrink:0;border:1px solid currentColor;}
+.ain{flex:1;min-width:0;}
 .an{font-family:var(--D);font-size:10px;font-weight:700;letter-spacing:2px;color:var(--textb);margin-bottom:1px;}
 .ar{font-size:9px;color:var(--textd);text-transform:uppercase;letter-spacing:1px;}
 .asp{font-size:8px;padding:2px 7px;border-radius:10px;letter-spacing:1px;text-transform:uppercase;}
-.asp.active{background:rgba(0,230,118,0.12);color:var(--green);border:1px solid rgba(0,230,118,0.3);}
-.asp.working{background:rgba(25,159,216,0.1);color:var(--blue);border:1px solid rgba(25,159,216,0.3);}
-.asp.idle{background:rgba(200,232,248,0.05);color:var(--textd);border:1px solid rgba(200,232,248,0.12);}
+.asp.active{background:rgba(0,230,118,.12);color:var(--green);border:1px solid rgba(0,230,118,.3);}
+.asp.working{background:rgba(25,159,216,.1);color:var(--blue);border:1px solid rgba(25,159,216,.3);}
+.asp.idle{background:rgba(200,232,248,.05);color:var(--textd);border:1px solid rgba(200,232,248,.12);}
 .att{font-size:10px;color:var(--text);line-height:1.5;margin-bottom:7px;}
 .acf{display:flex;justify-content:space-between;font-size:9px;color:var(--textd);text-transform:uppercase;letter-spacing:1px;}
-.ai-ind{position:absolute;top:9px;right:9px;width:6px;height:6px;border-radius:50%;}
-.ai-ind.active{background:var(--green);box-shadow:0 0 6px var(--green);animation:pd 1.5s infinite;}
-.ai-ind.working{background:var(--blue);box-shadow:0 0 6px var(--blue);animation:pd 2s infinite;}
-.ai-ind.idle{background:rgba(200,232,248,0.2);}
-
+.aind{position:absolute;top:9px;right:9px;width:6px;height:6px;border-radius:50%;}
+.aind.active{background:var(--green);box-shadow:0 0 6px var(--green);animation:pd 1.5s infinite;}
+.aind.working{background:var(--blue);box-shadow:0 0 6px var(--blue);animation:pd 2s infinite;}
+.aind.idle{background:rgba(200,232,248,.2);}
 /* PROFILE */
 .pv{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:14px;}
-.ph2{display:flex;align-items:center;gap:18px;background:var(--glass);border:1px solid var(--gb);
-  border-radius:3px;padding:18px;backdrop-filter:blur(14px);position:relative;overflow:hidden;}
-.ph2::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;
-  background:linear-gradient(90deg,transparent,var(--blue),transparent);}
-.pa{width:76px;height:76px;border-radius:5px;display:flex;align-items:center;justify-content:center;
-  font-family:var(--D);font-size:26px;font-weight:900;border:2px solid currentColor;flex-shrink:0;}
+.ph2{display:flex;align-items:center;gap:18px;background:var(--glass);border:1px solid var(--gb);border-radius:3px;padding:18px;backdrop-filter:blur(14px);position:relative;overflow:hidden;}
+.ph2::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--blue),transparent);}
+.pa{width:76px;height:76px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-family:var(--D);font-size:26px;font-weight:900;border:2px solid currentColor;flex-shrink:0;}
 .pname{font-family:var(--D);font-size:26px;font-weight:900;letter-spacing:6px;color:var(--textb);margin-bottom:3px;}
 .prole{font-family:var(--B);font-size:13px;color:var(--textd);text-transform:uppercase;letter-spacing:3px;margin-bottom:10px;}
 .pg{display:grid;grid-template-columns:1fr 1fr;gap:11px;}
 .ps{background:var(--glass);border:1px solid var(--gb);border-radius:3px;padding:13px;backdrop-filter:blur(14px);}
-.bb{display:inline-flex;align-items:center;padding:3px 8px;border-radius:2px;font-size:9px;letter-spacing:1px;text-transform:uppercase;}
-.bb.b{background:rgba(25,159,216,0.12);color:var(--blue);border:1px solid rgba(25,159,216,0.28);}
-.bb.pu{background:rgba(155,89,182,0.12);color:var(--purple);border:1px solid rgba(155,89,182,0.28);}
-.bb.g{background:rgba(0,230,118,0.1);color:var(--green);border:1px solid rgba(0,230,118,0.28);}
-.bb.y{background:rgba(252,200,46,0.12);color:var(--yellow);border:1px solid rgba(252,200,46,0.28);}
-.bkb{display:flex;align-items:center;gap:7px;background:transparent;border:1px solid var(--gb);
-  color:var(--textd);font-family:var(--M);font-size:10px;letter-spacing:2px;text-transform:uppercase;
-  cursor:pointer;padding:6px 12px;border-radius:2px;transition:all 0.2s;align-self:flex-start;}
+.bb{display:inline-flex;align-items:center;padding:3px 8px;border-radius:2px;font-size:9px;letter-spacing:1px;text-transform:uppercase;margin:2px;}
+.bb.b{background:rgba(25,159,216,.12);color:var(--blue);border:1px solid rgba(25,159,216,.28);}
+.bb.pu{background:rgba(155,89,182,.12);color:var(--purple);border:1px solid rgba(155,89,182,.28);}
+.bb.g{background:rgba(0,230,118,.1);color:var(--green);border:1px solid rgba(0,230,118,.28);}
+.bb.y{background:rgba(252,200,46,.12);color:var(--yellow);border:1px solid rgba(252,200,46,.28);}
+.bkb{background:transparent;border:1px solid var(--gb);color:var(--textd);font-family:var(--M);font-size:10px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;padding:6px 12px;border-radius:2px;transition:all .2s;}
 .bkb:hover{border-color:var(--blue);color:var(--blue);}
-
-/* ALERT BOXES */
 .albox{font-size:10px;padding:6px 8px;border-radius:2px;margin-bottom:5px;line-height:1.4;}
-.albox.warn{background:rgba(255,107,53,0.1);border:1px solid rgba(255,107,53,0.25);color:var(--orange);}
-.albox.info{background:rgba(25,159,216,0.07);border:1px solid rgba(25,159,216,0.15);color:var(--textd);}
-
-/* SCROLLBAR */
-::-webkit-scrollbar{width:3px;}
+.albox.warn{background:rgba(255,107,53,.1);border:1px solid rgba(255,107,53,.25);color:var(--orange);}
+.albox.info{background:rgba(25,159,216,.07);border:1px solid rgba(25,159,216,.15);color:var(--textd);}
+.albox.red{background:rgba(255,51,85,.1);border:1px solid rgba(255,51,85,.3);color:var(--red);}
+/* GRIDS */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:11px;}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:11px;}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:11px;}
+.sc{background:var(--glass);border:1px solid var(--gb);border-radius:3px;padding:13px;text-align:center;backdrop-filter:blur(14px);}
+.sn{font-family:var(--D);font-size:26px;font-weight:700;line-height:1;}
+.sl{font-size:9px;letter-spacing:2px;color:var(--textd);text-transform:uppercase;margin-top:4px;}
+/* WAVE PARK */
+.wp-n{background:rgba(0,188,212,.08);border:1px solid rgba(0,188,212,.25);border-radius:3px;padding:10px;}
+.wp-n.issue{border-color:rgba(255,51,85,.4);background:rgba(255,51,85,.07);animation:pr 2s ease infinite;}
+@keyframes pr{0%,100%{box-shadow:none}50%{box-shadow:0 0 12px rgba(255,51,85,.3)}}
+.wp-nm{font-family:var(--D);font-size:9px;letter-spacing:2px;color:var(--teal);}
+.wp-n.issue .wp-nm{color:var(--red);}
+.sf-node{background:rgba(25,159,216,.1);border:1px solid var(--gb);border-radius:2px;padding:4px 8px;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--blue);white-space:nowrap;}
+.sf-arr{flex:1;height:2px;background:linear-gradient(90deg,var(--blue),rgba(25,159,216,.1));min-width:20px;}
+/* TEAM */
+.tm-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:14px;}
+.tm-card{border-radius:4px;overflow:hidden;cursor:pointer;transition:all .3s;border:1px solid var(--gb);}
+.tm-card:hover{transform:translateY(-4px);box-shadow:0 14px 40px rgba(0,0,0,.6);}
+.tm-bg{height:150px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;}
+.tm-av{font-family:var(--D);font-size:46px;font-weight:900;z-index:1;position:relative;}
+.tm-gl{position:absolute;inset:0;opacity:.18;background:radial-gradient(circle at 50% 60%,currentColor 0%,transparent 65%);}
+.tm-info{padding:10px;background:rgba(3,9,18,.92);}
+.tm-name{font-family:var(--D);font-size:12px;font-weight:700;letter-spacing:3px;color:var(--textb);}
+.tm-role{font-size:9px;color:var(--textd);text-transform:uppercase;letter-spacing:1px;margin-top:2px;}
+.tm-tags{display:flex;flex-wrap:wrap;gap:3px;margin-top:6px;}
+.tm-tag{font-size:8px;padding:1px 6px;border-radius:10px;background:rgba(25,159,216,.1);color:var(--blue);border:1px solid rgba(25,159,216,.2);}
+/* CALENDAR */
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;}
+.cal-day{background:var(--glass);border:1px solid var(--gb);border-radius:2px;padding:6px;min-height:65px;cursor:pointer;transition:border-color .2s;}
+.cal-day:hover{border-color:var(--gbh);}
+.cal-day.today{border-color:var(--blue);background:rgba(25,159,216,.08);}
+.cal-dn{font-family:var(--D);font-size:11px;color:var(--textd);margin-bottom:4px;}
+.cal-day.today .cal-dn{color:var(--blue);}
+.cal-ev{font-size:8px;padding:1px 4px;border-radius:1px;margin-bottom:2px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;}
+.cal-ev.task{background:rgba(252,200,46,.15);color:var(--yellow);}
+.cal-ev.cron{background:rgba(155,89,182,.15);color:var(--purple);}
+.cal-ev.social{background:rgba(255,45,155,.15);color:var(--pink);}
+.cal-ev.meet{background:rgba(0,230,118,.1);color:var(--green);}
+.cal-hdr{display:grid;grid-template-columns:repeat(7,1fr);gap:3px;margin-bottom:4px;}
+.cal-hd{font-size:9px;letter-spacing:2px;color:var(--textd);text-align:center;text-transform:uppercase;padding:4px 0;}
+/* PIPELINE */
+.pc{display:flex;flex-direction:column;gap:7px;}
+.ph3{font-family:var(--D);font-size:8px;letter-spacing:3px;padding:6px 10px;border-radius:2px;text-transform:uppercase;text-align:center;}
+.pi{background:var(--glass);border:1px solid var(--gb);border-radius:3px;padding:10px;cursor:pointer;transition:all .2s;}
+.pi:hover{border-color:var(--gbh);transform:translateX(2px);}
+.pi-tag{font-size:8px;padding:1px 6px;border-radius:10px;display:inline-block;margin-bottom:5px;}
+.pi-title{font-size:11px;color:var(--textb);line-height:1.4;margin-bottom:4px;}
+.pi-meta{font-size:9px;color:var(--textd);}
+/* TASKS */
+.ti{display:flex;align-items:center;gap:10px;background:var(--glass);border:1px solid var(--gb);border-radius:3px;padding:10px 13px;cursor:pointer;transition:all .2s;}
+.ti:hover{border-color:var(--gbh);}
+.tcb{width:16px;height:16px;border:1px solid var(--gb);border-radius:2px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:9px;}
+.tcb.done{background:rgba(0,230,118,.15);border-color:var(--green);color:var(--green);}
+.tt{flex:1;font-size:11px;}
+.tt.done{text-decoration:line-through;color:var(--textd);}
+.ta{font-size:9px;color:var(--blue);font-family:var(--D);}
+/* JOURNAL */
+.je{background:var(--glass);border:1px solid var(--gb);border-radius:3px;padding:14px;margin-bottom:10px;}
+.jd{font-family:var(--D);font-size:9px;letter-spacing:3px;color:var(--yellow);margin-bottom:8px;}
+.jag{font-size:9px;color:var(--blue);margin-bottom:5px;text-transform:uppercase;letter-spacing:2px;}
+.jtext{font-size:11px;color:var(--text);line-height:1.7;}
+.jtg{font-size:8px;padding:1px 6px;border-radius:10px;background:rgba(25,159,216,.1);color:var(--blue);border:1px solid rgba(25,159,216,.2);display:inline-block;margin-right:4px;margin-top:6px;}
+/* TRADR */
+.prod-card{background:var(--glass);border:1px solid var(--gb);border-radius:3px;overflow:hidden;cursor:pointer;transition:all .25s;}
+.prod-card:hover{transform:translateY(-3px);}
+.prod-img{height:110px;display:flex;align-items:center;justify-content:center;font-size:38px;border-bottom:1px solid var(--gb);}
+.prod-info{padding:10px;}
+.prod-name{font-family:var(--D);font-size:10px;letter-spacing:2px;color:var(--textb);margin-bottom:3px;}
+.prod-price{font-size:14px;font-weight:700;color:var(--yellow);}
+.prod-st{font-size:9px;margin-top:3px;}
+.prod-st.low{color:var(--orange);}
+.prod-st.ok{color:var(--green);}
+/* MARKETING */
+.mkt-ch{background:var(--glass);border:1px solid var(--gb);border-radius:3px;padding:13px;}
+.mkt-chn{font-family:var(--D);font-size:9px;letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;}
+.mkt-br{display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+.mkt-bl{color:var(--textd);width:60px;flex-shrink:0;font-size:9px;}
+.mkt-bw{flex:1;height:4px;background:rgba(255,255,255,.07);}
+.mkt-bf{height:100%;}
+.mkt-bv{color:var(--text);font-size:9px;flex-shrink:0;width:35px;text-align:right;}
+/* SOCIAL */
+.soc-m{background:var(--glass);border:1px solid var(--gb);border-radius:3px;padding:13px;position:relative;overflow:hidden;}
+.soc-p{font-family:var(--D);font-size:8px;letter-spacing:3px;color:var(--textd);text-transform:uppercase;margin-bottom:8px;}
+.soc-n{font-family:var(--D);font-size:28px;font-weight:700;line-height:1;}
+/* LEADS */
+.li{background:var(--glass);border:1px solid var(--gb);border-radius:3px;padding:11px;cursor:pointer;display:flex;gap:10px;transition:all .2s;}
+.li:hover{border-color:var(--gbh);}
+.lav{width:36px;height:36px;border-radius:3px;display:flex;align-items:center;justify-content:center;font-family:var(--D);font-size:11px;font-weight:700;flex-shrink:0;border:1px solid;}
+.lbody{flex:1;min-width:0;}
+.lfrom{font-size:11px;color:var(--textb);margin-bottom:2px;}
+.lmsg{font-size:10px;color:var(--textd);overflow:hidden;white-space:nowrap;text-overflow:ellipsis;}
+.lmeta{display:flex;gap:8px;margin-top:4px;font-size:9px;color:var(--textd);}
+.lbadge{font-size:8px;padding:1px 6px;border-radius:10px;}
+.lbadge.dm{background:rgba(155,89,182,.15);color:var(--purple);border:1px solid rgba(155,89,182,.3);}
+.lbadge.email{background:rgba(25,159,216,.1);color:var(--blue);border:1px solid rgba(25,159,216,.2);}
+.lbadge.comment{background:rgba(255,45,155,.1);color:var(--pink);border:1px solid rgba(255,45,155,.2);}
+.lbadge.new{background:rgba(255,107,53,.15);color:var(--orange);border:1px solid rgba(255,107,53,.3);}
+/* MONITOR */
+.mon-s{background:var(--glass);border:1px solid var(--gb);border-radius:3px;padding:10px;font-size:10px;margin-bottom:8px;}
+.mon-bar{height:6px;background:rgba(25,159,216,.1);overflow:hidden;margin-bottom:3px;}
+.mon-bf{height:100%;background:linear-gradient(90deg,var(--blue),var(--pink));}
+.spark{display:flex;align-items:flex-end;gap:1px;height:28px;}
+.spk{flex:1;background:rgba(25,159,216,.4);min-height:2px;}
+::-webkit-scrollbar{width:3px;height:3px;}
 ::-webkit-scrollbar-track{background:transparent;}
-::-webkit-scrollbar-thumb{background:rgba(25,159,216,0.2);}
-
-/* ENTER ANIMATION */
-.ve{animation:vf 0.3s ease;}
-@keyframes vf{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
-
-/* TRANSCRIPT BOX */
-.tbox{font-size:11px;color:var(--textd);text-align:center;font-style:italic;min-height:16px;max-width:340px;}
-.rbox{font-size:11px;color:var(--text);text-align:center;max-width:360px;line-height:1.55;
-  background:rgba(25,159,216,0.05);padding:8px 12px;border:1px solid rgba(25,159,216,0.15);border-radius:3px;}
+::-webkit-scrollbar-thumb{background:rgba(25,159,216,.2);}
 </style>
 </head>
 <body>
@@ -239,698 +266,953 @@ body::after{content:'';position:fixed;inset:0;z-index:0;
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
 <script src="https://unpkg.com/@babel/standalone@7.23.9/babel.min.js"></script>
 <script type="text/babel">
-const {useState,useEffect,useRef,useCallback} = React;
-
-// ── DATA ─────────────────────────────────────────────────────
-const AGENTS = [
-  {id:'chad',name:'CHAD',role:'CEO / Orchestrator',status:'active',dept:'command',
-   task:'Coordinating all 14 agents. Monitoring system alerts & strategic decisions.',
-   model:'claude-sonnet-4-6',color:'#199FD8',
-   metrics:{'Agents Managed':'14','Tasks Delegated':'28','Alerts Reviewed':'7','System Status':'Nominal'},
-   tools:['OpenClaw','Discord','File System','All Agents'],
-   caps:['Agent orchestration','Strategic planning','Alert management','Task delegation']},
-  {id:'bob',name:'BOB',role:'Finance Director',status:'active',dept:'finance',
-   task:'P&L reconciliation running. Q1 close report 87% complete. Cash flow nominal.',
-   model:'claude-sonnet-4-6',color:'#FCC82E',
-   metrics:{'Revenue Today':'$14,820','Expenses':'$3,240','Net Profit':'$11,580','Subscriptions':'143'},
-   tools:['Xero','Stripe','Google Sheets','Reporting API'],
-   caps:['Financial reporting','P&L analysis','Cash flow mgmt','Subscription tracking']},
-  {id:'connie',name:'CONNIE',role:'Content Agent',status:'working',dept:'marketing',
-   task:'Drafting 3 blog posts. Review queue has 7 items pending human approval.',
-   model:'claude-haiku-4-5',color:'#FF2D9B',
-   metrics:{'Posts Drafted':'3','In Review':'7','Published This Week':'12','Avg Word Count':'1,240'},
-   tools:['WordPress','Google Docs','Grammarly API','SEMrush'],
-   caps:['Long-form content','SEO copywriting','Editorial planning','Brand voice']},
-  {id:'dave',name:'DAVE',role:'Analytics Agent',status:'idle',dept:'data',
-   task:'Awaiting pipeline refresh. BigQuery sync scheduled in 14 minutes.',
-   model:'claude-haiku-4-5',color:'#199FD8',
-   metrics:{'Dashboards Active':'6','Queries Run Today':'47','Data Sources':'9','Next Sync':'14m'},
-   tools:['BigQuery','Looker','Python','Tableau'],
-   caps:['Data pipelines','Dashboard creation','Forecasting','Anomaly detection']},
-  {id:'frankie',name:'FRANKIE',role:'Forex Trader',status:'active',dept:'trading',
-   task:'EUR/USD long position open. TP set at 1.0892. Watching DXY correlation.',
-   model:'claude-sonnet-4-6',color:'#FCC82E',
-   metrics:{'Open Positions':'2','Daily PnL':'+$840','Win Rate':'68%','Risk Level':'Medium'},
-   tools:['MT5','TradingView','OANDA API','Economic Calendar'],
-   caps:['Forex trading','Technical analysis','Risk management','Macro correlation']},
-  {id:'larry',name:'LARRY',role:'Legal Counsel',status:'idle',dept:'legal',
-   task:'Compliance review queued. 2 contracts pending signature. ToS v2.4 drafted.',
-   model:'claude-haiku-4-5',color:'#9B59B6',
-   metrics:{'Contracts Reviewed':'4','Compliance Items':'2','Open Risks':'1','ToS Version':'v2.4'},
-   tools:['Notion','DocuSign','LexisNexis','Contract DB'],
-   caps:['Contract review','Compliance monitoring','Risk assessment','Legal research']},
-  {id:'megan',name:'MEGAN',role:'Media Agent',status:'working',dept:'marketing',
-   task:'Scheduling 12 posts across 4 platforms. Editing YouTube video brief.',
-   model:'claude-haiku-4-5',color:'#FF2D9B',
-   metrics:{'Posts Scheduled':'12','Platforms':'4','Reach This Week':'48K','Engagement':'4.2%'},
-   tools:['Hootsuite','Canva API','YouTube Studio','Meta Business'],
-   caps:['Social scheduling','Media production','Platform management','Audience targeting']},
-  {id:'pete',name:'PETE',role:'Product Manager',status:'active',dept:'product',
-   task:'Sprint 14 review in progress. 3 features in QA. Q2 roadmap update ready.',
-   model:'claude-sonnet-4-6',color:'#1ABC9C',
-   metrics:{'Features in QA':'3','Sprint Progress':'78%','Pages Built':'24','Conversion':'3.8%'},
-   tools:['Linear','Figma','GitHub','Vercel'],
-   caps:['Product roadmap','Sprint management','Feature prioritization','Conversion optimization']},
-  {id:'poly',name:'POLY',role:'Prediction Markets',status:'active',dept:'trading',
-   task:'Monitoring 8 Polymarket positions. SOL 15m oracle lag window active. 2 near resolution.',
-   model:'claude-sonnet-4-6',color:'#199FD8',
-   metrics:{'Open Positions':'8','Near Resolution':'2','Avg Confidence':'71%','Expected Value':'+$320'},
-   tools:['Polymarket API','Binance WS','Chainlink','VPN'],
-   caps:['Prediction market analysis','Oracle lag strategy','Position sizing','Market research']},
-  {id:'sammy',name:'SAMMY',role:'Support Agent',status:'working',dept:'support',
-   task:'4 tickets open. Avg response 2.3min. 1 escalation pending to Chad.',
-   model:'claude-haiku-4-5',color:'#1ABC9C',
-   metrics:{'Tickets Open':'4','Avg Response':'2.3m','Resolved Today':'11','CSAT Score':'4.8/5'},
-   tools:['Intercom','HelpDesk','Notion KB','Slack'],
-   caps:['Customer support','Ticket routing','FAQ management','Escalation handling']},
-  {id:'sue',name:'SUE',role:'SEO Specialist',status:'idle',dept:'marketing',
-   task:'Site audit complete. 23 technical recommendations queued for Pete.',
-   model:'claude-haiku-4-5',color:'#FF2D9B',
-   metrics:{'Keywords Tracked':'340','DA Score':'42','Backlinks':'1,204','Audit Items':'23'},
-   tools:['Ahrefs','SEMrush','Google Search Console','Screaming Frog'],
-   caps:['Technical SEO','Keyword research','Backlink building','Content optimization']},
-  {id:'sally',name:'SALLY',role:'Social Media',status:'active',dept:'marketing',
-   task:'A/B test live on 2 ad creatives. Engagement rate up 14% vs last week.',
-   model:'claude-haiku-4-5',color:'#FF2D9B',
-   metrics:{'A/B Tests Live':'2','Engagement':'+14%','Follower Growth':'+280','Top Platform':'Instagram'},
-   tools:['Meta Ads','TikTok Business','Instagram API','Sprout Social'],
-   caps:['Paid social','A/B testing','Community management','Growth strategy']},
-  {id:'toni',name:'TONI',role:'Futures Trader',status:'working',dept:'trading',
-   task:'NQ contract position: long 1 unit. Monitoring Fed announcement at 2pm EST.',
-   model:'claude-sonnet-4-6',color:'#FCC82E',
-   metrics:{'Contracts Active':'1','Daily PnL':'+$1,240','Strategy':'Momentum','Risk':'Med-High'},
-   tools:['NinjaTrader','Interactive Brokers','CME Data','Bloomberg Feed'],
-   caps:['Futures trading','NinjaScript automation','Macro analysis','Risk management']},
-  {id:'axiom',name:'AXIOM',role:'Strategy Optimiser',status:'active',dept:'trading',
-   task:'10-factor confidence scoring model — weight adjustment cycle 7 of 20. Convergence 68%.',
-   model:'claude-opus-4-6',color:'#9B59B6',
-   metrics:{'Model Confidence':'74%','Weight Cycles':'7/20','Factors Active':'10','Convergence':'68%'},
-   tools:['NinjaTrader Bridge','Python ML','SQLite','Market Data API'],
-   caps:['Algo strategy','ML weight optimization','Backtesting','Market regime detection']},
-  {id:'pablo',name:'PABLO',role:'PPC Manager',status:'idle',dept:'marketing',
-   task:'Google Ads audit queued. Budget reallocation report ready for review.',
-   model:'claude-haiku-4-5',color:'#FCC82E',
-   metrics:{'Campaigns Active':'8','ROAS':'3.2x','CTR':'4.1%','Budget Used':'72%'},
-   tools:['Google Ads API','Meta Ads','Optmyzr','Google Analytics'],
-   caps:['PPC campaign mgmt','Bid optimization','Ad copywriting','Budget allocation']},
+const {useState,useEffect,useRef,useCallback}=React;
+const AGENTS=[
+  {id:'chad',name:'CHAD',role:'CEO / Orchestrator',status:'active',dept:'command',task:'Coordinating all 14 agents. System alerts nominal.',model:'claude-sonnet-4-6',color:'#199FD8',metrics:{'Agents':'14','Tasks':'28','Alerts':'7','Status':'Nominal'},tools:['OpenClaw','Discord','All Agents'],caps:['Orchestration','Planning','Alert mgmt']},
+  {id:'bob',name:'BOB',role:'Finance Director',status:'active',dept:'finance',task:'P&L reconciliation. Q1 close 87% complete.',model:'claude-sonnet-4-6',color:'#FCC82E',metrics:{'Revenue':'$14,820','Expenses':'$3,240','Profit':'$11,580','Subs':'143'},tools:['Xero','Stripe','Sheets'],caps:['Reporting','P&L','Cash flow']},
+  {id:'connie',name:'CONNIE',role:'Content Agent',status:'working',dept:'marketing',task:'3 blog posts in draft. 7 items pending review.',model:'claude-haiku-4-5',color:'#FF2D9B',metrics:{'Drafted':'3','Review':'7','Published':'12','Avg Words':'1,240'},tools:['WordPress','Docs','SEMrush'],caps:['Long-form','SEO copy','Brand voice']},
+  {id:'dave',name:'DAVE',role:'Analytics Agent',status:'idle',dept:'data',task:'BigQuery sync in 14 minutes.',model:'claude-haiku-4-5',color:'#199FD8',metrics:{'Dashboards':'6','Queries':'47','Sources':'9','Sync':'14m'},tools:['BigQuery','Looker','Python'],caps:['Pipelines','Forecasting','Anomaly detection']},
+  {id:'frankie',name:'FRANKIE',role:'Forex Trader',status:'active',dept:'trading',task:'EUR/USD long. TP 1.0892. Watching DXY correlation.',model:'claude-sonnet-4-6',color:'#FCC82E',metrics:{'Positions':'2','PnL':'+$840','Win Rate':'68%','Risk':'Med'},tools:['MT5','OANDA API','Econ Cal'],caps:['Forex','Risk mgmt','Macro']},
+  {id:'larry',name:'LARRY',role:'Legal Counsel',status:'idle',dept:'legal',task:'2 contracts pending. ToS v2.4 drafted.',model:'claude-haiku-4-5',color:'#9B59B6',metrics:{'Contracts':'4','Compliance':'2','Risks':'1','ToS':'v2.4'},tools:['DocuSign','LexisNexis','Notion'],caps:['Contracts','Compliance','Risk']},
+  {id:'megan',name:'MEGAN',role:'Media Agent',status:'working',dept:'marketing',task:'12 posts scheduled. Editing YouTube brief.',model:'claude-haiku-4-5',color:'#FF2D9B',metrics:{'Scheduled':'12','Platforms':'4','Reach':'48K','Eng':'4.2%'},tools:['Hootsuite','Canva','YouTube'],caps:['Scheduling','Production']},
+  {id:'pete',name:'PETE',role:'Product Manager',status:'active',dept:'product',task:'Sprint 14 review. 3 features in QA.',model:'claude-sonnet-4-6',color:'#1ABC9C',metrics:{'In QA':'3','Sprint':'78%','Pages':'24','Conv':'3.8%'},tools:['Linear','Figma','GitHub'],caps:['Roadmap','Sprints','Features']},
+  {id:'poly',name:'POLY',role:'Prediction Markets',status:'active',dept:'trading',task:'8 Polymarket positions. SOL oracle lag active.',model:'claude-sonnet-4-6',color:'#199FD8',metrics:{'Positions':'8','Resolving':'2','Confidence':'71%','EV':'+$320'},tools:['Polymarket','Binance WS','Chainlink'],caps:['Prediction','Oracle lag']},
+  {id:'sammy',name:'SAMMY',role:'Support Agent',status:'working',dept:'support',task:'4 tickets open. Avg 2.3min. FAQ pipeline active.',model:'claude-haiku-4-5',color:'#1ABC9C',metrics:{'Open':'4','Avg Resp':'2.3m','Resolved':'11','CSAT':'4.8/5'},tools:['Intercom','HelpDesk','Notion KB'],caps:['Support','Routing','FAQ pipeline']},
+  {id:'sue',name:'SUE',role:'SEO Specialist',status:'idle',dept:'marketing',task:'Audit complete. 23 items queued for Pete.',model:'claude-haiku-4-5',color:'#FF2D9B',metrics:{'Keywords':'340','DA':'42','Backlinks':'1,204','Items':'23'},tools:['Ahrefs','SEMrush','GSC'],caps:['Technical SEO','Keywords']},
+  {id:'sally',name:'SALLY',role:'Social Media',status:'active',dept:'marketing',task:'A/B test live. Engagement +14% vs last week.',model:'claude-haiku-4-5',color:'#FF2D9B',metrics:{'A/B Tests':'2','Eng':'+14%','Growth':'+280','Top':'Instagram'},tools:['Meta Ads','TikTok','Sprout'],caps:['Paid social','A/B testing']},
+  {id:'toni',name:'TONI',role:'Futures Trader',status:'working',dept:'trading',task:'NQ long 1 unit. Fed announcement 2pm EST.',model:'claude-sonnet-4-6',color:'#FCC82E',metrics:{'Contracts':'1','PnL':'+$1,240','Strategy':'Momentum','Risk':'Med-High'},tools:['NinjaTrader','IBKR','CME'],caps:['Futures','NinjaScript','Macro']},
+  {id:'axiom',name:'AXIOM',role:'Strategy Optimiser',status:'active',dept:'trading',task:'10-factor model. Cycle 7/20. Convergence 68%.',model:'claude-opus-4-6',color:'#9B59B6',metrics:{'Confidence':'74%','Cycles':'7/20','Factors':'10','Conv':'68%'},tools:['NT Bridge','Python ML','SQLite'],caps:['Algo','ML optimization','Backtesting']},
+  {id:'pablo',name:'PABLO',role:'PPC Manager',status:'idle',dept:'marketing',task:'Google Ads audit queued. Budget report ready.',model:'claude-haiku-4-5',color:'#FCC82E',metrics:{'Campaigns':'8','ROAS':'3.2x','CTR':'4.1%','Budget':'72%'},tools:['Google Ads','Meta Ads','Optmyzr'],caps:['PPC','Bid optimization']},
 ];
-
-const LOGS = [
-  {msg:'SOL/USDC price tick — $148.42',tag:'trade',agent:'POLY'},
-  {msg:'Oracle lag delta 0.11% — below threshold',tag:'sys',agent:'POLY'},
-  {msg:'EUR/USD TP updated → 1.0892',tag:'trade',agent:'FRANKIE'},
-  {msg:'Blog post draft complete — sent to review queue',tag:'ok',agent:'CONNIE'},
-  {msg:'Heartbeat nominal — all systems responding',tag:'ok',agent:'CHAD'},
-  {msg:'NQ position +$340 unrealised PnL',tag:'trade',agent:'TONI'},
-  {msg:'Instagram variant B winning A/B test (+19%)',tag:'mkt',agent:'SALLY'},
-  {msg:'Ticket #1042 resolved — CSAT 5/5',tag:'ok',agent:'SAMMY'},
-  {msg:'Axiom cycle 7 complete — convergence 68%',tag:'sys',agent:'AXIOM'},
-  {msg:'3 Google Ads campaigns underperforming',tag:'warn',agent:'PABLO'},
-  {msg:'Context window 34% — within budget',tag:'sys',agent:'CHAD'},
-  {msg:'Revenue event — $340 subscription payment',tag:'ok',agent:'BOB'},
-  {msg:'SEO audit flagged 23 technical issues',tag:'warn',agent:'SUE'},
-  {msg:'Sprint 14 — QA signed off 2/3 features',tag:'ok',agent:'PETE'},
-  {msg:'Legal: ToS v2.4 draft ready for review',tag:'sys',agent:'LARRY'},
-  {msg:'BigQuery pipeline refresh — 9 sources synced',tag:'ok',agent:'DAVE'},
-  {msg:'Discord heartbeat ping sent',tag:'sys',agent:'CHAD'},
-  {msg:'2 Polymarket positions near resolution',tag:'trade',agent:'POLY'},
-  {msg:'12 social posts scheduled — 4 platforms',tag:'mkt',agent:'MEGAN'},
-  {msg:'Binance WS reconnected — feed healthy',tag:'ok',agent:'POLY'},
+const LOGS=[
+  {msg:'SOL/USDC tick $148.42',tag:'trade',agent:'POLY'},
+  {msg:'EUR/USD TP updated 1.0892',tag:'trade',agent:'FRANKIE'},
+  {msg:'Blog draft complete — review queue',tag:'ok',agent:'CONNIE'},
+  {msg:'Heartbeat nominal — all systems',tag:'ok',agent:'CHAD'},
+  {msg:'NQ position +$340 unrealised',tag:'trade',agent:'TONI'},
+  {msg:'Instagram B variant winning +19%',tag:'mkt',agent:'SALLY'},
+  {msg:'Ticket #1042 resolved CSAT 5/5',tag:'ok',agent:'SAMMY'},
+  {msg:'Axiom cycle 7 — 68% convergence',tag:'sys',agent:'AXIOM'},
+  {msg:'3 Google Ads underperforming',tag:'warn',agent:'PABLO'},
+  {msg:'Revenue event $340 subscription',tag:'ok',agent:'BOB'},
+  {msg:'SEO audit — 23 technical issues',tag:'warn',agent:'SUE'},
+  {msg:'Wave Park 2 users reconnected',tag:'sys',agent:'CHAD'},
+  {msg:'12 posts scheduled 4 platforms',tag:'mkt',agent:'MEGAN'},
+];
+const FX=[
+  {time:'08:30',curr:'USD',title:'Non-Farm Payrolls',impact:'red',prev:'227K',fore:'185K'},
+  {time:'10:00',curr:'USD',title:'ISM Services PMI',impact:'red',prev:'53.5',fore:'52.5'},
+  {time:'12:30',curr:'EUR',title:'ECB Meeting Minutes',impact:'orange',prev:'—',fore:'—'},
+  {time:'14:00',curr:'GBP',title:'BOE Governor Speech',impact:'orange',prev:'—',fore:'—'},
+  {time:'15:30',curr:'AUD',title:'Trade Balance',impact:'yellow',prev:'5.4B',fore:'4.8B'},
+  {time:'18:00',curr:'JPY',title:'BOJ Monetary Policy',impact:'red',prev:'0.50%',fore:'0.50%'},
+];
+const WAVE=[
+  {name:'TraderMike_AU',strat:'ES Scalper Pro',status:'connected',signal:'OK',license:'Active',ping:'24ms'},
+  {name:'FXKing_London',strat:'GBP Momentum',status:'connected',signal:'OK',license:'Active',ping:'87ms'},
+  {name:'AlgoAlpha',strat:'NQ Breakout',status:'connected',signal:'OK',license:'Active',ping:'156ms'},
+  {name:'CryptoCarl',strat:'SOL Arb Bot',status:'issue',signal:'MISSED',license:'Active',ping:'—'},
+  {name:'PipHunter99',strat:'ES Scalper Pro',status:'connected',signal:'OK',license:'Active',ping:'41ms'},
+  {name:'TradingWolf',strat:'Axiom v2',status:'disconnected',signal:'—',license:'Expired',ping:'—'},
+  {name:'MarketMaestro',strat:'NQ Breakout',status:'connected',signal:'OK',license:'Active',ping:'203ms'},
+  {name:'QuickFingers',strat:'GBP Momentum',status:'connected',signal:'OK',license:'Active',ping:'67ms'},
+];
+const STRATS=['ES Scalper Pro','GBP Momentum','NQ Breakout','SOL Arb Bot','Axiom v2'];
+const CAL=[
+  {day:17,title:'NQ Trade Review',type:'task'},{day:17,title:'Social Post',type:'social'},
+  {day:17,title:'Cron: Heartbeat',type:'cron'},{day:18,title:'Sprint 15 Kickoff',type:'meet'},
+  {day:18,title:'Blog: SEO Post',type:'social'},{day:19,title:'Fed Announcement',type:'task'},
+  {day:20,title:'Cron: Analytics',type:'cron'},{day:20,title:'Ads Budget Review',type:'task'},
+  {day:21,title:'Q1 P&L Close',type:'meet'},{day:22,title:'5x Posts Scheduled',type:'social'},
+  {day:23,title:'Axiom Cycle 8',type:'cron'},{day:24,title:'Legal Review',type:'task'},
+];
+const PIPE={
+  idea:[{title:'10 NinjaTrader Tips for Beginners',type:'blog',agent:'CONNIE',due:'Mar 20'},{title:'Wave Park Onboarding Video Script',type:'video',agent:'MEGAN',due:'Mar 22'},{title:'ACE AI — How it Works',type:'blog',agent:'CONNIE',due:'Mar 25'}],
+  draft:[{title:'Polymarket Strategy Guide',type:'blog',agent:'CONNIE',due:'Mar 19'},{title:'Weekly Trading Recap',type:'social',agent:'SALLY',due:'Mar 18'},{title:'TRADR Launch Announcement',type:'email',agent:'MEGAN',due:'Mar 21'}],
+  review:[{title:'SEO: Best Forex Brokers 2026',type:'blog',agent:'SUE',due:'Mar 17'},{title:'Instagram Reel — NQ Trade',type:'social',agent:'SALLY',due:'Mar 17'}],
+  published:[{title:'Oracle Lag Strategy Guide',type:'blog',agent:'CONNIE',due:'Mar 15'},{title:'ACEBOT Launch Post',type:'social',agent:'SALLY',due:'Mar 14'},{title:'March Newsletter',type:'email',agent:'MEGAN',due:'Mar 12'}],
+};
+const TASKS=[
+  {text:'Review Wave Park license — CryptoCarl',pri:'high',done:false,assign:'LARRY',due:'Today'},
+  {text:'Approve 3 Connie blog posts in review',pri:'high',done:false,assign:'YOU',due:'Today'},
+  {text:'Sign off Q1 P&L with Bob',pri:'high',done:false,assign:'YOU',due:'Mar 21'},
+  {text:'Record Wave Park onboarding video',pri:'med',done:false,assign:'YOU',due:'Mar 22'},
+  {text:'Review TRADR catalogue with Pete',pri:'med',done:false,assign:'YOU',due:'Mar 24'},
+  {text:'Axiom backtest results review',pri:'med',done:true,assign:'YOU',due:'Mar 16'},
+  {text:'Instagram strategy brief for Sally',pri:'low',done:true,assign:'SALLY',due:'Mar 15'},
+];
+const LEADS=[
+  {name:'@tradingwolf_au',platform:'Instagram',type:'dm',msg:'Is Wave Park still taking new members? Been watching your content for months',time:'12 min',color:'#FF2D9B',isnew:true},
+  {name:'mike@tradefx.com',platform:'Email',type:'email',msg:'Inquiry re: enterprise licensing — our fund manages 12 traders',time:'28 min',color:'#199FD8',isnew:true},
+  {name:'@pipmaster99',platform:'YouTube',type:'comment',msg:'This NQ strategy is incredible — do you have a course?',time:'1h',color:'#FF0000',isnew:false},
+  {name:'@cryptoqueenAU',platform:'TikTok',type:'comment',msg:'How do I sign up for ACE AI? Looks amazing',time:'2h',color:'#69C9D0',isnew:false},
+  {name:'james@hedgefund.io',platform:'Email',type:'email',msg:'Partnership for algo distribution — interested?',time:'3h',color:'#199FD8',isnew:false},
+  {name:'@fx_london',platform:'Twitter',type:'dm',msg:'Your Polymarket content is gold — keep it coming!',time:'4h',color:'#1DA1F2',isnew:false},
+];
+const JOURNAL=[
+  {date:'2026-03-17',entries:[
+    {agent:'CHAD',text:'All 14 agents nominal. Wave Park 2 reconnection events resolved. Sammy cleared 11 tickets. Axiom convergence at 68% — improving. 28 tasks delegated.',tags:['operations','fleet']},
+    {agent:'POLY',text:'SOL oracle lag window active 4x15min windows. 2 positions near resolution. Binance WS stable. Strategy confidence 71% across 8 active markets.',tags:['trading','polymarket']},
+    {agent:'AXIOM',text:'Completed weight cycles 5-7. Gradient descent converging on confirmation bias correction. Factor 3 (volume) and Factor 7 (momentum) showing highest signal.',tags:['ml','strategy']},
+  ]},
+  {date:'2026-03-16',entries:[
+    {agent:'CHAD',text:'Market rally created 3 urgent trade decisions. Wave Park relay had 47min outage — resolved by restarting NinjaTrader bridge. 23 tasks completed across fleet.',tags:['operations']},
+    {agent:'CONNIE',text:'Published SEO article: Best Algo Trading Platforms 2026. 1840 words, 3 internal links, schema markup. Sent to Sue for backlinks. 3 new drafts started.',tags:['content','seo']},
+  ]},
+];
+const TRADR=[
+  {name:'TRADR Core Tee',price:'$49',emoji:'👕',stock:'In Stock',ss:'ok',sold:24},
+  {name:'TRADR Hoodie',price:'$89',emoji:'🧥',stock:'Low Stock',ss:'low',sold:8},
+  {name:'TRADR Cap',price:'$35',emoji:'🧢',stock:'In Stock',ss:'ok',sold:31},
+  {name:'TRADR Shorts',price:'$59',emoji:'🩳',stock:'In Stock',ss:'ok',sold:17},
+  {name:'TRADR Socks 3pk',price:'$25',emoji:'🧦',stock:'In Stock',ss:'ok',sold:42},
+  {name:'TRADR Bag',price:'$79',emoji:'🎒',stock:'Pre-Order',ss:'low',sold:5},
+];
+const MON=[
+  {name:'main',model:'opus-4-6',tokens:125000,cost:1.87,status:'active',last:'Updated server.js'},
+  {name:'chad-tools',model:'sonnet-4-6',tokens:84200,cost:0.42,status:'active',last:'Discord heartbeat sent'},
+  {name:'wave-monitor',model:'haiku-4-5',tokens:31400,cost:0.09,status:'idle',last:'License check done'},
+  {name:'content-pipe',model:'haiku-4-5',tokens:56800,cost:0.14,status:'active',last:'Draft saved: SEO post'},
 ];
 
 function ts(){return new Date().toLocaleTimeString('en-AU',{hour12:false,hour:'2-digit',minute:'2-digit',second:'2-digit',timeZone:'Australia/Melbourne'});}
-
-function cmdReply(t){
+function cmd(t){
   const tl=t.toLowerCase();
-  if(tl.includes('status')||tl.includes('system'))return'All systems operational. 8 agents active, 4 working, 3 idle. Trading bots monitoring live markets. API rate within limits. 3 non-critical alerts.';
-  if(tl.includes('agent')||tl.includes('who')||tl.includes('fleet'))return'15-agent fleet: Chad orchestrating, Poly and Frankie watching open positions, Toni long NQ futures, Connie has 3 posts in draft, Axiom mid-cycle on weight optimization at 68% convergence.';
-  if(tl.includes('trade')||tl.includes('trading')||tl.includes('sol')||tl.includes('market'))return'Poly monitoring 8 Polymarket positions at 71% average confidence. Frankie: EUR-USD long, TP 1.0892. Toni: NQ futures long, up 1,240 dollars today. Axiom confidence model cycle 7 running.';
-  if(tl.includes('revenue')||tl.includes('money')||tl.includes('profit')||tl.includes('finance'))return'Bob reports net profit of 11,580 dollars today. 143 active subscriptions. Revenue on track versus Q1 target. Cash flow nominal.';
-  if(tl.includes('alert')||tl.includes('warn')||tl.includes('problem'))return'3 non-critical alerts. Pablo has 3 underperforming Google Ads campaigns. Sue queued 23 SEO issues for Pete. Sammy has 1 escalation pending. No critical system failures.';
-  if(tl.includes('hello')||tl.includes('hi ')||tl.includes('hey')||tl.includes("what's up"))return'ACE online and operational. All 15 agents active or standby. How can I assist you, Commander?';
-  if(tl.includes('help'))return'Try: system status, trading update, revenue report, show agents, or any agent name for a briefing.';
-  if(tl.includes('chad'))return'Chad is actively orchestrating all 14 subordinate agents. 28 tasks delegated today, 7 alerts reviewed. No critical escalations pending.';
-  if(tl.includes('axiom'))return'Axiom running weight adjustment cycle 7 of 20 on the 10-factor confidence scoring model. Convergence at 68%. Operating on Opus-class model — highest priority allocation.';
-  if(tl.includes('poly'))return'Poly monitoring 8 Polymarket positions. 2 approaching resolution. Average confidence 71%. SOL 15-minute oracle lag window active. VPN connected.';
-  if(tl.includes('bob'))return'Bob: net profit 11,580 dollars today. 143 subscriptions active. P&L reconciliation 87% complete. Q1 close report generating.';
-  return`Command received: "${t}". Routing through ACE core. Stand by for agent response.`;
+  if(tl.includes('status')||tl.includes('system'))return'All systems operational. 8 agents active, 4 working. Wave Park 7/8 connected. 3 non-critical alerts.';
+  if(tl.includes('trade')||tl.includes('sol'))return'Poly: 8 Polymarket positions 71% confidence. Frankie: EUR-USD long TP 1.0892. Toni: NQ futures up $1,240. Axiom cycle 7 of 20.';
+  if(tl.includes('wave'))return'Wave Park: 7/8 users connected. CryptoCarl missed signal — likely Boardshop plugin issue. TradingWolf license expired. All 5 master strategies broadcasting.';
+  if(tl.includes('revenue')||tl.includes('profit'))return'Bob: net profit $11,580 today. 143 subscriptions active. Q1 P&L 87% complete. Cash flow nominal.';
+  if(tl.includes('alert')||tl.includes('warn'))return'3 alerts: Pablo 3 underperforming campaigns, Sue 23 SEO issues queued, CryptoCarl Wave Park signal miss.';
+  if(tl.includes('hello')||tl.includes('hi ')||tl.includes('hey'))return'ACE online. All 15 agents standing by. Wave Park nominal. Ready, Commander.';
+  return'Command received: "'+t+'". Routing through ACE core...';
 }
 
-// ── ORB ──────────────────────────────────────────────────────
+// ORB
 function AceOrb({state}){
-  const cRef=useRef(null);
-  const rafRef=useRef(null);
-  const pRef=useRef([]);
-
+  const cRef=useRef(null),rafRef=useRef(null),pRef=useRef([]);
+  useEffect(()=>{pRef.current=Array.from({length:80},(_,i)=>({angle:(i/80)*Math.PI*2+Math.random()*.4,radius:100+Math.random()*60,speed:(.003+Math.random()*.005)*(Math.random()>.5?1:-1),size:.6+Math.random()*2.2,opacity:.2+Math.random()*.8,col:Math.random()>.55?'#FF2D9B':Math.random()>.5?'#9B59B6':'#199FD8'}));},[]);
   useEffect(()=>{
-    pRef.current=Array.from({length:80},(_,i)=>({
-      angle:(i/80)*Math.PI*2+Math.random()*0.4,
-      radius:100+Math.random()*65,
-      speed:(0.003+Math.random()*0.005)*(Math.random()>0.5?1:-1),
-      size:0.6+Math.random()*2.2,
-      opacity:0.2+Math.random()*0.8,
-      col:Math.random()>0.55?'#FF2D9B':Math.random()>0.5?'#9B59B6':'#199FD8',
-    }));
-  },[]);
-
-  useEffect(()=>{
-    const cv=cRef.current; if(!cv)return;
-    const ctx=cv.getContext('2d');
-    let st=null;
-    function hex2rgba(h,a){const r=parseInt(h.slice(1,3),16),g=parseInt(h.slice(3,5),16),b=parseInt(h.slice(5,7),16);return`rgba(${r},${g},${b},${a})`;}
+    const cv=cRef.current;if(!cv)return;const ctx=cv.getContext('2d');let st=null;
+    function h2r(h,a){const r=parseInt(h.slice(1,3),16),g=parseInt(h.slice(3,5),16),b=parseInt(h.slice(5,7),16);return'rgba('+r+','+g+','+b+','+a+')';}
     function draw(ts){
-      if(!st)st=ts;
-      const t=(ts-st)/1000;
-      const W=cv.width,H=cv.height,cx=W/2,cy=H/2;
+      if(!st)st=ts;const t=(ts-st)/1e3;const W=cv.width,H=cv.height,cx=W/2,cy=H/2;
       ctx.clearRect(0,0,W,H);
-
       const idle=state==='idle',lst=state==='listening',prc=state==='processing',spk=state==='speaking';
-      const ps=idle?1:lst?3.2:prc?5.5:2.5;
-      const gm=idle?1:lst?1.65:prc?1.45:2.1;
-      const pulse=(Math.sin(t*ps)+1)/2;
-      const bR=74, orbR=bR*(0.91+pulse*0.09);
-
-      let cCol=lst?'#FF2D9B':prc?'#9B59B6':spk?'#FCC82E':'#199FD8';
-
-      // ambient bg glow
-      const bg=ctx.createRadialGradient(cx,cy,0,cx,cy,185);
-      bg.addColorStop(0,hex2rgba('#199FD8',0.11*gm));
-      bg.addColorStop(0.45,hex2rgba('#9B59B6',0.05*gm));
-      bg.addColorStop(1,'transparent');
-      ctx.fillStyle=bg; ctx.beginPath(); ctx.arc(cx,cy,185,0,Math.PI*2); ctx.fill();
-
-      // expanding waves
-      if(lst||spk){
-        for(let w=0;w<3;w++){
-          const ph=((t*(lst?1.4:0.9)+w*0.9)%2.6)/2.6;
-          const wR=orbR+12+ph*130;
-          const wO=(1-ph)*0.55*gm;
-          ctx.beginPath(); ctx.arc(cx,cy,wR,0,Math.PI*2);
-          ctx.strokeStyle=lst?hex2rgba('#FF2D9B',wO):hex2rgba('#FCC82E',wO);
-          ctx.lineWidth=1.5; ctx.stroke();
-        }
-      }
-
-      // orbiting ellipses
-      [[orbR+11,(orbR+11)*0.22,t*0.55,'#199FD8',0.55],
-       [orbR+7,(orbR+7)*0.38,-t*0.32+1,'#FF2D9B',0.38],
-       [orbR+17,(orbR+17)*0.14,t*0.21+2,'#9B59B6',0.32]
-      ].forEach(([rx,ry,rot,col,al])=>{
-        ctx.save(); ctx.translate(cx,cy); ctx.rotate(rot);
-        ctx.beginPath(); ctx.ellipse(0,0,rx,ry*gm*0.65+ry*0.35,0,0,Math.PI*2);
-        ctx.strokeStyle=col+Math.round(al*gm*255).toString(16).padStart(2,'0');
-        ctx.lineWidth=1; ctx.stroke(); ctx.restore();
+      const ps=idle?1:lst?3.2:prc?5.5:2.5,gm=idle?1:lst?1.65:prc?1.45:2.1,pulse=(Math.sin(t*ps)+1)/2;
+      const orbR=72*(.91+pulse*.09);
+      const cCol=lst?'#FF2D9B':prc?'#9B59B6':spk?'#FCC82E':'#199FD8';
+      const bg=ctx.createRadialGradient(cx,cy,0,cx,cy,180);
+      bg.addColorStop(0,h2r('#199FD8',.11*gm));bg.addColorStop(.45,h2r('#9B59B6',.05*gm));bg.addColorStop(1,'transparent');
+      ctx.fillStyle=bg;ctx.beginPath();ctx.arc(cx,cy,180,0,Math.PI*2);ctx.fill();
+      if(lst||spk){for(let w=0;w<3;w++){const ph=((t*(lst?1.4:.9)+w*.9)%2.6)/2.6,wR=orbR+12+ph*120,wO=(1-ph)*.55*gm;ctx.beginPath();ctx.arc(cx,cy,wR,0,Math.PI*2);ctx.strokeStyle=lst?h2r('#FF2D9B',wO):h2r('#FCC82E',wO);ctx.lineWidth=1.5;ctx.stroke();}}
+      [[orbR+10,(orbR+10)*.22,t*.55,'#199FD8',.55],[orbR+6,(orbR+6)*.38,-t*.32+1,'#FF2D9B',.38],[orbR+16,(orbR+16)*.14,t*.21+2,'#9B59B6',.32]].forEach(function(d){
+        ctx.save();ctx.translate(cx,cy);ctx.rotate(d[2]);ctx.beginPath();ctx.ellipse(0,0,d[0],d[1]*gm*.65+d[1]*.35,0,0,Math.PI*2);ctx.strokeStyle=d[3]+Math.round(d[4]*gm*255).toString(16).padStart(2,'0');ctx.lineWidth=1;ctx.stroke();ctx.restore();
       });
-
-      // main sphere
-      const sph=ctx.createRadialGradient(cx-orbR*0.28,cy-orbR*0.28,orbR*0.04,cx,cy,orbR);
-      sph.addColorStop(0,'rgba(255,255,255,0.92)');
-      sph.addColorStop(0.18,cCol);
-      sph.addColorStop(0.55,'#040e24');
-      sph.addColorStop(1,'#020810');
-      ctx.beginPath(); ctx.arc(cx,cy,orbR,0,Math.PI*2); ctx.fillStyle=sph; ctx.fill();
-
-      // inner shine
-      const inn=ctx.createRadialGradient(cx,cy,0,cx,cy,orbR*0.65);
-      inn.addColorStop(0,`rgba(255,255,255,${0.22*pulse})`);
-      inn.addColorStop(0.4,hex2rgba(cCol,0.28*pulse*gm));
-      inn.addColorStop(1,'transparent');
-      ctx.beginPath(); ctx.arc(cx,cy,orbR*0.65,0,Math.PI*2); ctx.fillStyle=inn; ctx.fill();
-
-      // processing swirl
-      if(prc){
-        for(let i=0;i<12;i++){
-          const a=t*4.5+i*(Math.PI*2/12);
-          const pr=orbR*0.5*(0.55+Math.sin(t*3+i)*0.45);
-          ctx.beginPath(); ctx.arc(cx+Math.cos(a)*pr,cy+Math.sin(a)*pr,2.2,0,Math.PI*2);
-          ctx.fillStyle=`rgba(155,89,182,${0.45+Math.sin(t*6+i)*0.55})`; ctx.fill();
-        }
-        // extra ring
-        ctx.beginPath(); ctx.arc(cx,cy,orbR*0.7,0,Math.PI*2);
-        ctx.strokeStyle=`rgba(155,89,182,${0.3+pulse*0.3})`; ctx.lineWidth=1; ctx.stroke();
-      }
-
-      // speaking waveform
-      if(spk){
-        const bars=44;
-        for(let i=0;i<bars;i++){
-          const a=(i/bars)*Math.PI*2;
-          const h=6+Math.sin(t*5.5+i*0.85)*18+Math.sin(t*9+i*1.4)*5;
-          ctx.beginPath();
-          ctx.moveTo(cx+Math.cos(a)*(orbR+3),cy+Math.sin(a)*(orbR+3));
-          ctx.lineTo(cx+Math.cos(a)*(orbR+3+h),cy+Math.sin(a)*(orbR+3+h));
-          ctx.strokeStyle=`rgba(252,200,46,${0.5+Math.sin(t*4+i)*0.5})`;
-          ctx.lineWidth=2.2; ctx.lineCap='round'; ctx.stroke();
-        }
-      }
-
-      // listening ring
-      if(lst){
-        const lR=orbR+26+Math.sin(t*3)*6;
-        ctx.beginPath(); ctx.arc(cx,cy,lR,0,Math.PI*2);
-        ctx.strokeStyle=`rgba(255,45,155,${0.4+pulse*0.35})`; ctx.lineWidth=2; ctx.stroke();
-      }
-
-      // particles
-      pRef.current.forEach(p=>{
-        p.angle+=p.speed*(prc?3.5:lst?1.8:1);
-        const alpha=Math.min(1,p.opacity*(0.45+pulse*0.55)*gm);
-        ctx.beginPath(); ctx.arc(cx+Math.cos(p.angle)*p.radius,cy+Math.sin(p.angle)*p.radius,p.size,0,Math.PI*2);
-        ctx.fillStyle=p.col+Math.round(alpha*255).toString(16).padStart(2,'0'); ctx.fill();
-      });
-
+      const sph=ctx.createRadialGradient(cx-orbR*.28,cy-orbR*.28,orbR*.04,cx,cy,orbR);
+      sph.addColorStop(0,'rgba(255,255,255,.92)');sph.addColorStop(.18,cCol);sph.addColorStop(.55,'#040e24');sph.addColorStop(1,'#020810');
+      ctx.beginPath();ctx.arc(cx,cy,orbR,0,Math.PI*2);ctx.fillStyle=sph;ctx.fill();
+      if(prc){for(let i=0;i<12;i++){const a=t*4.5+i*(Math.PI*2/12),pr=orbR*.5*(.55+Math.sin(t*3+i)*.45);ctx.beginPath();ctx.arc(cx+Math.cos(a)*pr,cy+Math.sin(a)*pr,2.2,0,Math.PI*2);ctx.fillStyle='rgba(155,89,182,'+(0.45+Math.sin(t*6+i)*.55)+')';ctx.fill();}}
+      if(spk){for(let i=0;i<44;i++){const a=(i/44)*Math.PI*2,h=6+Math.sin(t*5.5+i*.85)*18;ctx.beginPath();ctx.moveTo(cx+Math.cos(a)*(orbR+3),cy+Math.sin(a)*(orbR+3));ctx.lineTo(cx+Math.cos(a)*(orbR+3+h),cy+Math.sin(a)*(orbR+3+h));ctx.strokeStyle='rgba(252,200,46,'+(0.5+Math.sin(t*4+i)*.5)+')';ctx.lineWidth=2;ctx.lineCap='round';ctx.stroke();}}
+      if(lst){const lR=orbR+24+Math.sin(t*3)*5;ctx.beginPath();ctx.arc(cx,cy,lR,0,Math.PI*2);ctx.strokeStyle='rgba(255,45,155,'+(.4+pulse*.35)+')';ctx.lineWidth=2;ctx.stroke();}
+      pRef.current.forEach(function(p){p.angle+=p.speed*(prc?3.5:lst?1.8:1);const alpha=Math.min(1,p.opacity*(.45+pulse*.55)*gm);ctx.beginPath();ctx.arc(cx+Math.cos(p.angle)*p.radius,cy+Math.sin(p.angle)*p.radius,p.size,0,Math.PI*2);ctx.fillStyle=p.col+Math.round(alpha*255).toString(16).padStart(2,'0');ctx.fill();});
       rafRef.current=requestAnimationFrame(draw);
     }
     rafRef.current=requestAnimationFrame(draw);
-    return()=>cancelAnimationFrame(rafRef.current);
+    return function(){cancelAnimationFrame(rafRef.current);};
   },[state]);
-
-  return <canvas ref={cRef} width={320} height={320} style={{display:'block'}} />;
+  return React.createElement('canvas',{ref:cRef,width:290,height:290,style:{display:'block'}});
 }
 
-// ── VOICE HOOK ───────────────────────────────────────────────
-function useVoice({onTranscript,onState}){
-  const recRef=useRef(null);
-  const syn=window.speechSynthesis;
-
-  const start=useCallback(()=>{
-    const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-    if(!SR){alert('Use Chrome for full voice support.');return;}
-    const r=new SR(); r.lang='en-AU'; r.continuous=false; r.interimResults=false;
-    r.onstart=()=>onState('listening');
-    r.onresult=e=>onTranscript(e.results[0][0].transcript);
-    r.onerror=()=>onState('idle');
-    r.onend=()=>{};
-    r.start(); recRef.current=r;
-  },[onTranscript,onState]);
-
-  const stop=useCallback(()=>{
-    if(recRef.current){recRef.current.stop();recRef.current=null;}
-    onState('idle');
-  },[onState]);
-
-  const speak=useCallback((text)=>{
-    syn.cancel();
-    const u=new SpeechSynthesisUtterance(text);
-    u.rate=0.94; u.pitch=0.88; u.volume=0.92;
-    const v=syn.getVoices();
-    const pref=v.find(x=>x.name.includes('Daniel')||x.name.includes('Alex')||x.name.includes('Google UK'));
-    if(pref)u.voice=pref;
-    u.onstart=()=>onState('speaking');
-    u.onend=()=>onState('idle');
-    syn.speak(u);
-  },[onState]);
-
+function useVoice({onT,onS}){
+  const recRef=useRef(null);const syn=window.speechSynthesis;
+  const start=useCallback(function(){const SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR)return;const r=new SR();r.lang='en-AU';r.onstart=function(){onS('listening');};r.onresult=function(e){onT(e.results[0][0].transcript);};r.onerror=function(){onS('idle');};r.start();recRef.current=r;},[onT,onS]);
+  const stop=useCallback(function(){if(recRef.current){recRef.current.stop();recRef.current=null;}onS('idle');},[onS]);
+  const speak=useCallback(function(text){syn.cancel();const u=new SpeechSynthesisUtterance(text);u.rate=.94;u.pitch=.88;const v=syn.getVoices();const pref=v.find(function(x){return x.name.includes('Daniel')||x.name.includes('Alex');});if(pref)u.voice=pref;u.onstart=function(){onS('speaking');};u.onend=function(){onS('idle');};syn.speak(u);},[onS]);
   return{start,stop,speak};
 }
 
-// ── TOP BAR ──────────────────────────────────────────────────
 function TopBar({onNav}){
-  const [clk,setClk]=useState('');
-  const [profit,setProfit]=useState(11580);
-  const [tasks,setTasks]=useState(28);
-  useEffect(()=>{const i=setInterval(()=>setClk(ts()),1000);setClk(ts());return()=>clearInterval(i);},[]);
-  useEffect(()=>{const i=setInterval(()=>setProfit(p=>p+Math.floor(Math.random()*90)),9000);return()=>clearInterval(i);},[]);
+  const[clk,setClk]=useState('');const[profit,setProfit]=useState(11580);
+  useEffect(function(){const i=setInterval(function(){setClk(ts());},1000);setClk(ts());return function(){clearInterval(i);};},[]);
+  useEffect(function(){const i=setInterval(function(){setProfit(function(p){return p+Math.floor(Math.random()*90);});},9000);return function(){clearInterval(i);};},[]);
   return(
-    <div className="tb">
-      <div className="logo" onClick={()=>onNav('mission')}>ACE<span>.</span>AI</div>
-      <div className="tb-sep"/>
-      <div className="tb-m">
-        <div className="met"><div className="met-l">Profit Today</div><div className="met-v y">${profit.toLocaleString()}</div></div>
-        <div className="met"><div className="met-l">Active Tasks</div><div className="met-v b">{tasks}</div></div>
-        <div className="met"><div className="met-l">Alerts</div><div className="met-v o">3</div></div>
-        <div className="met"><div className="met-l">Agents Online</div><div className="met-v g">12/15</div></div>
-      </div>
-      <div className="sp"/>
-      <div className="sys-st"><div className="dot g"/><span style={{color:'var(--green)',fontSize:'10px',letterSpacing:'2px'}}>ALL SYSTEMS GO</span></div>
-      <div className="clk">{clk} AEST</div>
-    </div>
+    React.createElement('div',{className:'tb'},
+      React.createElement('div',{className:'logo',onClick:function(){onNav('mission');}},
+        'ACE',React.createElement('span',null,'.'),'AI'
+      ),
+      React.createElement('div',{className:'tb-sep'}),
+      React.createElement('div',{className:'tb-m'},
+        React.createElement('div',{className:'met'},React.createElement('div',{className:'met-l'},'Profit Today'),React.createElement('div',{className:'met-v y'},'$'+profit.toLocaleString())),
+        React.createElement('div',{className:'met'},React.createElement('div',{className:'met-l'},'Active Tasks'),React.createElement('div',{className:'met-v b'},'28')),
+        React.createElement('div',{className:'met'},React.createElement('div',{className:'met-l'},'Alerts'),React.createElement('div',{className:'met-v o'},'3')),
+        React.createElement('div',{className:'met'},React.createElement('div',{className:'met-l'},'Agents'),React.createElement('div',{className:'met-v g'},'12/15')),
+        React.createElement('div',{className:'met'},React.createElement('div',{className:'met-l'},'Wave Park'),React.createElement('div',{className:'met-v b'},'7/8'))
+      ),
+      React.createElement('div',{className:'sp'}),
+      React.createElement('div',{className:'sys-st'},
+        React.createElement('div',{className:'dot g'}),
+        React.createElement('span',{style:{color:'var(--green)',fontSize:'10px',letterSpacing:'2px'}},'ALL SYSTEMS GO')
+      ),
+      React.createElement('div',{className:'clk'},clk+' AEST')
+    )
   );
 }
 
-// ── BOTTOM NAV ───────────────────────────────────────────────
-function BottomNav({cur,onNav}){
-  const items=[
-    {id:'mission',label:'Mission',icon:'◈'},{id:'agents',label:'Agents',icon:'◉'},
-    {id:'trading',label:'Trading',icon:'◆'},{id:'marketing',label:'Marketing',icon:'◐'},
-    {id:'finance',label:'Finance',icon:'◎'},{id:'legal',label:'Legal',icon:'◑'},
-    {id:'product',label:'Product',icon:'◇'},{id:'settings',label:'Settings',icon:'⊙'},
-  ];
-  return(
-    <div className="bn">
-      {items.map(x=>(
-        <button key={x.id} className={`nb${cur===x.id?' act':''}`} onClick={()=>onNav(x.id)}>
-          <div className="ni">{x.icon}</div>{x.label}
-        </button>
-      ))}
-    </div>
+const MAINNAV=[
+  {id:'mission',label:'Mission',icon:'◈'},{id:'agents',label:'Agents',icon:'◉'},
+  {id:'leads',label:'Leads',icon:'◐'},{id:'content',label:'Content',icon:'◆'},
+  {id:'wavepark',label:'Wave Park',icon:'〜'},{id:'calendar',label:'Calendar',icon:'▦'},
+  {id:'tasks',label:'Tasks',icon:'☑'},{id:'marketing',label:'Marketing',icon:'◎'},
+  {id:'team',label:'Team',icon:'◑'},{id:'social',label:'Social',icon:'◇'},
+  {id:'support',label:'Support',icon:'◉'},{id:'monitor',label:'Monitor',icon:'▣'},
+  {id:'journal',label:'Journal',icon:'≡'},{id:'tradr',label:'TRADR',icon:'★'},
+];
+const AGTNAV=[
+  {id:'agents',label:'All',icon:'◉'},{id:'agt-trading',label:'Trading',icon:'◆'},
+  {id:'agt-marketing',label:'Marketing',icon:'◎'},{id:'agt-ops',label:'Ops',icon:'◑'},
+  {id:'agt-data',label:'Data',icon:'▣'},
+];
+
+function BotNav({cur,onNav}){
+  const inA=cur.startsWith('agent')||cur.startsWith('agt-');
+  const nav=inA?AGTNAV:MAINNAV;
+  return React.createElement('div',{className:'bn'},
+    inA&&React.createElement(React.Fragment,null,
+      React.createElement('button',{className:'nb',onClick:function(){onNav('mission');}},React.createElement('div',{className:'ni'},'◈'),'Mission'),
+      React.createElement('div',{className:'bn-sep'})
+    ),
+    nav.map(function(x){return React.createElement('button',{key:x.id,className:'nb'+(cur===x.id?' act':''),onClick:function(){onNav(x.id);}},React.createElement('div',{className:'ni'},x.icon),x.label);})
   );
 }
 
-// ── LEFT PANEL ───────────────────────────────────────────────
+function FxNews(){
+  const icons={red:'🗂️',orange:'📂',yellow:'📁'};
+  return React.createElement('div',{className:'gp',style:{padding:'11px'}},
+    React.createElement('div',{className:'ph'},'ForexFactory News'),
+    FX.map(function(n,i){return React.createElement('div',{key:i,className:'fx-item'},
+      React.createElement('div',{className:'fx-folder '+n.impact},icons[n.impact]),
+      React.createElement('div',{className:'fx-body'},
+        React.createElement('div',null,React.createElement('span',{className:'fx-time'},n.time),React.createElement('span',{className:'fx-curr'},n.curr)),
+        React.createElement('div',{className:'fx-title'},n.title),
+        React.createElement('div',{className:'fx-prev'},'Prev: '+n.prev+' · Fore: '+n.fore)
+      )
+    );}),
+    React.createElement('div',{style:{fontSize:'9px',color:'var(--textd)',marginTop:'5px',textAlign:'right'}},'🔴 HIGH  🟠 MED  🟡 LOW')
+  );
+}
+
+function Meter({l,v,c}){
+  return React.createElement('div',{className:'mr'},
+    React.createElement('div',{className:'mh'},React.createElement('span',{className:'mk'},l),React.createElement('span',{style:{color:c}},v+'%')),
+    React.createElement('div',{className:'mb'},React.createElement('div',{className:'mf',style:{width:v+'%',background:'linear-gradient(90deg,'+c+'66,'+c+')'}}))
+  );
+}
+
 function LeftPanel(){
-  const [v,setV]=useState({cpu:28,mem:64,api:22});
-  useEffect(()=>{
-    const i=setInterval(()=>setV({
-      cpu:Math.round(Math.max(10,Math.min(88,28+(Math.random()-.5)*14))),
-      mem:Math.round(Math.max(40,Math.min(84,64+(Math.random()-.5)*9))),
-      api:Math.round(Math.max(5,Math.min(60,22+(Math.random()-.5)*11))),
-    }),3200);return()=>clearInterval(i);
-  },[]);
-  const M=({label,val,col})=>(
-    <div className="mr">
-      <div className="mh"><span className="mk">{label}</span><span className="mv" style={{color:col}}>{val}%</span></div>
-      <div className="mb"><div className="mf" style={{width:val+'%',background:`linear-gradient(90deg,${col}66,${col})`}}/></div>
-    </div>
-  );
-  const ac=AGENTS.filter(a=>a.status==='active').length;
-  const wc=AGENTS.filter(a=>a.status==='working').length;
-  const ic=AGENTS.filter(a=>a.status==='idle').length;
-  return(
-    <div className="lp">
-      <div className="gp" style={{padding:'11px'}}>
-        <div className="ph">System Health</div>
-        <M label="CPU" val={v.cpu} col="var(--blue)"/>
-        <M label="Memory" val={v.mem} col="var(--pink)"/>
-        <M label="API Rate" val={v.api} col="var(--yellow)"/>
-      </div>
-      <div className="gp" style={{padding:'11px'}}>
-        <div className="ph">Agent Status</div>
-        <div className="kv"><span className="kk">Active</span><span className="vv g">{ac}</span></div>
-        <div className="kv"><span className="kk">Working</span><span className="vv b">{wc}</span></div>
-        <div className="kv"><span className="kk">Idle</span><span className="vv">{ic}</span></div>
-        <div className="kv"><span className="kk">Fleet Total</span><span className="vv">{AGENTS.length}</span></div>
-      </div>
-      <div className="gp" style={{padding:'11px'}}>
-        <div className="ph">Trading Systems</div>
-        <div className="kv"><span className="kk">Polymarket</span><span className="vv g">Live</span></div>
-        <div className="kv"><span className="kk">Forex</span><span className="vv g">Live</span></div>
-        <div className="kv"><span className="kk">Futures</span><span className="vv y">Watching</span></div>
-        <div className="kv"><span className="kk">Axiom Model</span><span className="vv b">Cycle 7/20</span></div>
-        <div className="kv"><span className="kk">VPN</span><span className="vv g">Active</span></div>
-      </div>
-      <div className="gp" style={{padding:'11px'}}>
-        <div className="ph">Alerts</div>
-        <div className="albox warn">▲ Pablo: 3 campaigns underperforming</div>
-        <div className="albox warn">▲ Sue: 23 SEO issues queued</div>
-        <div className="albox info">● Sammy: 1 escalation pending</div>
-      </div>
-    </div>
+  const[v,setV]=useState({cpu:28,mem:64,api:22});
+  useEffect(function(){const i=setInterval(function(){setV({cpu:Math.round(Math.max(10,Math.min(88,28+(Math.random()-.5)*14))),mem:Math.round(Math.max(40,Math.min(84,64+(Math.random()-.5)*9))),api:Math.round(Math.max(5,Math.min(60,22+(Math.random()-.5)*11)))});},3200);return function(){clearInterval(i);};},[]);
+  return React.createElement('div',{className:'lp'},
+    React.createElement('div',{className:'gp',style:{padding:'11px'}},
+      React.createElement('div',{className:'ph'},'System Health'),
+      React.createElement(Meter,{l:'CPU',v:v.cpu,c:'var(--blue)'}),
+      React.createElement(Meter,{l:'Memory',v:v.mem,c:'var(--pink)'}),
+      React.createElement(Meter,{l:'API Rate',v:v.api,c:'var(--yellow)'})
+    ),
+    React.createElement('div',{className:'gp',style:{padding:'11px'}},
+      React.createElement('div',{className:'ph'},'Agent Status'),
+      React.createElement('div',{className:'kv'},React.createElement('span',{className:'kk'},'Active'),React.createElement('span',{className:'vv g'},'7')),
+      React.createElement('div',{className:'kv'},React.createElement('span',{className:'kk'},'Working'),React.createElement('span',{className:'vv b'},'4')),
+      React.createElement('div',{className:'kv'},React.createElement('span',{className:'kk'},'Idle'),React.createElement('span',{className:'kk'},'4')),
+      React.createElement('div',{className:'kv'},React.createElement('span',{className:'kk'},'Wave Park'),React.createElement('span',{className:'vv b'},'7/8'))
+    ),
+    React.createElement('div',{className:'gp',style:{padding:'11px'}},
+      React.createElement('div',{className:'ph'},'Trading'),
+      React.createElement('div',{className:'kv'},React.createElement('span',{className:'kk'},'Polymarket'),React.createElement('span',{className:'vv g'},'Live')),
+      React.createElement('div',{className:'kv'},React.createElement('span',{className:'kk'},'Forex'),React.createElement('span',{className:'vv g'},'Live')),
+      React.createElement('div',{className:'kv'},React.createElement('span',{className:'kk'},'NQ Futures'),React.createElement('span',{className:'vv y'},'+$1,240')),
+      React.createElement('div',{className:'kv'},React.createElement('span',{className:'kk'},'Axiom'),React.createElement('span',{className:'vv b'},'Cycle 7/20')),
+      React.createElement('div',{className:'kv'},React.createElement('span',{className:'kk'},'VPN'),React.createElement('span',{className:'vv g'},'Active'))
+    ),
+    React.createElement('div',{className:'gp',style:{padding:'11px'}},
+      React.createElement('div',{className:'ph'},'Alerts'),
+      React.createElement('div',{className:'albox warn'},'▲ CryptoCarl missed signal'),
+      React.createElement('div',{className:'albox warn'},'▲ Pablo: 3 ads underperform'),
+      React.createElement('div',{className:'albox info'},'● Sammy: 1 escalation pending')
+    ),
+    React.createElement(FxNews)
   );
 }
 
-// ── RIGHT PANEL ──────────────────────────────────────────────
 function RightPanel(){
-  const [logs,setLogs]=useState(()=>
-    LOGS.slice(0,8).map((l,i)=>({...l,ts:ts(),id:i}))
-  );
-  const logEl=useRef(null);
-  const idR=useRef(8);
-  useEffect(()=>{
-    const i=setInterval(()=>{
-      const e=LOGS[Math.floor(Math.random()*LOGS.length)];
-      setLogs(p=>[...p.slice(-22),{...e,ts:ts(),id:idR.current++}]);
-    },3600);return()=>clearInterval(i);
-  },[]);
-  useEffect(()=>{if(logEl.current)logEl.current.scrollTop=logEl.current.scrollHeight;},[logs]);
-
-  const tasks=[
-    {text:'Run weekly SEO audit',agent:'SUE',p:'high'},
-    {text:'Review Q1 P&L report',agent:'BOB',p:'med'},
-    {text:'Deploy Axiom cycle 8',agent:'AXIOM',p:'high'},
-    {text:'Schedule social content',agent:'MEGAN',p:'low'},
-  ];
-  const pc={high:'var(--orange)',med:'var(--yellow)',low:'var(--textd)'};
-  return(
-    <div className="rp">
-      <div className="gp" style={{padding:'11px',flex:1,overflow:'hidden',display:'flex',flexDirection:'column'}}>
-        <div className="ph">Live Activity</div>
-        <div ref={logEl} style={{flex:1,overflowY:'auto'}}>
-          {logs.map(l=>(
-            <div key={l.id} className="le">
-              <span className="lts">{l.ts}</span>
-              <span className="lm">[{l.agent}] {l.msg}</span>
-              <span className={`lt ${l.tag}`}>{l.tag.toUpperCase()}</span>
-            </div>
-          ))}
-        </div>
-      </div>
-      <div className="gp" style={{padding:'11px'}}>
-        <div className="ph">Task Queue</div>
-        {tasks.map((t,i)=>(
-          <div key={i} style={{display:'flex',alignItems:'center',gap:'7px',fontSize:'10px',padding:'4px 0',borderBottom:'1px solid rgba(25,159,216,0.06)'}}>
-            <div style={{width:'5px',height:'5px',borderRadius:'1px',background:pc[t.p],flexShrink:0}}/>
-            <span style={{flex:1,color:'var(--text)'}}>{t.text}</span>
-            <span style={{color:'var(--blue)',fontSize:'9px'}}>{t.agent}</span>
-          </div>
-        ))}
-      </div>
-    </div>
+  const[logs,setLogs]=useState(function(){return LOGS.slice(0,8).map(function(l,i){return Object.assign({},l,{ts:ts(),id:i});});});
+  const logEl=useRef(null);const idR=useRef(8);
+  useEffect(function(){const i=setInterval(function(){const e=LOGS[Math.floor(Math.random()*LOGS.length)];setLogs(function(p){return p.slice(-22).concat([Object.assign({},e,{ts:ts(),id:idR.current++})]);});},3600);return function(){clearInterval(i);};},[]);
+  useEffect(function(){if(logEl.current)logEl.current.scrollTop=logEl.current.scrollHeight;},[logs]);
+  const tasks=[{t:'Run weekly SEO audit',a:'SUE',p:'var(--orange)'},{t:'Review Q1 P&L',a:'BOB',p:'var(--yellow)'},{t:'Deploy Axiom cycle 8',a:'AXIOM',p:'var(--orange)'},{t:'Wave Park license renewal',a:'LARRY',p:'var(--orange)'}];
+  return React.createElement('div',{className:'rp'},
+    React.createElement('div',{className:'gp',style:{padding:'11px',flex:1,overflow:'hidden',display:'flex',flexDirection:'column'}},
+      React.createElement('div',{className:'ph'},'Live Activity'),
+      React.createElement('div',{ref:logEl,style:{flex:1,overflowY:'auto'}},
+        logs.map(function(l){return React.createElement('div',{key:l.id,className:'le'},
+          React.createElement('span',{className:'lts'},l.ts),
+          React.createElement('span',{className:'lm'},'['+l.agent+'] '+l.msg),
+          React.createElement('span',{className:'lt '+l.tag},l.tag.toUpperCase())
+        );})
+      )
+    ),
+    React.createElement('div',{className:'gp',style:{padding:'11px'}},
+      React.createElement('div',{className:'ph'},'Task Queue'),
+      tasks.map(function(t,i){return React.createElement('div',{key:i,style:{display:'flex',alignItems:'center',gap:'7px',fontSize:'10px',padding:'4px 0',borderBottom:'1px solid rgba(25,159,216,.06)'}},
+        React.createElement('div',{style:{width:'5px',height:'5px',borderRadius:'1px',background:t.p,flexShrink:0}}),
+        React.createElement('span',{style:{flex:1,color:'var(--text)'}},t.t),
+        React.createElement('span',{style:{color:'var(--blue)',fontSize:'9px'}},t.a)
+      );})
+    )
   );
 }
 
-// ── CENTER / ORB COMMAND ─────────────────────────────────────
 function CenterPanel({onNav}){
-  const [orbSt,setOrbSt]=useState('idle');
-  const [trn,setTrn]=useState('');
-  const [resp,setResp]=useState('');
-  const [inp,setInp]=useState('');
-  const [mic,setMic]=useState(false);
+  const[orbSt,setOrbSt]=useState('idle');
+  const[trn,setTrn]=useState('');
+  const[resp,setResp]=useState('');
+  const[inp,setInp]=useState('');
+  const[mic,setMic]=useState(false);
   const speakFn=useRef(null);
-
-  const handleTranscript=useCallback((text)=>{
-    setTrn(text); setOrbSt('processing');
-    setTimeout(()=>{
-      const r=cmdReply(text); setResp(r);
-      if(speakFn.current)speakFn.current(r);
-    },750);
-  },[]);
-
-  const handleState=useCallback((s)=>{
-    setOrbSt(s);
-    if(s==='idle')setMic(false);
-    if(s==='listening')setMic(true);
-  },[]);
-
-  const voice=useVoice({onTranscript:handleTranscript,onState:handleState});
+  const hT=useCallback(function(text){setTrn(text);setOrbSt('processing');setTimeout(function(){const r=cmd(text);setResp(r);if(speakFn.current)speakFn.current(r);},750);},[]);
+  const hS=useCallback(function(s){setOrbSt(s);if(s==='idle')setMic(false);if(s==='listening')setMic(true);},[]);
+  const voice=useVoice({onT:hT,onS:hS});
   speakFn.current=voice.speak;
-
-  const fireCmd=(text)=>{
-    if(!text.trim())return;
-    setTrn(text); setOrbSt('processing'); setInp('');
-    setTimeout(()=>{const r=cmdReply(text);setResp(r);voice.speak(r);},600);
-  };
-
-  const toggleMic=()=>{
-    if(mic){voice.stop();setMic(false);setOrbSt('idle');}
-    else voice.start();
-  };
-
-  const stLbl={idle:'ACE CORE // IDLE',listening:'LISTENING...',processing:'PROCESSING...',speaking:'RESPONDING'};
-  const stCol={idle:'var(--blue)',listening:'var(--pink)',processing:'var(--purple)',speaking:'var(--yellow)'};
-
-  return(
-    <div className="cp">
-      <div className="oc">
-        <div className="oname">ACE CORE</div>
-        <AceOrb state={orbSt}/>
-        <div className="ost" style={{color:stCol[orbSt]}}>{stLbl[orbSt]}</div>
-        {trn&&<div className="tbox" style={{marginTop:'4px'}}>"{trn}"</div>}
-        {resp&&orbSt!=='idle'&&<div className="rbox" style={{marginTop:'4px'}}>{resp}</div>}
-      </div>
-      <div className="ca" style={{marginTop:'4px'}}>
-        <div className="cir">
-          <input className="ci" placeholder="Enter command... or use voice ↗" value={inp}
-            onChange={e=>setInp(e.target.value)}
-            onKeyDown={e=>e.key==='Enter'&&fireCmd(inp)}/>
-          <button className={`mb-btn${mic?' on':''}`} onClick={toggleMic} title="Voice command">
-            {mic?'⏹':'🎤'}
-          </button>
-        </div>
-        <div className="qa">
-          <button className="qb" onClick={()=>fireCmd('system status')}>Status</button>
-          <button className="qb y" onClick={()=>fireCmd('trading update')}>Trading</button>
-          <button className="qb pk" onClick={()=>onNav('agents')}>Agents</button>
-          <button className="qb" onClick={()=>fireCmd('revenue report')}>Finance</button>
-        </div>
-      </div>
-    </div>
+  function fire(text){if(!text.trim())return;setTrn(text);setOrbSt('processing');setInp('');setTimeout(function(){const r=cmd(text);setResp(r);voice.speak(r);},600);}
+  function toggle(){if(mic){voice.stop();setMic(false);setOrbSt('idle');}else voice.start();}
+  const stL={idle:'ACE CORE // IDLE',listening:'LISTENING...',processing:'PROCESSING...',speaking:'RESPONDING'};
+  const stC={idle:'var(--blue)',listening:'var(--pink)',processing:'var(--purple)',speaking:'var(--yellow)'};
+  return React.createElement('div',{className:'cp'},
+    React.createElement('div',{className:'oc'},
+      React.createElement('div',{className:'oname'},'ACE CORE'),
+      React.createElement(AceOrb,{state:orbSt}),
+      React.createElement('div',{className:'ost',style:{color:stC[orbSt]}},stL[orbSt]),
+      trn&&React.createElement('div',{className:'tbox',style:{marginTop:'4px'}},'"'+trn+'"'),
+      resp&&orbSt!=='idle'&&React.createElement('div',{className:'rbox'},resp)
+    ),
+    React.createElement('div',{className:'ca',style:{marginTop:'4px'}},
+      React.createElement('div',{className:'cir'},
+        React.createElement('input',{className:'ci',placeholder:'Enter command... or use voice',value:inp,onChange:function(e){setInp(e.target.value);},onKeyDown:function(e){if(e.key==='Enter')fire(inp);}}),
+        React.createElement('button',{className:'mb-btn'+(mic?' on':''),onClick:toggle},mic?'⏹':'🎤')
+      ),
+      React.createElement('div',{className:'qa'},
+        React.createElement('button',{className:'qb',onClick:function(){fire('system status');}},'Status'),
+        React.createElement('button',{className:'qb',onClick:function(){fire('trading update');}},'Trading'),
+        React.createElement('button',{className:'qb',onClick:function(){onNav('agents');}},'Agents'),
+        React.createElement('button',{className:'qb',onClick:function(){fire('wave park status');}},'Wave Park')
+      )
+    )
   );
 }
 
-// ── MISSION CONTROL ──────────────────────────────────────────
 function MissionView({onNav}){
-  return(
-    <div className="ml ve">
-      <LeftPanel/>
-      <CenterPanel onNav={onNav}/>
-      <RightPanel/>
-    </div>
+  return React.createElement('div',{className:'ml'},React.createElement(LeftPanel),React.createElement(CenterPanel,{onNav:onNav}),React.createElement(RightPanel));
+}
+
+function AgentCard({a,onClick}){
+  const as={color:a.color,background:a.color+'14',borderColor:a.color+'55'};
+  return React.createElement('div',{className:'ac '+a.status,onClick:function(){onClick(a);}},
+    React.createElement('div',{className:'aind '+a.status}),
+    React.createElement('div',{className:'ach'},
+      React.createElement('div',{className:'aa',style:as},a.name.slice(0,2)),
+      React.createElement('div',{className:'ain'},
+        React.createElement('div',{className:'an'},a.name),
+        React.createElement('div',{className:'ar'},a.role)
+      )
+    ),
+    React.createElement('div',{className:'att'},a.task),
+    React.createElement('div',{className:'acf'},
+      React.createElement('span',{className:'asp '+a.status},a.status),
+      React.createElement('span',{style:{fontSize:'9px',color:'var(--textd)'}},a.model)
+    )
   );
 }
 
-// ── AGENT CARD ───────────────────────────────────────────────
-function AgentCard({agent,onClick}){
-  const as={color:agent.color,background:agent.color+'14',borderColor:agent.color+'55'};
-  return(
-    <div className={`ac ${agent.status}`} onClick={()=>onClick(agent)}>
-      <div className={`ai-ind ${agent.status}`}/>
-      <div className="ach">
-        <div className="aa" style={as}>{agent.name.slice(0,2)}</div>
-        <div className="ai">
-          <div className="an">{agent.name}</div>
-          <div className="ar">{agent.role}</div>
-        </div>
-      </div>
-      <div className="att">{agent.task}</div>
-      <div className="acf">
-        <span className={`asp ${agent.status}`}>{agent.status}</span>
-        <span style={{fontSize:'9px',color:'var(--textd)'}}>{agent.model}</span>
-      </div>
-    </div>
+function AgentsView({sub,onSelect}){
+  const df={agents:null,'agt-trading':'trading','agt-marketing':'marketing','agt-ops':['support','legal','finance','product','command'],'agt-data':'data'};
+  const filt=df[sub]||null;
+  const ags=filt===null?AGENTS:Array.isArray(filt)?AGENTS.filter(function(a){return filt.includes(a.dept);}):AGENTS.filter(function(a){return a.dept===filt;});
+  return React.createElement('div',{className:'fv'},
+    React.createElement('div',{className:'vt'},'// Agent Fleet // '+ags.length+' Units'),
+    React.createElement('div',{className:'ag'},ags.map(function(a){return React.createElement(AgentCard,{key:a.id,a:a,onClick:onSelect});}))
   );
 }
 
-// ── AGENTS VIEW ──────────────────────────────────────────────
-function AgentsView({onSelect}){
-  const [f,setF]=useState('all');
-  const filt=f==='all'?AGENTS:AGENTS.filter(a=>a.status===f);
-  return(
-    <div className="av ve">
-      <div style={{display:'flex',alignItems:'center',gap:'12px'}}>
-        <div style={{fontFamily:'var(--D)',fontSize:'9px',letterSpacing:'4px',color:'var(--blue)',opacity:0.55,textTransform:'uppercase'}}>// Agent Fleet // {AGENTS.length} Units</div>
-        <div style={{flex:1}}/>
-        {['all','active','working','idle'].map(x=>(
-          <button key={x} onClick={()=>setF(x)} style={{
-            padding:'3px 11px',background:f===x?'rgba(25,159,216,0.15)':'transparent',
-            border:`1px solid ${f===x?'var(--blue)':'rgba(25,159,216,0.15)'}`,borderRadius:'2px',
-            color:f===x?'var(--blue)':'var(--textd)',fontFamily:'var(--M)',fontSize:'9px',
-            letterSpacing:'2px',textTransform:'uppercase',cursor:'pointer'}}>
-            {x}
-          </button>
-        ))}
-      </div>
-      <div className="ag">
-        {filt.map(a=><AgentCard key={a.id} agent={a} onClick={onSelect}/>)}
-      </div>
-    </div>
-  );
-}
-
-// ── AGENT PROFILE ────────────────────────────────────────────
 function AgentProfile({agent,onBack}){
   if(!agent)return null;
   const as={color:agent.color,background:agent.color+'14',borderColor:agent.color};
-  return(
-    <div className="pv ve">
-      <button className="bkb" onClick={onBack}>← Back to Agents</button>
-      <div className="ph2">
-        <div className="pa" style={as}>{agent.name.slice(0,2)}</div>
-        <div style={{flex:1}}>
-          <div className="pname">{agent.name}</div>
-          <div className="prole">{agent.role}</div>
-          <div style={{display:'flex',gap:'7px',flexWrap:'wrap'}}>
-            <span className={`asp ${agent.status}`}>{agent.status}</span>
-            <span className="bb b">{agent.dept}</span>
-            <span className="bb pu">{agent.model}</span>
-          </div>
-        </div>
-        <div style={{textAlign:'right'}}>
-          <div style={{fontFamily:'var(--D)',fontSize:'32px',color:agent.color,textShadow:`0 0 24px ${agent.color}80`}}>●</div>
-          <div style={{fontSize:'9px',color:'var(--textd)',marginTop:'3px',letterSpacing:'2px',textTransform:'uppercase'}}>Live</div>
-        </div>
-      </div>
-      <div className="pg">
-        <div className="ps">
-          <div className="ph">Current Task</div>
-          <div style={{fontSize:'12px',color:'var(--text)',lineHeight:'1.6',background:'rgba(25,159,216,0.04)',padding:'10px',border:'1px solid rgba(25,159,216,0.1)',borderLeft:`2px solid ${agent.color}`,borderRadius:'2px'}}>
-            {agent.task}
-          </div>
-        </div>
-        <div className="ps">
-          <div className="ph">Performance Metrics</div>
-          {Object.entries(agent.metrics).map(([k,v])=>(
-            <div key={k} className="kv">
-              <span className="kk">{k}</span>
-              <span className="vv" style={{color:agent.color}}>{v}</span>
-            </div>
-          ))}
-        </div>
-        <div className="ps">
-          <div className="ph">Capabilities</div>
-          <div style={{display:'flex',flexWrap:'wrap',gap:'6px'}}>
-            {agent.caps.map(c=><span key={c} className="bb b">{c}</span>)}
-          </div>
-        </div>
-        <div className="ps">
-          <div className="ph">Connected Systems</div>
-          <div style={{display:'flex',flexWrap:'wrap',gap:'6px'}}>
-            {agent.tools.map(t=><span key={t} className="bb pu">{t}</span>)}
-          </div>
-        </div>
-      </div>
-    </div>
+  return React.createElement('div',{className:'pv'},
+    React.createElement('button',{className:'bkb',onClick:onBack},'← Back'),
+    React.createElement('div',{className:'ph2'},
+      React.createElement('div',{className:'pa',style:as},agent.name.slice(0,2)),
+      React.createElement('div',{style:{flex:1}},
+        React.createElement('div',{className:'pname'},agent.name),
+        React.createElement('div',{className:'prole'},agent.role),
+        React.createElement('div',{style:{display:'flex',gap:'7px',flexWrap:'wrap'}},
+          React.createElement('span',{className:'asp '+agent.status},agent.status),
+          React.createElement('span',{className:'bb b'},agent.dept),
+          React.createElement('span',{className:'bb pu'},agent.model)
+        )
+      )
+    ),
+    React.createElement('div',{className:'pg'},
+      React.createElement('div',{className:'ps'},
+        React.createElement('div',{className:'ph'},'Current Task'),
+        React.createElement('div',{style:{fontSize:'12px',color:'var(--text)',lineHeight:'1.6',padding:'10px',borderLeft:'2px solid '+agent.color,background:'rgba(25,159,216,.04)',border:'1px solid rgba(25,159,216,.1)',borderRadius:'2px'}},agent.task)
+      ),
+      React.createElement('div',{className:'ps'},
+        React.createElement('div',{className:'ph'},'Metrics'),
+        Object.entries(agent.metrics).map(function(e){return React.createElement('div',{key:e[0],className:'kv'},React.createElement('span',{className:'kk'},e[0]),React.createElement('span',{className:'vv',style:{color:agent.color}},e[1]));})
+      ),
+      React.createElement('div',{className:'ps'},
+        React.createElement('div',{className:'ph'},'Capabilities'),
+        React.createElement('div',{style:{display:'flex',flexWrap:'wrap'}},agent.caps.map(function(c){return React.createElement('span',{key:c,className:'bb b'},c);}))
+      ),
+      React.createElement('div',{className:'ps'},
+        React.createElement('div',{className:'ph'},'Systems'),
+        React.createElement('div',{style:{display:'flex',flexWrap:'wrap'}},agent.tools.map(function(t){return React.createElement('span',{key:t,className:'bb pu'},t);}))
+      )
+    )
   );
 }
 
-// ── DEPT VIEW ────────────────────────────────────────────────
-function DeptView({dept,onSelect}){
-  const dMap={trading:['trading'],marketing:['marketing'],finance:['finance'],legal:['legal'],product:['product'],support:['support']};
-  const agents=AGENTS.filter(a=>dMap[dept]&&dMap[dept].includes(a.dept));
-  const dTitle={trading:'Trading Operations',marketing:'Marketing Division',finance:'Finance Department',legal:'Legal & Compliance',product:'Product Team',support:'Support Division',settings:'System Settings'};
-  return(
-    <div className="av ve">
-      <div style={{fontFamily:'var(--D)',fontSize:'9px',letterSpacing:'4px',color:'var(--blue)',opacity:0.55,textTransform:'uppercase'}}>// {dTitle[dept]||dept}</div>
-      {agents.length>0?(
-        <div className="ag">{agents.map(a=><AgentCard key={a.id} agent={a} onClick={onSelect}/>)}</div>
-      ):(
-        <div style={{color:'var(--textd)',fontSize:'12px',textAlign:'center',paddingTop:'40px',fontFamily:'var(--D)',letterSpacing:'3px'}}>
-          MODULE LOADING...
-        </div>
-      )}
-    </div>
+function LeadsView(){
+  const[f,setF]=useState('all');
+  const fl=f==='all'?LEADS:LEADS.filter(function(l){return l.type===f;});
+  const pc={'Instagram':'#FF2D9B','YouTube':'#FF0000','TikTok':'#69C9D0','Email':'#199FD8','Twitter':'#1DA1F2'};
+  return React.createElement('div',{className:'fv'},
+    React.createElement('div',{className:'vt'},'// Leads // Centralised Inbox // '+LEADS.filter(function(l){return l.isnew;}).length+' New'),
+    React.createElement('div',{style:{display:'flex',gap:'8px',marginBottom:'4px'}},
+      ['all','dm','email','comment'].map(function(id){
+        const lbl={all:'All',dm:'DMs',email:'Email',comment:'Comments'}[id];
+        return React.createElement('button',{key:id,onClick:function(){setF(id);},style:{padding:'5px 12px',background:f===id?'rgba(25,159,216,.15)':'transparent',border:'1px solid '+(f===id?'var(--blue)':'rgba(25,159,216,.15)'),borderRadius:'2px',color:f===id?'var(--blue)':'var(--textd)',fontFamily:'var(--M)',fontSize:'9px',letterSpacing:'2px',textTransform:'uppercase',cursor:'pointer'}},lbl);
+      })
+    ),
+    React.createElement('div',{style:{display:'flex',gap:'12px'}},
+      React.createElement('div',{style:{flex:1,display:'flex',flexDirection:'column',gap:'6px'}},
+        fl.map(function(l,i){
+          const col=pc[l.platform]||'var(--blue)';
+          return React.createElement('div',{key:i,className:'li'},
+            React.createElement('div',{className:'lav',style:{color:col,borderColor:col+'44'}},l.name.replace('@','').slice(0,2).toUpperCase()),
+            React.createElement('div',{className:'lbody'},
+              React.createElement('div',{style:{display:'flex',gap:'7px',marginBottom:'2px',flexWrap:'wrap'}},
+                React.createElement('span',{className:'lfrom'},l.name),
+                React.createElement('span',{className:'lbadge '+l.type},l.type),
+                l.isnew&&React.createElement('span',{className:'lbadge new'},'NEW')
+              ),
+              React.createElement('div',{className:'lmsg'},l.msg),
+              React.createElement('div',{className:'lmeta'},React.createElement('span',null,'📡 '+l.platform),React.createElement('span',null,'🕐 '+l.time))
+            ),
+            React.createElement('div',{style:{display:'flex',gap:'5px',flexShrink:0}},
+              React.createElement('button',{style:{padding:'4px 8px',background:'rgba(25,159,216,.1)',border:'1px solid rgba(25,159,216,.2)',borderRadius:'2px',color:'var(--blue)',fontFamily:'var(--M)',fontSize:'9px',cursor:'pointer'}},'Reply'),
+              React.createElement('button',{style:{padding:'4px 8px',background:'rgba(255,45,155,.08)',border:'1px solid rgba(255,45,155,.2)',borderRadius:'2px',color:'var(--pink)',fontFamily:'var(--M)',fontSize:'9px',cursor:'pointer'}},'→ FAQ')
+            )
+          );
+        })
+      ),
+      React.createElement('div',{style:{width:'200px',flexShrink:0,display:'flex',flexDirection:'column',gap:'9px'}},
+        React.createElement('div',{className:'gp',style:{padding:'11px'}},
+          React.createElement('div',{className:'ph'},'Stats'),
+          React.createElement('div',{className:'kv'},React.createElement('span',{className:'kk'},'New'),React.createElement('span',{className:'vv o'},'2')),
+          React.createElement('div',{className:'kv'},React.createElement('span',{className:'kk'},'DMs'),React.createElement('span',{className:'vv pu'},'1')),
+          React.createElement('div',{className:'kv'},React.createElement('span',{className:'kk'},'Emails'),React.createElement('span',{className:'vv b'},'1')),
+          React.createElement('div',{className:'kv'},React.createElement('span',{className:'kk'},'→ FAQ Queue'),React.createElement('span',{className:'vv g'},'3'))
+        )
+      )
+    )
   );
 }
 
-// ── APP ──────────────────────────────────────────────────────
+function ContentView(){
+  const cols=[['idea','IDEA','#199FD8','b'],['draft','DRAFT','#FCC82E','y'],['review','REVIEW','#FF2D9B','p'],['published','LIVE','#00E676','g']];
+  const ti={blog:'📝',social:'📱',video:'🎬',email:'📧'};
+  return React.createElement('div',{className:'fv'},
+    React.createElement('div',{className:'vt'},'// Content Pipeline // '+Object.values(PIPE).flat().length+' Active'),
+    React.createElement('div',{style:{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:'11px',flex:1}},
+      cols.map(function(col){
+        return React.createElement('div',{key:col[0],className:'pc'},
+          React.createElement('div',{className:'ph3',style:{background:col[2]+'15',border:'1px solid '+col[2]+'44',color:col[2]}},col[1]+' ('+PIPE[col[0]].length+')'),
+          PIPE[col[0]].map(function(item,i){
+            return React.createElement('div',{key:i,className:'pi'},
+              React.createElement('div',{className:'pi-tag bb '+col[3]},ti[item.type]+' '+item.type),
+              React.createElement('div',{className:'pi-title'},item.title),
+              React.createElement('div',{className:'pi-meta'},item.agent+' · '+item.due)
+            );
+          })
+        );
+      })
+    )
+  );
+}
+
+function WaveParkView(){
+  const conn=WAVE.filter(function(u){return u.status==='connected';}).length;
+  const iss=WAVE.filter(function(u){return u.status==='issue';}).length;
+  const off=WAVE.filter(function(u){return u.status==='disconnected';}).length;
+  const statC={connected:'var(--green)',issue:'var(--red)',disconnected:'var(--textd)'};
+  return React.createElement('div',{className:'fv'},
+    React.createElement('div',{className:'vt'},'// Wave Park // Relay & License Monitor'),
+    React.createElement('div',{className:'g4'},
+      [[conn,'Connected','var(--green)'],[iss,'Signal Issues','var(--red)'],[off,'Offline','var(--textd)'],[STRATS.length,'Master Strats','var(--blue)']].map(function(d){
+        return React.createElement('div',{key:d[1],className:'sc'},React.createElement('div',{className:'sn',style:{color:d[2]}},d[0]),React.createElement('div',{className:'sl'},d[1]));
+      })
+    ),
+    React.createElement('div',{className:'gp',style:{padding:'13px'}},
+      React.createElement('div',{className:'ph'},'Signal Flow — Master Strategies to Users'),
+      STRATS.map(function(s,i){
+        const users=WAVE.filter(function(u){return u.strat===s;});
+        return React.createElement('div',{key:i,style:{marginBottom:'10px'}},
+          React.createElement('div',{style:{fontSize:'9px',color:'var(--yellow)',letterSpacing:'2px',marginBottom:'5px',textTransform:'uppercase'}},'▶ '+s),
+          React.createElement('div',{style:{display:'flex',alignItems:'center',gap:'6px',flexWrap:'wrap'}},
+            React.createElement('div',{className:'sf-node',style:{borderColor:'rgba(252,200,46,.4)',color:'var(--yellow)',background:'rgba(252,200,46,.08)'}},'MASTER'),
+            users.map(function(u,j){
+              const c=u.status==='connected'?'var(--green)':u.status==='issue'?'var(--red)':'var(--textd)';
+              const bc=u.status==='connected'?'rgba(0,230,118,.3)':u.status==='issue'?'rgba(255,51,85,.5)':'rgba(255,255,255,.1)';
+              return React.createElement(React.Fragment,{key:j},
+                React.createElement('div',{className:'sf-arr',style:{background:u.status==='connected'?'linear-gradient(90deg,var(--blue),rgba(25,159,216,.1))':u.status==='issue'?'linear-gradient(90deg,var(--red),rgba(255,51,85,.1))':'rgba(255,255,255,.05)'}}),
+                React.createElement('div',{className:'sf-node',style:{borderColor:bc,color:c,background:u.status==='connected'?'rgba(0,230,118,.06)':u.status==='issue'?'rgba(255,51,85,.08)':'rgba(0,0,0,.2)'}},u.name)
+              );
+            })
+          )
+        );
+      })
+    ),
+    React.createElement('div',null,
+      React.createElement('div',{className:'ph',style:{marginBottom:'8px'}},'User Connection Status'),
+      React.createElement('div',{style:{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(280px,1fr))',gap:'8px'}},
+        WAVE.map(function(u,i){
+          const sc=statC[u.status]||'var(--textd)';
+          return React.createElement('div',{key:i,className:'wp-n'+(u.status==='issue'?' issue':'')},
+            React.createElement('div',{style:{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:'5px'}},
+              React.createElement('div',{className:'wp-nm'},u.name),
+              React.createElement('span',{style:{fontSize:'8px',padding:'2px 6px',borderRadius:'10px',background:sc+'20',color:sc,border:'1px solid '+sc+'44'}},u.status.toUpperCase())
+            ),
+            React.createElement('div',{className:'kv'},React.createElement('span',{className:'kk'},'Strategy'),React.createElement('span',{className:'vv t'},u.strat)),
+            React.createElement('div',{className:'kv'},React.createElement('span',{className:'kk'},'Signal'),React.createElement('span',{style:{color:u.signal==='OK'?'var(--green)':'var(--red)'}},u.signal)),
+            React.createElement('div',{className:'kv'},React.createElement('span',{className:'kk'},'License'),React.createElement('span',{style:{color:u.license==='Active'?'var(--green)':'var(--red)'}},u.license)),
+            React.createElement('div',{className:'kv'},React.createElement('span',{className:'kk'},'Ping'),React.createElement('span',{className:'vv b'},u.ping)),
+            u.status==='issue'&&React.createElement('div',{className:'albox red',style:{marginTop:'6px',marginBottom:0}},'⚠ Boardshop plugin issue — check NinjaTrader bridge'),
+            u.license==='Expired'&&React.createElement('div',{className:'albox warn',style:{marginTop:'6px',marginBottom:0}},'⚠ License expired — contact Larry')
+          );
+        })
+      )
+    )
+  );
+}
+
+function CalendarView(){
+  const DOW=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
+  const days=Array.from({length:31},function(_,i){return i+1;});
+  const allDays=Array(6).fill(null).concat(days);
+  return React.createElement('div',{className:'fv'},
+    React.createElement('div',{className:'vt'},'// Calendar // March 2026 // Brendo · Bruges · Virgs'),
+    React.createElement('div',{style:{display:'flex',gap:'12px',flex:1,overflow:'hidden'}},
+      React.createElement('div',{style:{flex:1,display:'flex',flexDirection:'column',gap:'5px',overflow:'hidden'}},
+        React.createElement('div',{className:'cal-hdr'},DOW.map(function(d){return React.createElement('div',{key:d,className:'cal-hd'},d);})),
+        React.createElement('div',{className:'cal-grid',style:{overflow:'auto',flex:1}},
+          allDays.map(function(day,i){
+            if(!day)return React.createElement('div',{key:'e'+i,style:{minHeight:'65px'}});
+            const evs=CAL.filter(function(e){return e.day===day;});
+            return React.createElement('div',{key:day,className:'cal-day'+(day===17?' today':'')+(evs.length?' has-event':'')},
+              React.createElement('div',{className:'cal-dn'},day),
+              evs.slice(0,3).map(function(e,j){return React.createElement('div',{key:j,className:'cal-ev '+e.type},e.title);})
+            );
+          })
+        )
+      ),
+      React.createElement('div',{style:{width:'190px',flexShrink:0,display:'flex',flexDirection:'column',gap:'9px',overflowY:'auto'}},
+        React.createElement('div',{className:'gp',style:{padding:'11px'}},
+          React.createElement('div',{className:'ph'},'Today — Mar 17'),
+          CAL.filter(function(e){return e.day===17;}).map(function(e,i){
+            return React.createElement('div',{key:i,style:{padding:'5px 0',borderBottom:'1px solid rgba(25,159,216,.06)',fontSize:'10px'}},
+              React.createElement('div',{className:'cal-ev '+e.type,style:{display:'inline-block',marginBottom:'2px'}},e.type),
+              React.createElement('div',{style:{color:'var(--text)'}},e.title)
+            );
+          })
+        ),
+        React.createElement('div',{className:'gp',style:{padding:'11px'}},
+          React.createElement('div',{className:'ph'},'Legend'),
+          [['task','var(--yellow)','Tasks'],['cron','var(--purple)','Cron Jobs'],['social','var(--pink)','Social'],['meet','var(--green)','Meetings']].map(function(d){
+            return React.createElement('div',{key:d[0],style:{display:'flex',alignItems:'center',gap:'7px',fontSize:'10px',padding:'3px 0'}},
+              React.createElement('div',{style:{width:'8px',height:'8px',borderRadius:'1px',background:d[1],flexShrink:0}}),
+              React.createElement('span',{style:{color:'var(--textd)'}},d[2])
+            );
+          })
+        )
+      )
+    )
+  );
+}
+
+function TasksView(){
+  const[tasks,setTasks]=useState(TASKS);
+  function toggle(idx){setTasks(function(t){return t.map(function(task,i){return i===idx?Object.assign({},task,{done:!task.done}):task;});});}
+  const pc={high:'var(--red)',med:'var(--yellow)',low:'var(--textd)'};
+  const pend=tasks.filter(function(t){return !t.done;});
+  const done=tasks.filter(function(t){return t.done;});
+  return React.createElement('div',{className:'fv'},
+    React.createElement('div',{className:'vt'},'// Human Tasks // '+pend.length+' Pending'),
+    React.createElement('div',{style:{display:'flex',gap:'12px'}},
+      React.createElement('div',{style:{flex:1}},
+        React.createElement('div',{style:{fontSize:'9px',color:'var(--orange)',letterSpacing:'3px',marginBottom:'8px',textTransform:'uppercase'}},'// Pending ('+pend.length+')'),
+        React.createElement('div',{style:{display:'flex',flexDirection:'column',gap:'6px',marginBottom:'16px'}},
+          pend.map(function(task){
+            const idx=tasks.indexOf(task);
+            return React.createElement('div',{key:idx,className:'ti',onClick:function(){toggle(idx);}},
+              React.createElement('div',{style:{width:'5px',height:'5px',borderRadius:'1px',background:pc[task.pri],flexShrink:0}}),
+              React.createElement('div',{className:'tcb'},'○'),
+              React.createElement('span',{className:'tt'},task.text),
+              React.createElement('span',{className:'ta'},task.assign),
+              React.createElement('span',{style:{fontSize:'9px',color:'var(--textd)',flexShrink:0}},task.due)
+            );
+          })
+        ),
+        React.createElement('div',{style:{fontSize:'9px',color:'var(--green)',letterSpacing:'3px',marginBottom:'8px',textTransform:'uppercase'}},'// Completed ('+done.length+')'),
+        React.createElement('div',{style:{display:'flex',flexDirection:'column',gap:'6px'}},
+          done.map(function(task){
+            const idx=tasks.indexOf(task);
+            return React.createElement('div',{key:idx,className:'ti',style:{opacity:.5},onClick:function(){toggle(idx);}},
+              React.createElement('div',{style:{width:'5px',height:'5px',borderRadius:'1px',background:'var(--green)',flexShrink:0}}),
+              React.createElement('div',{className:'tcb done'},'✓'),
+              React.createElement('span',{className:'tt done'},task.text),
+              React.createElement('span',{className:'ta'},task.assign),
+              React.createElement('span',{style:{fontSize:'9px',color:'var(--textd)',flexShrink:0}},task.due)
+            );
+          })
+        )
+      )
+    )
+  );
+}
+
+function MarketingView(){
+  const channels=[
+    {name:'Google Ads',color:'#4285F4',metrics:[['CTR','4.1%',62],['ROAS','3.2x',80],['Conv','2.8%',55],['Budget','72%',72]]},
+    {name:'Meta Ads',color:'#1877F2',metrics:[['CTR','3.6%',54],['ROAS','2.8x',70],['Conv','2.1%',42],['Budget','65%',65]]},
+    {name:'SEO Organic',color:'#00E676',metrics:[['DA Score','42',42],['Keywords','340',68],['Backlinks','1.2K',80],['Visibility','38%',38]]},
+    {name:'Email',color:'#FCC82E',metrics:[['Open Rate','28%',56],['Click Rate','6.2%',62],['Growth','+4%',40],['Unsub','0.3%',97]]},
+    {name:'Social Paid',color:'#FF2D9B',metrics:[['Reach','48K',65],['Engagement','4.2%',75],['Followers','+280',45],['A/B Win','67%',67]]},
+    {name:'TikTok',color:'#69C9D0',metrics:[['Views','124K',55],['Shares','842',45],['Comments','213',30],['Growth','+12%',60]]},
+  ];
+  return React.createElement('div',{className:'fv'},
+    React.createElement('div',{className:'vt'},'// Marketing Intelligence // Agents: PABLO · SALLY · SUE · CONNIE'),
+    React.createElement('div',{className:'g4'},
+      [['Revenue','$14,820','var(--yellow)'],['ROAS Avg','3.0x','var(--green)'],['Campaigns Active','16','var(--blue)'],['Alerts','3','var(--orange)']].map(function(d){
+        return React.createElement('div',{key:d[0],className:'sc'},React.createElement('div',{className:'sn',style:{color:d[2]}},d[1]),React.createElement('div',{className:'sl'},d[0]));
+      })
+    ),
+    React.createElement('div',{className:'g3'},
+      channels.map(function(ch,i){
+        return React.createElement('div',{key:i,className:'mkt-ch'},
+          React.createElement('div',{className:'mkt-chn',style:{color:ch.color}},ch.name),
+          ch.metrics.map(function(m,j){
+            return React.createElement('div',{key:j,className:'mkt-br'},
+              React.createElement('span',{className:'mkt-bl'},m[0]),
+              React.createElement('div',{className:'mkt-bw'},React.createElement('div',{className:'mkt-bf',style:{width:m[2]+'%',background:'linear-gradient(90deg,'+ch.color+'88,'+ch.color+')'}})),
+              React.createElement('span',{className:'mkt-bv'},m[1])
+            );
+          })
+        );
+      })
+    )
+  );
+}
+
+function TeamView({onSelect}){
+  const cols={'CHAD':'#199FD8','BOB':'#FCC82E','CONNIE':'#FF2D9B','DAVE':'#199FD8','FRANKIE':'#FCC82E','LARRY':'#9B59B6','MEGAN':'#FF2D9B','PETE':'#1ABC9C','POLY':'#199FD8','SAMMY':'#1ABC9C','SUE':'#FF2D9B','SALLY':'#FF2D9B','TONI':'#FCC82E','AXIOM':'#9B59B6','PABLO':'#FCC82E'};
+  const tags={'CHAD':['CEO','Command'],'BOB':['Finance'],'CONNIE':['Content','SEO'],'DAVE':['Analytics'],'FRANKIE':['Forex','MT5'],'LARRY':['Legal'],'MEGAN':['Media','Social'],'PETE':['Product'],'POLY':['Prediction'],'SAMMY':['Support'],'SUE':['SEO'],'SALLY':['Social Ads'],'TONI':['Futures'],'AXIOM':['ML','Strategy'],'PABLO':['PPC']};
+  return React.createElement('div',{className:'fv'},
+    React.createElement('div',{className:'vt'},'// ACE Agent Team // 15 Operatives // Swap emojis for custom agent images'),
+    React.createElement('div',{className:'tm-grid'},
+      AGENTS.map(function(a,i){
+        const col=cols[a.name]||'#199FD8';
+        const tgs=tags[a.name]||[];
+        return React.createElement('div',{key:i,className:'tm-card',style:{background:'rgba(3,9,18,.9)'},onClick:function(){onSelect(a);}},
+          React.createElement('div',{className:'tm-bg',style:{background:'radial-gradient(circle at 50% 80%,'+col+'22 0%,rgba(3,9,18,.95) 70%)'}},
+            React.createElement('div',{className:'tm-gl',style:{color:col}}),
+            React.createElement('div',{className:'tm-av',style:{color:col,textShadow:'0 0 30px '+col}},a.name.slice(0,2)),
+            React.createElement('div',{style:{position:'absolute',top:'8px',left:'8px',fontFamily:'var(--D)',fontSize:'16px',fontWeight:900,letterSpacing:'3px',color:col,opacity:.85,textShadow:'0 0 20px '+col}},a.name),
+            React.createElement('div',{className:'aind '+a.status,style:{position:'absolute',top:'10px',right:'10px'}})
+          ),
+          React.createElement('div',{className:'tm-info'},
+            React.createElement('div',{className:'tm-name'},a.name),
+            React.createElement('div',{className:'tm-role'},a.role),
+            React.createElement('div',{className:'tm-tags'},
+              tgs.map(function(t){return React.createElement('span',{key:t,className:'tm-tag'},t);}),
+              React.createElement('span',{className:'asp '+a.status,style:{fontSize:'8px',padding:'1px 6px'}},a.status)
+            )
+          )
+        );
+      })
+    )
+  );
+}
+
+function SocialView(){
+  const platforms=[
+    {name:'Instagram',color:'#E1306C',followers:'12.4K',growth:'+280',reach:'48K',eng:'4.2%',posts:3},
+    {name:'TikTok',color:'#69C9D0',followers:'8.2K',growth:'+156',reach:'124K',eng:'6.8%',posts:2},
+    {name:'YouTube',color:'#FF0000',followers:'3.1K',growth:'+42',reach:'18K',eng:'3.1%',posts:1},
+    {name:'Twitter',color:'#1DA1F2',followers:'5.6K',growth:'+88',reach:'22K',eng:'2.4%',posts:5},
+  ];
+  return React.createElement('div',{className:'fv'},
+    React.createElement('div',{className:'vt'},'// Social Command // Agent: SALLY // Posts Today: 12'),
+    React.createElement('div',{style:{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:'11px',marginBottom:'4px'}},
+      platforms.map(function(p,i){
+        return React.createElement('div',{key:i,className:'soc-m',style:{borderTop:'2px solid '+p.color}},
+          React.createElement('div',{className:'soc-p',style:{color:p.color}},p.name),
+          React.createElement('div',{className:'soc-n',style:{color:p.color}},p.followers),
+          React.createElement('div',{style:{fontSize:'10px',color:'var(--green)',marginTop:'3px'}},'▲ '+p.growth+' this week'),
+          React.createElement('div',{style:{marginTop:'8px'}},
+            React.createElement('div',{className:'kv'},React.createElement('span',{className:'kk'},'Reach'),React.createElement('span',{className:'vv b'},p.reach)),
+            React.createElement('div',{className:'kv'},React.createElement('span',{className:'kk'},'Eng Rate'),React.createElement('span',{className:'vv g'},p.eng)),
+            React.createElement('div',{className:'kv'},React.createElement('span',{className:'kk'},'Posts Today'),React.createElement('span',{className:'vv y'},p.posts))
+          )
+        );
+      })
+    ),
+    React.createElement('div',{className:'g2'},
+      React.createElement('div',{className:'gp',style:{padding:'13px'}},
+        React.createElement('div',{className:'ph'},'A/B Tests Running'),
+        [['Instagram Reel CTA','Variant B winning','▲ 19%','var(--green)'],['TikTok Hook','Testing...','—','var(--textd)']].map(function(d,i){
+          return React.createElement('div',{key:i,style:{padding:'8px 0',borderBottom:'1px solid rgba(25,159,216,.06)'}},
+            React.createElement('div',{style:{fontSize:'11px',color:'var(--textb)',marginBottom:'3px'}},d[0]),
+            React.createElement('div',{style:{fontSize:'10px',color:'var(--textd)'}},d[1],' ',React.createElement('span',{style:{color:d[3],marginLeft:'8px'}},d[2]))
+          );
+        })
+      ),
+      React.createElement('div',{className:'gp',style:{padding:'13px'}},
+        React.createElement('div',{className:'ph'},'Upcoming Posts'),
+        [['Today 2PM','Instagram Reel — NQ Trade'],['Today 5PM','TikTok — ACE AI Demo'],['Tomorrow 9AM','YouTube Short — Wave Park'],['Thu 12PM','Twitter Thread — Strategy']].map(function(d,i){
+          return React.createElement('div',{key:i,style:{display:'flex',gap:'8px',padding:'5px 0',borderBottom:'1px solid rgba(25,159,216,.06)',fontSize:'10px'}},
+            React.createElement('span',{style:{color:'var(--yellow)',flexShrink:0,fontSize:'9px'}},d[0]),
+            React.createElement('span',{style:{color:'var(--text)'}},d[1])
+          );
+        })
+      )
+    )
+  );
+}
+
+function SupportView(){
+  const tickets=[
+    {id:'#1043',from:'CryptoCarl',issue:'Wave Park signal not received — Boardshop shows connected but no trade data',status:'open',pri:'high',time:'5 min',route:'WAVEPARK'},
+    {id:'#1042',from:'PipHunter99',issue:'How do I change my NinjaTrader license to a new machine?',status:'resolved',pri:'med',time:'2h',route:'FAQ'},
+    {id:'#1041',from:'MarketMaestro',issue:'Strategy not auto-updating to latest version',status:'open',pri:'med',time:'3h',route:'FAQ'},
+    {id:'#1040',from:'FXKing_London',issue:'Requesting EUR/GBP strategy variant',status:'escalated',pri:'low',time:'4h',route:'CHAD'},
+    {id:'#1039',from:'QuickFingers',issue:'Subscription renewal not processing',status:'resolved',pri:'high',time:'6h',route:'FAQ'},
+  ];
+  const sc={open:'var(--orange)',resolved:'var(--green)',escalated:'var(--red)'};
+  const pc={high:'var(--red)',med:'var(--yellow)',low:'var(--textd)'};
+  const rc={FAQ:'var(--pink)',WAVEPARK:'var(--teal)',CHAD:'var(--yellow)'};
+  return React.createElement('div',{className:'fv'},
+    React.createElement('div',{className:'vt'},'// Sammy Support // Today: '+tickets.length+' tickets // Sammy → Connie FAQ Pipeline Active'),
+    React.createElement('div',{className:'g4'},
+      [[tickets.filter(function(t){return t.status==='open';}).length,'Open','var(--orange)'],[tickets.filter(function(t){return t.status==='resolved';}).length,'Resolved','var(--green)'],['2.3m','Avg Response','var(--blue)'],['4.8/5','CSAT','var(--yellow)']].map(function(d){
+        return React.createElement('div',{key:d[1],className:'sc'},React.createElement('div',{className:'sn',style:{color:d[2]}},d[0]),React.createElement('div',{className:'sl'},d[1]));
+      })
+    ),
+    React.createElement('div',{style:{display:'flex',gap:'12px'}},
+      React.createElement('div',{style:{flex:1,display:'flex',flexDirection:'column',gap:'6px'}},
+        tickets.map(function(t,i){
+          return React.createElement('div',{key:i,className:'gp',style:{padding:'11px',display:'flex',gap:'10px',alignItems:'flex-start'}},
+            React.createElement('div',{style:{fontFamily:'var(--D)',fontSize:'9px',color:'var(--blue)',flexShrink:0,paddingTop:'2px'}},t.id),
+            React.createElement('div',{style:{flex:1}},
+              React.createElement('div',{style:{display:'flex',gap:'6px',marginBottom:'4px',flexWrap:'wrap'}},
+                React.createElement('span',{style:{fontSize:'11px',color:'var(--textb)'}},t.from),
+                React.createElement('span',{style:{fontSize:'8px',padding:'1px 6px',borderRadius:'10px',background:sc[t.status]+'15',color:sc[t.status],border:'1px solid '+sc[t.status]+'44'}},t.status),
+                React.createElement('span',{style:{fontSize:'8px',padding:'1px 6px',borderRadius:'10px',background:pc[t.pri]+'15',color:pc[t.pri],border:'1px solid '+pc[t.pri]+'44'}},t.pri)
+              ),
+              React.createElement('div',{style:{fontSize:'10px',color:'var(--text)',lineHeight:'1.4',marginBottom:'4px'}},t.issue),
+              React.createElement('div',{style:{fontSize:'9px',color:'var(--textd)'}},t.time+' ago')
+            ),
+            React.createElement('div',{style:{flexShrink:0,textAlign:'right'}},
+              React.createElement('div',{style:{fontSize:'8px',padding:'2px 8px',borderRadius:'2px',background:rc[t.route]+'15',color:rc[t.route],border:'1px solid '+rc[t.route]+'33',letterSpacing:'1px',marginBottom:'5px'}},'→ '+t.route),
+              t.status==='open'&&React.createElement('button',{style:{padding:'3px 8px',background:'rgba(25,159,216,.1)',border:'1px solid rgba(25,159,216,.2)',borderRadius:'2px',color:'var(--blue)',fontFamily:'var(--M)',fontSize:'8px',cursor:'pointer'}},'Reply')
+            )
+          );
+        })
+      ),
+      React.createElement('div',{style:{width:'200px',flexShrink:0,display:'flex',flexDirection:'column',gap:'9px'}},
+        React.createElement('div',{className:'gp',style:{padding:'11px'}},
+          React.createElement('div',{className:'ph'},'FAQ Pipeline'),
+          React.createElement('div',{style:{fontSize:'10px',color:'var(--textd)',lineHeight:'1.7'}},
+            'Resolved tickets auto-routed to Connie. Each becomes an SEO FAQ post with schema markup, indexed on the relevant site.'
+          ),
+          React.createElement('div',{style:{marginTop:'8px'}},
+            React.createElement('div',{className:'kv'},React.createElement('span',{className:'kk'},'Published This Week'),React.createElement('span',{className:'vv g'},'3')),
+            React.createElement('div',{className:'kv'},React.createElement('span',{className:'kk'},'In Draft'),React.createElement('span',{className:'vv y'},'2')),
+            React.createElement('div',{className:'kv'},React.createElement('span',{className:'kk'},'Pending Review'),React.createElement('span',{className:'vv o'},'1'))
+          )
+        )
+      )
+    )
+  );
+}
+
+function MonitorView(){
+  const[cpu,setCpu]=useState(28);const[mem,setMem]=useState(64);
+  useEffect(function(){const i=setInterval(function(){setCpu(function(v){return Math.round(Math.max(10,Math.min(88,v+(Math.random()-.5)*12)));});setMem(function(v){return Math.round(Math.max(40,Math.min(82,v+(Math.random()-.5)*6)));});},2800);return function(){clearInterval(i);};},[]);
+  const mCol={'opus-4-6':'var(--purple)','sonnet-4-6':'var(--blue)','haiku-4-5':'var(--teal)'};
+  const spark=[20,35,28,45,32,55,48,38,60,42,70,55,65,78,72,85,68,74,80,76];
+  return React.createElement('div',{className:'fv'},
+    React.createElement('div',{className:'vt'},'// OpenClaw Monitor // Inspired by tugcantopaloglu/openclaw-dashboard'),
+    React.createElement('div',{className:'g4'},
+      [['Active Sessions','3','var(--green)'],['Total Tokens','297K','var(--blue)'],['Est Cost Today','$2.52','var(--yellow)'],['API Rate','18%','var(--textd)']].map(function(d){
+        return React.createElement('div',{key:d[0],className:'sc'},React.createElement('div',{className:'sn',style:{color:d[2],fontSize:'22px'}},d[1]),React.createElement('div',{className:'sl'},d[0]));
+      })
+    ),
+    React.createElement('div',{className:'g2'},
+      React.createElement('div',{className:'gp',style:{padding:'13px'}},
+        React.createElement('div',{className:'ph'},'Active Sessions'),
+        MON.map(function(s,i){
+          return React.createElement('div',{key:i,className:'mon-s'},
+            React.createElement('div',{style:{display:'flex',justifyContent:'space-between',marginBottom:'6px'}},
+              React.createElement('span',{style:{fontFamily:'var(--D)',fontSize:'10px',color:mCol[s.model]||'var(--blue)'}},s.name),
+              React.createElement('span',{style:{fontSize:'8px',padding:'2px 6px',borderRadius:'10px',background:s.status==='active'?'rgba(0,230,118,.12)':'rgba(200,232,248,.05)',color:s.status==='active'?'var(--green)':'var(--textd)',border:'1px solid '+(s.status==='active'?'rgba(0,230,118,.3)':'rgba(200,232,248,.1)')}},s.status)
+            ),
+            React.createElement('div',{className:'kv'},React.createElement('span',{className:'kk'},'Model'),React.createElement('span',{style:{color:mCol[s.model]||'var(--blue)',fontSize:'9px'}},s.model)),
+            React.createElement('div',{className:'kv'},React.createElement('span',{className:'kk'},'Tokens'),React.createElement('span',{className:'vv b'},(s.tokens/1000).toFixed(1)+'K')),
+            React.createElement('div',{className:'kv'},React.createElement('span',{className:'kk'},'Cost'),React.createElement('span',{className:'vv y'},'$'+s.cost)),
+            React.createElement('div',{className:'kv'},React.createElement('span',{className:'kk'},'Last Action'),React.createElement('span',{style:{fontSize:'9px',color:'var(--textd)',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',maxWidth:'120px'}},s.last))
+          );
+        })
+      ),
+      React.createElement('div',{style:{display:'flex',flexDirection:'column',gap:'11px'}},
+        React.createElement('div',{className:'gp',style:{padding:'13px'}},
+          React.createElement('div',{className:'ph'},'System Health'),
+          React.createElement('div',{className:'kv'},React.createElement('span',{className:'kk'},'CPU'),React.createElement('span',{className:'vv b'},cpu+'%')),
+          React.createElement('div',{className:'mon-bar',style:{marginBottom:'8px'}},React.createElement('div',{className:'mon-bf',style:{width:cpu+'%'}})),
+          React.createElement('div',{className:'kv'},React.createElement('span',{className:'kk'},'Memory'),React.createElement('span',{className:'vv p'},mem+'%')),
+          React.createElement('div',{className:'mon-bar',style:{marginBottom:'8px'}},React.createElement('div',{className:'mon-bf',style:{width:mem+'%'}})),
+          React.createElement('div',{className:'kv'},React.createElement('span',{className:'kk'},'Disk'),React.createElement('span',{className:'vv g'},'43%')),
+          React.createElement('div',{className:'mon-bar'},React.createElement('div',{className:'mon-bf',style:{width:'43%'}}))
+        ),
+        React.createElement('div',{className:'gp',style:{padding:'13px'}},
+          React.createElement('div',{className:'ph'},'Activity Heatmap 24h'),
+          React.createElement('div',{className:'spark'},
+            spark.map(function(v,i){return React.createElement('div',{key:i,className:'spk',style:{height:v+'%',opacity:.3+v/100*.7}});})
+          ),
+          React.createElement('div',{style:{display:'flex',justifyContent:'space-between',fontSize:'8px',color:'var(--textd)',marginTop:'4px'}},
+            React.createElement('span',null,'00:00'),React.createElement('span',null,'12:00'),React.createElement('span',null,'24:00')
+          )
+        ),
+        React.createElement('div',{className:'gp',style:{padding:'13px'}},
+          React.createElement('div',{className:'ph'},'Cron Jobs'),
+          [['Heartbeat','Every 15min',true],['Memory Snapshot','Every 1h',true],['Wave Park Check','Every 5min',true],['Analytics Sync','Every 6h',true],['Cost Report','Daily 9am',false]].map(function(d,i){
+            return React.createElement('div',{key:i,className:'kv'},
+              React.createElement('span',{className:'kk'},d[0]),
+              React.createElement('span',{style:{fontSize:'9px',color:'var(--textd)'}},d[1]),
+              React.createElement('span',{style:{fontSize:'8px',padding:'1px 5px',background:d[2]?'rgba(0,230,118,.1)':'rgba(255,255,255,.05)',color:d[2]?'var(--green)':'var(--textd)',border:'1px solid '+(d[2]?'rgba(0,230,118,.3)':'rgba(255,255,255,.1)'),borderRadius:'10px'}},d[2]?'ON':'OFF')
+            );
+          })
+        )
+      )
+    )
+  );
+}
+
+function JournalView(){
+  const[sel,setSel]=useState(0);
+  return React.createElement('div',{className:'fv'},
+    React.createElement('div',{className:'vt'},'// Agent Journal // Daily Memory Log // All Agents'),
+    React.createElement('div',{style:{display:'flex',gap:'12px',flex:1,overflow:'hidden'}},
+      React.createElement('div',{style:{width:'180px',flexShrink:0,display:'flex',flexDirection:'column',gap:'6px',overflowY:'auto'}},
+        JOURNAL.map(function(j,i){
+          return React.createElement('div',{key:i,onClick:function(){setSel(i);},style:{padding:'10px',background:sel===i?'rgba(25,159,216,.12)':'var(--glass)',border:'1px solid '+(sel===i?'var(--blue)':'var(--gb)'),borderRadius:'3px',cursor:'pointer',transition:'all .2s'}},
+            React.createElement('div',{style:{fontFamily:'var(--D)',fontSize:'9px',letterSpacing:'2px',color:'var(--yellow)',marginBottom:'3px'}},j.date),
+            React.createElement('div',{style:{fontSize:'9px',color:'var(--textd)'}},j.entries.length+' entries'),
+            React.createElement('div',{style:{fontSize:'8px',color:'var(--blue)',marginTop:'2px'}},j.entries.map(function(e){return e.agent;}).join(' · '))
+          );
+        })
+      ),
+      React.createElement('div',{style:{flex:1,overflowY:'auto'}},
+        JOURNAL[sel].entries.map(function(entry,i){
+          return React.createElement('div',{key:i,className:'je'},
+            React.createElement('div',{className:'jd'},JOURNAL[sel].date),
+            React.createElement('div',{className:'jag'},'// '+entry.agent),
+            React.createElement('div',{className:'jtext'},entry.text),
+            React.createElement('div',{style:{marginTop:'8px'}},entry.tags.map(function(t){return React.createElement('span',{key:t,className:'jtg'},t);}))
+          );
+        })
+      )
+    )
+  );
+}
+
+function TradrView(){
+  return React.createElement('div',{className:'fv'},
+    React.createElement('div',{style:{display:'flex',alignItems:'center',paddingBottom:'12px',borderBottom:'1px solid var(--gb)',gap:'12px'}},
+      React.createElement('div',{style:{flex:1}},
+        React.createElement('div',{style:{fontFamily:'var(--D)',fontSize:'16px',fontWeight:700,letterSpacing:'6px',color:'var(--yellow)',textShadow:'0 0 20px rgba(252,200,46,.3)'}},'TRADR'),
+        React.createElement('div',{style:{fontSize:'9px',color:'var(--textd)',letterSpacing:'3px',marginTop:'2px'}},'PERFORMANCE STREETWEAR // IN BUILD')
+      ),
+      React.createElement('div',{className:'g4',style:{width:'auto',gap:'9px'}},
+        [['Revenue','$4,920','var(--yellow)'],['Orders','127','var(--blue)'],['Sold','127','var(--green)'],['Avg Order','$57','var(--textd)']].map(function(d){
+          return React.createElement('div',{key:d[0],className:'sc',style:{padding:'8px 12px'}},React.createElement('div',{style:{fontFamily:'var(--D)',fontSize:'18px',fontWeight:700,color:d[2]}},d[1]),React.createElement('div',{className:'sl'},d[0]));
+        })
+      )
+    ),
+    React.createElement('div',{style:{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(160px,1fr))',gap:'11px'}},
+      TRADR.map(function(p,i){
+        return React.createElement('div',{key:i,className:'prod-card'},
+          React.createElement('div',{className:'prod-img',style:{background:'radial-gradient(circle at 50% 60%,rgba(252,200,46,.1) 0%,rgba(3,9,18,.9) 70%)'}},p.emoji),
+          React.createElement('div',{className:'prod-info'},
+            React.createElement('div',{className:'prod-name'},p.name),
+            React.createElement('div',{className:'prod-price'},p.price),
+            React.createElement('div',{className:'prod-st '+p.ss},p.stock+' · '+p.sold+' sold')
+          )
+        );
+      })
+    )
+  );
+}
+
+function Placeholder({title}){
+  return React.createElement('div',{style:{flex:1,display:'flex',alignItems:'center',justifyContent:'center',color:'var(--textd)'}},
+    React.createElement('div',{style:{textAlign:'center'}},
+      React.createElement('div',{style:{fontFamily:'var(--D)',fontSize:'18px',letterSpacing:'5px',marginBottom:'10px',color:'var(--blue)'}},title),
+      React.createElement('div',{style:{fontSize:'11px',letterSpacing:'2px'}},'MODULE ONLINE — WIRING IN PROGRESS')
+    )
+  );
+}
+
 function App(){
-  const [view,setView]=useState('mission');
-  const [selAgent,setSelAgent]=useState(null);
-
-  const nav=(v)=>{setSelAgent(null);setView(v);};
-  const selectAgent=(a)=>{setSelAgent(a);setView('agent-profile');};
-
-  const renderContent=()=>{
-    if(view==='mission')return<MissionView onNav={nav}/>;
-    const wrap=(child)=>(
-      <div className="ml ve" style={{overflow:'hidden'}}>
-        {child}
-      </div>
-    );
-    if(view==='agent-profile'&&selAgent)return wrap(<AgentProfile agent={selAgent} onBack={()=>nav('agents')}/>);
-    if(view==='agents')return wrap(<AgentsView onSelect={selectAgent}/>);
-    if(['trading','marketing','finance','legal','product','support'].includes(view))
-      return wrap(<DeptView dept={view} onSelect={selectAgent}/>);
-    return wrap(
-      <div style={{flex:1,display:'flex',alignItems:'center',justifyContent:'center',color:'var(--textd)'}}>
-        <div style={{textAlign:'center'}}>
-          <div style={{fontFamily:'var(--D)',fontSize:'16px',letterSpacing:'5px',marginBottom:'10px',color:'var(--blue)'}}>{view.toUpperCase()}</div>
-          <div style={{fontSize:'11px',letterSpacing:'2px'}}>MODULE ONLINE — WIRING IN PROGRESS</div>
-        </div>
-      </div>
-    );
-  };
-
-  return(
-    <>
-      <TopBar onNav={nav}/>
-      {renderContent()}
-      <BottomNav cur={view} onNav={nav}/>
-    </>
+  const[view,setView]=useState('mission');
+  const[selAgent,setSelAgent]=useState(null);
+  function nav(v){if(!v.startsWith('agt-')&&v!=='agents')setSelAgent(null);setView(v);}
+  function selectAgent(a){setSelAgent(a);setView('agent-profile');}
+  function renderContent(){
+    if(view==='mission')return React.createElement(MissionView,{onNav:nav});
+    function wrap(child){return React.createElement('div',{className:'ml',style:{overflow:'hidden'}},child);}
+    if(view==='agent-profile'&&selAgent)return wrap(React.createElement(AgentProfile,{agent:selAgent,onBack:function(){nav('agents');}}));
+    if(view==='agents'||view.startsWith('agt-'))return wrap(React.createElement(AgentsView,{sub:view,onSelect:selectAgent}));
+    if(view==='leads')return wrap(React.createElement(LeadsView));
+    if(view==='content')return wrap(React.createElement(ContentView));
+    if(view==='wavepark')return wrap(React.createElement(WaveParkView));
+    if(view==='calendar')return wrap(React.createElement(CalendarView));
+    if(view==='tasks')return wrap(React.createElement(TasksView));
+    if(view==='marketing')return wrap(React.createElement(MarketingView));
+    if(view==='team')return wrap(React.createElement(TeamView,{onSelect:selectAgent}));
+    if(view==='social')return wrap(React.createElement(SocialView));
+    if(view==='support')return wrap(React.createElement(SupportView));
+    if(view==='monitor')return wrap(React.createElement(MonitorView));
+    if(view==='journal')return wrap(React.createElement(JournalView));
+    if(view==='tradr')return wrap(React.createElement(TradrView));
+    return wrap(React.createElement('div',{className:'fv'},React.createElement(Placeholder,{title:view.toUpperCase()})));
+  }
+  return React.createElement(React.Fragment,null,
+    React.createElement(TopBar,{onNav:nav}),
+    renderContent(),
+    React.createElement(BotNav,{cur:view,onNav:nav})
   );
 }
 
-ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+ReactDOM.createRoot(document.getElementById('root')).render(React.createElement(App));
 </script>
 </body>
 </html>
