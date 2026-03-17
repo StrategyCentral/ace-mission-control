@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ACE // Mission Control</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;900&family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#030912;--bg2:#050f20;
+  --glass:rgba(8,22,50,0.72);
+  --gb:rgba(25,159,216,0.18);--gbh:rgba(25,159,216,0.5);
+  --blue:#199FD8;--blue-g:rgba(25,159,216,0.3);
+  --yellow:#FCC82E;--yellow-g:rgba(252,200,46,0.3);
+  --pink:#FF2D9B;--pink-g:rgba(255,45,155,0.3);
+  --purple:#9B59B6;--green:#00E676;--orange:#FF6B35;--red:#FF3355;
+  --text:#C8E8F8;--textd:rgba(200,232,248,0.45);--textb:#EAF6FF;
+  --D:'Orbitron',monospace;--M:'Share Tech Mono',monospace;--B:'Rajdhani',sans-serif;
+}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:var(--M);font-size:13px;overflow:hidden;}
+body::before{content:'';position:fixed;inset:0;z-index:0;
+  background-image:
+    radial-gradient(ellipse at 20% 25%,rgba(25,159,216,0.09) 0%,transparent 55%),
+    radial-gradient(ellipse at 80% 75%,rgba(255,45,155,0.06) 0%,transparent 45%),
+    linear-gradient(rgba(25,159,216,0.022) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(25,159,216,0.022) 1px,transparent 1px);
+  background-size:100% 100%,100% 100%,50px 50px,50px 50px;pointer-events:none;}
+body::after{content:'';position:fixed;inset:0;z-index:0;
+  background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,0.06) 3px,rgba(0,0,0,0.06) 6px);
+  pointer-events:none;}
+#root{position:relative;z-index:1;height:100vh;display:flex;flex-direction:column;}
+
+/* TOP BAR */
+.tb{display:flex;align-items:center;height:48px;flex-shrink:0;
+  background:rgba(3,9,18,0.95);border-bottom:1px solid var(--gb);
+  padding:0 18px;gap:14px;position:relative;overflow:hidden;}
+.tb::after{content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--blue),var(--pink),var(--blue),transparent);
+  animation:tl 6s ease-in-out infinite;}
+@keyframes tl{0%,100%{opacity:0.35}50%{opacity:0.85}}
+.logo{font-family:var(--D);font-size:16px;font-weight:900;letter-spacing:5px;color:var(--blue);
+  text-shadow:0 0 20px var(--blue-g),0 0 50px rgba(25,159,216,0.15);cursor:pointer;flex-shrink:0;}
+.logo span{color:var(--yellow);}
+.tb-sep{width:1px;height:20px;background:var(--gb);}
+.tb-m{display:flex;gap:20px;}
+.met{display:flex;flex-direction:column;gap:1px;min-width:72px;}
+.met-l{font-size:8px;letter-spacing:2px;color:var(--textd);text-transform:uppercase;}
+.met-v{font-family:var(--D);font-size:12px;font-weight:700;}
+.met-v.y{color:var(--yellow);text-shadow:0 0 8px var(--yellow-g);}
+.met-v.b{color:var(--blue);text-shadow:0 0 8px var(--blue-g);}
+.met-v.g{color:var(--green);}
+.met-v.o{color:var(--orange);}
+.sp{flex:1;}
+.sys-st{display:flex;align-items:center;gap:7px;font-size:10px;letter-spacing:2px;text-transform:uppercase;}
+.dot{width:8px;height:8px;border-radius:50%;animation:pd 2s ease infinite;}
+.dot.g{background:var(--green);box-shadow:0 0 8px var(--green);}
+.dot.y{background:var(--yellow);box-shadow:0 0 8px var(--yellow);}
+.dot.r{background:var(--red);box-shadow:0 0 8px var(--red);}
+@keyframes pd{0%,100%{opacity:1;transform:scale(1)}50%{opacity:0.4;transform:scale(0.8)}}
+.clk{font-family:var(--D);font-size:11px;color:rgba(200,232,248,0.38);letter-spacing:2px;margin-left:10px;}
+
+/* MAIN */
+.ml{flex:1;display:flex;overflow:hidden;}
+
+/* GLASS PANEL */
+.gp{background:var(--glass);border:1px solid var(--gb);border-radius:3px;
+  backdrop-filter:blur(14px);position:relative;overflow:hidden;}
+.gp::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--blue-g),transparent);}
+.ph{font-family:var(--D);font-size:8px;letter-spacing:3px;color:rgba(200,232,248,0.45);
+  text-transform:uppercase;display:flex;align-items:center;gap:7px;margin-bottom:11px;}
+.ph::before{content:'//';color:var(--blue);font-size:9px;}
+
+/* PANELS */
+.lp{width:222px;flex-shrink:0;padding:11px;display:flex;flex-direction:column;gap:9px;
+  border-right:1px solid var(--gb);background:rgba(3,8,20,0.65);overflow-y:auto;}
+.rp{width:222px;flex-shrink:0;padding:11px;display:flex;flex-direction:column;gap:9px;
+  border-left:1px solid var(--gb);background:rgba(3,8,20,0.65);overflow-y:auto;}
+.cp{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:10px;gap:6px;position:relative;}
+
+/* METERS */
+.mr{margin-bottom:8px;}
+.mh{display:flex;justify-content:space-between;font-size:10px;margin-bottom:3px;}
+.mk{color:var(--textd);text-transform:uppercase;letter-spacing:1px;}
+.mv{color:var(--blue);}
+.mb{height:3px;background:rgba(25,159,216,0.1);overflow:hidden;}
+.mf{height:100%;position:relative;transition:width 1.2s ease;}
+.mf::after{content:'';position:absolute;right:0;top:0;bottom:0;width:4px;background:rgba(255,255,255,0.7);}
+
+/* KV */
+.kv{display:flex;justify-content:space-between;align-items:center;font-size:10px;padding:3px 0;
+  border-bottom:1px solid rgba(25,159,216,0.06);}
+.kv:last-child{border-bottom:none;}
+.kk{color:var(--textd);text-transform:uppercase;letter-spacing:1px;}
+.vv{color:var(--text);}
+.vv.b{color:var(--blue);}
+.vv.g{color:var(--green);}
+.vv.y{color:var(--yellow);}
+.vv.o{color:var(--orange);}
+.vv.p{color:var(--pink);}
+.vv.pu{color:var(--purple);}
+
+/* LOG */
+.le{display:flex;gap:5px;font-size:10px;padding:5px 0;
+  border-bottom:1px solid rgba(25,159,216,0.05);animation:fi 0.3s ease;}
+@keyframes fi{from{opacity:0;transform:translateY(-3px)}to{opacity:1;transform:translateY(0)}}
+.lts{color:var(--yellow);flex-shrink:0;font-size:9px;}
+.lm{flex:1;color:var(--text);line-height:1.4;}
+.lt{font-size:8px;padding:1px 5px;border-radius:2px;flex-shrink:0;align-self:flex-start;}
+.lt.sys{background:rgba(25,159,216,0.15);color:var(--blue);}
+.lt.ok{background:rgba(0,230,118,0.12);color:var(--green);}
+.lt.warn{background:rgba(255,107,53,0.14);color:var(--orange);}
+.lt.trade{background:rgba(252,200,46,0.12);color:var(--yellow);}
+.lt.mkt{background:rgba(255,45,155,0.12);color:var(--pink);}
+
+/* ORB */
+.oc{display:flex;flex-direction:column;align-items:center;}
+.oname{font-family:var(--D);font-size:24px;font-weight:900;letter-spacing:8px;
+  color:var(--textb);text-shadow:0 0 30px var(--blue-g);margin-bottom:2px;}
+.ost{font-family:var(--D);font-size:9px;letter-spacing:4px;text-transform:uppercase;
+  margin-top:4px;height:16px;transition:color 0.3s;}
+
+/* COMMAND */
+.ca{display:flex;flex-direction:column;align-items:center;gap:7px;width:100%;max-width:400px;}
+.cir{display:flex;gap:7px;width:100%;}
+.ci{flex:1;background:rgba(25,159,216,0.06);border:1px solid var(--gb);border-radius:3px;
+  color:var(--text);font-family:var(--M);font-size:12px;padding:8px 12px;outline:none;
+  transition:border-color 0.2s,box-shadow 0.2s;}
+.ci:focus{border-color:var(--blue);box-shadow:0 0 14px rgba(25,159,216,0.2);}
+.ci::placeholder{color:var(--textd);}
+.mb-btn{width:38px;height:38px;border-radius:50%;border:1px solid var(--gb);
+  background:rgba(25,159,216,0.1);color:var(--blue);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;font-size:15px;
+  transition:all 0.2s;flex-shrink:0;}
+.mb-btn:hover{border-color:var(--blue);box-shadow:0 0 18px var(--blue-g);}
+.mb-btn.on{border-color:var(--pink);color:var(--pink);background:rgba(255,45,155,0.15);
+  box-shadow:0 0 22px var(--pink-g);animation:mp 1s ease infinite;}
+@keyframes mp{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
+.qa{display:flex;gap:7px;}
+.qb{padding:5px 13px;background:transparent;border:1px solid var(--gb);border-radius:2px;
+  color:var(--textd);font-family:var(--M);font-size:10px;letter-spacing:1px;
+  text-transform:uppercase;cursor:pointer;transition:all 0.2s;}
+.qb:hover{border-color:var(--blue);color:var(--blue);box-shadow:0 0 10px var(--blue-g);}
+.qb.y:hover{border-color:var(--yellow);color:var(--yellow);box-shadow:0 0 10px var(--yellow-g);}
+.qb.pk:hover{border-color:var(--pink);color:var(--pink);box-shadow:0 0 10px var(--pink-g);}
+
+/* BOTTOM NAV */
+.bn{height:54px;flex-shrink:0;background:rgba(3,9,18,0.96);border-top:1px solid var(--gb);
+  display:flex;align-items:center;justify-content:center;gap:3px;padding:0 16px;}
+.nb{display:flex;flex-direction:column;align-items:center;gap:2px;padding:5px 13px;
+  background:transparent;border:1px solid transparent;border-radius:3px;cursor:pointer;
+  transition:all 0.2s;color:var(--textd);font-family:var(--M);font-size:8px;letter-spacing:1.5px;text-transform:uppercase;}
+.nb:hover{border-color:var(--gb);color:var(--blue);}
+.nb.act{border-color:var(--blue);color:var(--blue);background:rgba(25,159,216,0.09);
+  box-shadow:0 0 14px rgba(25,159,216,0.18);}
+.ni{font-size:15px;}
+
+/* AGENTS */
+.av{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:14px;}
+.ag{display:grid;grid-template-columns:repeat(auto-fill,minmax(195px,1fr));gap:11px;}
+.ac{background:var(--glass);border:1px solid var(--gb);border-radius:3px;padding:13px;
+  cursor:pointer;position:relative;overflow:hidden;transition:all 0.28s;
+  backdrop-filter:blur(14px);}
+.ac::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;opacity:0;transition:opacity 0.3s;}
+.ac:hover{transform:translateY(-3px);border-color:var(--gbh);
+  box-shadow:0 10px 36px rgba(0,0,0,0.45),0 0 24px rgba(25,159,216,0.1);}
+.ac:hover::before{opacity:1;}
+.ac.active::before{background:linear-gradient(90deg,transparent,var(--green),transparent);}
+.ac.working::before{background:linear-gradient(90deg,transparent,var(--blue),transparent);}
+.ac.idle::before{background:linear-gradient(90deg,transparent,rgba(200,232,248,0.18),transparent);}
+.ac.active{border-color:rgba(0,230,118,0.2);}
+.ac.active:hover{box-shadow:0 10px 36px rgba(0,0,0,0.45),0 0 28px rgba(0,230,118,0.12);}
+.ac.working{border-color:rgba(25,159,216,0.22);}
+.ach{display:flex;align-items:center;gap:9px;margin-bottom:9px;}
+.aa{width:40px;height:40px;border-radius:3px;display:flex;align-items:center;justify-content:center;
+  font-family:var(--D);font-size:12px;font-weight:700;flex-shrink:0;position:relative;
+  border:1px solid currentColor;}
+.ai{flex:1;min-width:0;}
+.an{font-family:var(--D);font-size:10px;font-weight:700;letter-spacing:2px;color:var(--textb);margin-bottom:1px;}
+.ar{font-size:9px;color:var(--textd);text-transform:uppercase;letter-spacing:1px;}
+.asp{font-size:8px;padding:2px 7px;border-radius:10px;letter-spacing:1px;text-transform:uppercase;}
+.asp.active{background:rgba(0,230,118,0.12);color:var(--green);border:1px solid rgba(0,230,118,0.3);}
+.asp.working{background:rgba(25,159,216,0.1);color:var(--blue);border:1px solid rgba(25,159,216,0.3);}
+.asp.idle{background:rgba(200,232,248,0.05);color:var(--textd);border:1px solid rgba(200,232,248,0.12);}
+.att{font-size:10px;color:var(--text);line-height:1.5;margin-bottom:7px;}
+.acf{display:flex;justify-content:space-between;font-size:9px;color:var(--textd);text-transform:uppercase;letter-spacing:1px;}
+.ai-ind{position:absolute;top:9px;right:9px;width:6px;height:6px;border-radius:50%;}
+.ai-ind.active{background:var(--green);box-shadow:0 0 6px var(--green);animation:pd 1.5s infinite;}
+.ai-ind.working{background:var(--blue);box-shadow:0 0 6px var(--blue);animation:pd 2s infinite;}
+.ai-ind.idle{background:rgba(200,232,248,0.2);}
+
+/* PROFILE */
+.pv{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:14px;}
+.ph2{display:flex;align-items:center;gap:18px;background:var(--glass);border:1px solid var(--gb);
+  border-radius:3px;padding:18px;backdrop-filter:blur(14px);position:relative;overflow:hidden;}
+.ph2::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,var(--blue),transparent);}
+.pa{width:76px;height:76px;border-radius:5px;display:flex;align-items:center;justify-content:center;
+  font-family:var(--D);font-size:26px;font-weight:900;border:2px solid currentColor;flex-shrink:0;}
+.pname{font-family:var(--D);font-size:26px;font-weight:900;letter-spacing:6px;color:var(--textb);margin-bottom:3px;}
+.prole{font-family:var(--B);font-size:13px;color:var(--textd);text-transform:uppercase;letter-spacing:3px;margin-bottom:10px;}
+.pg{display:grid;grid-template-columns:1fr 1fr;gap:11px;}
+.ps{background:var(--glass);border:1px solid var(--gb);border-radius:3px;padding:13px;backdrop-filter:blur(14px);}
+.bb{display:inline-flex;align-items:center;padding:3px 8px;border-radius:2px;font-size:9px;letter-spacing:1px;text-transform:uppercase;}
+.bb.b{background:rgba(25,159,216,0.12);color:var(--blue);border:1px solid rgba(25,159,216,0.28);}
+.bb.pu{background:rgba(155,89,182,0.12);color:var(--purple);border:1px solid rgba(155,89,182,0.28);}
+.bb.g{background:rgba(0,230,118,0.1);color:var(--green);border:1px solid rgba(0,230,118,0.28);}
+.bb.y{background:rgba(252,200,46,0.12);color:var(--yellow);border:1px solid rgba(252,200,46,0.28);}
+.bkb{display:flex;align-items:center;gap:7px;background:transparent;border:1px solid var(--gb);
+  color:var(--textd);font-family:var(--M);font-size:10px;letter-spacing:2px;text-transform:uppercase;
+  cursor:pointer;padding:6px 12px;border-radius:2px;transition:all 0.2s;align-self:flex-start;}
+.bkb:hover{border-color:var(--blue);color:var(--blue);}
+
+/* ALERT BOXES */
+.albox{font-size:10px;padding:6px 8px;border-radius:2px;margin-bottom:5px;line-height:1.4;}
+.albox.warn{background:rgba(255,107,53,0.1);border:1px solid rgba(255,107,53,0.25);color:var(--orange);}
+.albox.info{background:rgba(25,159,216,0.07);border:1px solid rgba(25,159,216,0.15);color:var(--textd);}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:3px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:rgba(25,159,216,0.2);}
+
+/* ENTER ANIMATION */
+.ve{animation:vf 0.3s ease;}
+@keyframes vf{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
+/* TRANSCRIPT BOX */
+.tbox{font-size:11px;color:var(--textd);text-align:center;font-style:italic;min-height:16px;max-width:340px;}
+.rbox{font-size:11px;color:var(--text);text-align:center;max-width:360px;line-height:1.55;
+  background:rgba(25,159,216,0.05);padding:8px 12px;border:1px solid rgba(25,159,216,0.15);border-radius:3px;}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="https://unpkg.com/@babel/standalone@7.23.9/babel.min.js"></script>
+<script type="text/babel">
+const {useState,useEffect,useRef,useCallback} = React;
+
+// ── DATA ─────────────────────────────────────────────────────
+const AGENTS = [
+  {id:'chad',name:'CHAD',role:'CEO / Orchestrator',status:'active',dept:'command',
+   task:'Coordinating all 14 agents. Monitoring system alerts & strategic decisions.',
+   model:'claude-sonnet-4-6',color:'#199FD8',
+   metrics:{'Agents Managed':'14','Tasks Delegated':'28','Alerts Reviewed':'7','System Status':'Nominal'},
+   tools:['OpenClaw','Discord','File System','All Agents'],
+   caps:['Agent orchestration','Strategic planning','Alert management','Task delegation']},
+  {id:'bob',name:'BOB',role:'Finance Director',status:'active',dept:'finance',
+   task:'P&L reconciliation running. Q1 close report 87% complete. Cash flow nominal.',
+   model:'claude-sonnet-4-6',color:'#FCC82E',
+   metrics:{'Revenue Today':'$14,820','Expenses':'$3,240','Net Profit':'$11,580','Subscriptions':'143'},
+   tools:['Xero','Stripe','Google Sheets','Reporting API'],
+   caps:['Financial reporting','P&L analysis','Cash flow mgmt','Subscription tracking']},
+  {id:'connie',name:'CONNIE',role:'Content Agent',status:'working',dept:'marketing',
+   task:'Drafting 3 blog posts. Review queue has 7 items pending human approval.',
+   model:'claude-haiku-4-5',color:'#FF2D9B',
+   metrics:{'Posts Drafted':'3','In Review':'7','Published This Week':'12','Avg Word Count':'1,240'},
+   tools:['WordPress','Google Docs','Grammarly API','SEMrush'],
+   caps:['Long-form content','SEO copywriting','Editorial planning','Brand voice']},
+  {id:'dave',name:'DAVE',role:'Analytics Agent',status:'idle',dept:'data',
+   task:'Awaiting pipeline refresh. BigQuery sync scheduled in 14 minutes.',
+   model:'claude-haiku-4-5',color:'#199FD8',
+   metrics:{'Dashboards Active':'6','Queries Run Today':'47','Data Sources':'9','Next Sync':'14m'},
+   tools:['BigQuery','Looker','Python','Tableau'],
+   caps:['Data pipelines','Dashboard creation','Forecasting','Anomaly detection']},
+  {id:'frankie',name:'FRANKIE',role:'Forex Trader',status:'active',dept:'trading',
+   task:'EUR/USD long position open. TP set at 1.0892. Watching DXY correlation.',
+   model:'claude-sonnet-4-6',color:'#FCC82E',
+   metrics:{'Open Positions':'2','Daily PnL':'+$840','Win Rate':'68%','Risk Level':'Medium'},
+   tools:['MT5','TradingView','OANDA API','Economic Calendar'],
+   caps:['Forex trading','Technical analysis','Risk management','Macro correlation']},
+  {id:'larry',name:'LARRY',role:'Legal Counsel',status:'idle',dept:'legal',
+   task:'Compliance review queued. 2 contracts pending signature. ToS v2.4 drafted.',
+   model:'claude-haiku-4-5',color:'#9B59B6',
+   metrics:{'Contracts Reviewed':'4','Compliance Items':'2','Open Risks':'1','ToS Version':'v2.4'},
+   tools:['Notion','DocuSign','LexisNexis','Contract DB'],
+   caps:['Contract review','Compliance monitoring','Risk assessment','Legal research']},
+  {id:'megan',name:'MEGAN',role:'Media Agent',status:'working',dept:'marketing',
+   task:'Scheduling 12 posts across 4 platforms. Editing YouTube video brief.',
+   model:'claude-haiku-4-5',color:'#FF2D9B',
+   metrics:{'Posts Scheduled':'12','Platforms':'4','Reach This Week':'48K','Engagement':'4.2%'},
+   tools:['Hootsuite','Canva API','YouTube Studio','Meta Business'],
+   caps:['Social scheduling','Media production','Platform management','Audience targeting']},
+  {id:'pete',name:'PETE',role:'Product Manager',status:'active',dept:'product',
+   task:'Sprint 14 review in progress. 3 features in QA. Q2 roadmap update ready.',
+   model:'claude-sonnet-4-6',color:'#1ABC9C',
+   metrics:{'Features in QA':'3','Sprint Progress':'78%','Pages Built':'24','Conversion':'3.8%'},
+   tools:['Linear','Figma','GitHub','Vercel'],
+   caps:['Product roadmap','Sprint management','Feature prioritization','Conversion optimization']},
+  {id:'poly',name:'POLY',role:'Prediction Markets',status:'active',dept:'trading',
+   task:'Monitoring 8 Polymarket positions. SOL 15m oracle lag window active. 2 near resolution.',
+   model:'claude-sonnet-4-6',color:'#199FD8',
+   metrics:{'Open Positions':'8','Near Resolution':'2','Avg Confidence':'71%','Expected Value':'+$320'},
+   tools:['Polymarket API','Binance WS','Chainlink','VPN'],
+   caps:['Prediction market analysis','Oracle lag strategy','Position sizing','Market research']},
+  {id:'sammy',name:'SAMMY',role:'Support Agent',status:'working',dept:'support',
+   task:'4 tickets open. Avg response 2.3min. 1 escalation pending to Chad.',
+   model:'claude-haiku-4-5',color:'#1ABC9C',
+   metrics:{'Tickets Open':'4','Avg Response':'2.3m','Resolved Today':'11','CSAT Score':'4.8/5'},
+   tools:['Intercom','HelpDesk','Notion KB','Slack'],
+   caps:['Customer support','Ticket routing','FAQ management','Escalation handling']},
+  {id:'sue',name:'SUE',role:'SEO Specialist',status:'idle',dept:'marketing',
+   task:'Site audit complete. 23 technical recommendations queued for Pete.',
+   model:'claude-haiku-4-5',color:'#FF2D9B',
+   metrics:{'Keywords Tracked':'340','DA Score':'42','Backlinks':'1,204','Audit Items':'23'},
+   tools:['Ahrefs','SEMrush','Google Search Console','Screaming Frog'],
+   caps:['Technical SEO','Keyword research','Backlink building','Content optimization']},
+  {id:'sally',name:'SALLY',role:'Social Media',status:'active',dept:'marketing',
+   task:'A/B test live on 2 ad creatives. Engagement rate up 14% vs last week.',
+   model:'claude-haiku-4-5',color:'#FF2D9B',
+   metrics:{'A/B Tests Live':'2','Engagement':'+14%','Follower Growth':'+280','Top Platform':'Instagram'},
+   tools:['Meta Ads','TikTok Business','Instagram API','Sprout Social'],
+   caps:['Paid social','A/B testing','Community management','Growth strategy']},
+  {id:'toni',name:'TONI',role:'Futures Trader',status:'working',dept:'trading',
+   task:'NQ contract position: long 1 unit. Monitoring Fed announcement at 2pm EST.',
+   model:'claude-sonnet-4-6',color:'#FCC82E',
+   metrics:{'Contracts Active':'1','Daily PnL':'+$1,240','Strategy':'Momentum','Risk':'Med-High'},
+   tools:['NinjaTrader','Interactive Brokers','CME Data','Bloomberg Feed'],
+   caps:['Futures trading','NinjaScript automation','Macro analysis','Risk management']},
+  {id:'axiom',name:'AXIOM',role:'Strategy Optimiser',status:'active',dept:'trading',
+   task:'10-factor confidence scoring model — weight adjustment cycle 7 of 20. Convergence 68%.',
+   model:'claude-opus-4-6',color:'#9B59B6',
+   metrics:{'Model Confidence':'74%','Weight Cycles':'7/20','Factors Active':'10','Convergence':'68%'},
+   tools:['NinjaTrader Bridge','Python ML','SQLite','Market Data API'],
+   caps:['Algo strategy','ML weight optimization','Backtesting','Market regime detection']},
+  {id:'pablo',name:'PABLO',role:'PPC Manager',status:'idle',dept:'marketing',
+   task:'Google Ads audit queued. Budget reallocation report ready for review.',
+   model:'claude-haiku-4-5',color:'#FCC82E',
+   metrics:{'Campaigns Active':'8','ROAS':'3.2x','CTR':'4.1%','Budget Used':'72%'},
+   tools:['Google Ads API','Meta Ads','Optmyzr','Google Analytics'],
+   caps:['PPC campaign mgmt','Bid optimization','Ad copywriting','Budget allocation']},
+];
+
+const LOGS = [
+  {msg:'SOL/USDC price tick — $148.42',tag:'trade',agent:'POLY'},
+  {msg:'Oracle lag delta 0.11% — below threshold',tag:'sys',agent:'POLY'},
+  {msg:'EUR/USD TP updated → 1.0892',tag:'trade',agent:'FRANKIE'},
+  {msg:'Blog post draft complete — sent to review queue',tag:'ok',agent:'CONNIE'},
+  {msg:'Heartbeat nominal — all systems responding',tag:'ok',agent:'CHAD'},
+  {msg:'NQ position +$340 unrealised PnL',tag:'trade',agent:'TONI'},
+  {msg:'Instagram variant B winning A/B test (+19%)',tag:'mkt',agent:'SALLY'},
+  {msg:'Ticket #1042 resolved — CSAT 5/5',tag:'ok',agent:'SAMMY'},
+  {msg:'Axiom cycle 7 complete — convergence 68%',tag:'sys',agent:'AXIOM'},
+  {msg:'3 Google Ads campaigns underperforming',tag:'warn',agent:'PABLO'},
+  {msg:'Context window 34% — within budget',tag:'sys',agent:'CHAD'},
+  {msg:'Revenue event — $340 subscription payment',tag:'ok',agent:'BOB'},
+  {msg:'SEO audit flagged 23 technical issues',tag:'warn',agent:'SUE'},
+  {msg:'Sprint 14 — QA signed off 2/3 features',tag:'ok',agent:'PETE'},
+  {msg:'Legal: ToS v2.4 draft ready for review',tag:'sys',agent:'LARRY'},
+  {msg:'BigQuery pipeline refresh — 9 sources synced',tag:'ok',agent:'DAVE'},
+  {msg:'Discord heartbeat ping sent',tag:'sys',agent:'CHAD'},
+  {msg:'2 Polymarket positions near resolution',tag:'trade',agent:'POLY'},
+  {msg:'12 social posts scheduled — 4 platforms',tag:'mkt',agent:'MEGAN'},
+  {msg:'Binance WS reconnected — feed healthy',tag:'ok',agent:'POLY'},
+];
+
+function ts(){return new Date().toLocaleTimeString('en-AU',{hour12:false,hour:'2-digit',minute:'2-digit',second:'2-digit',timeZone:'Australia/Melbourne'});}
+
+function cmdReply(t){
+  const tl=t.toLowerCase();
+  if(tl.includes('status')||tl.includes('system'))return'All systems operational. 8 agents active, 4 working, 3 idle. Trading bots monitoring live markets. API rate within limits. 3 non-critical alerts.';
+  if(tl.includes('agent')||tl.includes('who')||tl.includes('fleet'))return'15-agent fleet: Chad orchestrating, Poly and Frankie watching open positions, Toni long NQ futures, Connie has 3 posts in draft, Axiom mid-cycle on weight optimization at 68% convergence.';
+  if(tl.includes('trade')||tl.includes('trading')||tl.includes('sol')||tl.includes('market'))return'Poly monitoring 8 Polymarket positions at 71% average confidence. Frankie: EUR-USD long, TP 1.0892. Toni: NQ futures long, up 1,240 dollars today. Axiom confidence model cycle 7 running.';
+  if(tl.includes('revenue')||tl.includes('money')||tl.includes('profit')||tl.includes('finance'))return'Bob reports net profit of 11,580 dollars today. 143 active subscriptions. Revenue on track versus Q1 target. Cash flow nominal.';
+  if(tl.includes('alert')||tl.includes('warn')||tl.includes('problem'))return'3 non-critical alerts. Pablo has 3 underperforming Google Ads campaigns. Sue queued 23 SEO issues for Pete. Sammy has 1 escalation pending. No critical system failures.';
+  if(tl.includes('hello')||tl.includes('hi ')||tl.includes('hey')||tl.includes("what's up"))return'ACE online and operational. All 15 agents active or standby. How can I assist you, Commander?';
+  if(tl.includes('help'))return'Try: system status, trading update, revenue report, show agents, or any agent name for a briefing.';
+  if(tl.includes('chad'))return'Chad is actively orchestrating all 14 subordinate agents. 28 tasks delegated today, 7 alerts reviewed. No critical escalations pending.';
+  if(tl.includes('axiom'))return'Axiom running weight adjustment cycle 7 of 20 on the 10-factor confidence scoring model. Convergence at 68%. Operating on Opus-class model — highest priority allocation.';
+  if(tl.includes('poly'))return'Poly monitoring 8 Polymarket positions. 2 approaching resolution. Average confidence 71%. SOL 15-minute oracle lag window active. VPN connected.';
+  if(tl.includes('bob'))return'Bob: net profit 11,580 dollars today. 143 subscriptions active. P&L reconciliation 87% complete. Q1 close report generating.';
+  return`Command received: "${t}". Routing through ACE core. Stand by for agent response.`;
+}
+
+// ── ORB ──────────────────────────────────────────────────────
+function AceOrb({state}){
+  const cRef=useRef(null);
+  const rafRef=useRef(null);
+  const pRef=useRef([]);
+
+  useEffect(()=>{
+    pRef.current=Array.from({length:80},(_,i)=>({
+      angle:(i/80)*Math.PI*2+Math.random()*0.4,
+      radius:100+Math.random()*65,
+      speed:(0.003+Math.random()*0.005)*(Math.random()>0.5?1:-1),
+      size:0.6+Math.random()*2.2,
+      opacity:0.2+Math.random()*0.8,
+      col:Math.random()>0.55?'#FF2D9B':Math.random()>0.5?'#9B59B6':'#199FD8',
+    }));
+  },[]);
+
+  useEffect(()=>{
+    const cv=cRef.current; if(!cv)return;
+    const ctx=cv.getContext('2d');
+    let st=null;
+    function hex2rgba(h,a){const r=parseInt(h.slice(1,3),16),g=parseInt(h.slice(3,5),16),b=parseInt(h.slice(5,7),16);return`rgba(${r},${g},${b},${a})`;}
+    function draw(ts){
+      if(!st)st=ts;
+      const t=(ts-st)/1000;
+      const W=cv.width,H=cv.height,cx=W/2,cy=H/2;
+      ctx.clearRect(0,0,W,H);
+
+      const idle=state==='idle',lst=state==='listening',prc=state==='processing',spk=state==='speaking';
+      const ps=idle?1:lst?3.2:prc?5.5:2.5;
+      const gm=idle?1:lst?1.65:prc?1.45:2.1;
+      const pulse=(Math.sin(t*ps)+1)/2;
+      const bR=74, orbR=bR*(0.91+pulse*0.09);
+
+      let cCol=lst?'#FF2D9B':prc?'#9B59B6':spk?'#FCC82E':'#199FD8';
+
+      // ambient bg glow
+      const bg=ctx.createRadialGradient(cx,cy,0,cx,cy,185);
+      bg.addColorStop(0,hex2rgba('#199FD8',0.11*gm));
+      bg.addColorStop(0.45,hex2rgba('#9B59B6',0.05*gm));
+      bg.addColorStop(1,'transparent');
+      ctx.fillStyle=bg; ctx.beginPath(); ctx.arc(cx,cy,185,0,Math.PI*2); ctx.fill();
+
+      // expanding waves
+      if(lst||spk){
+        for(let w=0;w<3;w++){
+          const ph=((t*(lst?1.4:0.9)+w*0.9)%2.6)/2.6;
+          const wR=orbR+12+ph*130;
+          const wO=(1-ph)*0.55*gm;
+          ctx.beginPath(); ctx.arc(cx,cy,wR,0,Math.PI*2);
+          ctx.strokeStyle=lst?hex2rgba('#FF2D9B',wO):hex2rgba('#FCC82E',wO);
+          ctx.lineWidth=1.5; ctx.stroke();
+        }
+      }
+
+      // orbiting ellipses
+      [[orbR+11,(orbR+11)*0.22,t*0.55,'#199FD8',0.55],
+       [orbR+7,(orbR+7)*0.38,-t*0.32+1,'#FF2D9B',0.38],
+       [orbR+17,(orbR+17)*0.14,t*0.21+2,'#9B59B6',0.32]
+      ].forEach(([rx,ry,rot,col,al])=>{
+        ctx.save(); ctx.translate(cx,cy); ctx.rotate(rot);
+        ctx.beginPath(); ctx.ellipse(0,0,rx,ry*gm*0.65+ry*0.35,0,0,Math.PI*2);
+        ctx.strokeStyle=col+Math.round(al*gm*255).toString(16).padStart(2,'0');
+        ctx.lineWidth=1; ctx.stroke(); ctx.restore();
+      });
+
+      // main sphere
+      const sph=ctx.createRadialGradient(cx-orbR*0.28,cy-orbR*0.28,orbR*0.04,cx,cy,orbR);
+      sph.addColorStop(0,'rgba(255,255,255,0.92)');
+      sph.addColorStop(0.18,cCol);
+      sph.addColorStop(0.55,'#040e24');
+      sph.addColorStop(1,'#020810');
+      ctx.beginPath(); ctx.arc(cx,cy,orbR,0,Math.PI*2); ctx.fillStyle=sph; ctx.fill();
+
+      // inner shine
+      const inn=ctx.createRadialGradient(cx,cy,0,cx,cy,orbR*0.65);
+      inn.addColorStop(0,`rgba(255,255,255,${0.22*pulse})`);
+      inn.addColorStop(0.4,hex2rgba(cCol,0.28*pulse*gm));
+      inn.addColorStop(1,'transparent');
+      ctx.beginPath(); ctx.arc(cx,cy,orbR*0.65,0,Math.PI*2); ctx.fillStyle=inn; ctx.fill();
+
+      // processing swirl
+      if(prc){
+        for(let i=0;i<12;i++){
+          const a=t*4.5+i*(Math.PI*2/12);
+          const pr=orbR*0.5*(0.55+Math.sin(t*3+i)*0.45);
+          ctx.beginPath(); ctx.arc(cx+Math.cos(a)*pr,cy+Math.sin(a)*pr,2.2,0,Math.PI*2);
+          ctx.fillStyle=`rgba(155,89,182,${0.45+Math.sin(t*6+i)*0.55})`; ctx.fill();
+        }
+        // extra ring
+        ctx.beginPath(); ctx.arc(cx,cy,orbR*0.7,0,Math.PI*2);
+        ctx.strokeStyle=`rgba(155,89,182,${0.3+pulse*0.3})`; ctx.lineWidth=1; ctx.stroke();
+      }
+
+      // speaking waveform
+      if(spk){
+        const bars=44;
+        for(let i=0;i<bars;i++){
+          const a=(i/bars)*Math.PI*2;
+          const h=6+Math.sin(t*5.5+i*0.85)*18+Math.sin(t*9+i*1.4)*5;
+          ctx.beginPath();
+          ctx.moveTo(cx+Math.cos(a)*(orbR+3),cy+Math.sin(a)*(orbR+3));
+          ctx.lineTo(cx+Math.cos(a)*(orbR+3+h),cy+Math.sin(a)*(orbR+3+h));
+          ctx.strokeStyle=`rgba(252,200,46,${0.5+Math.sin(t*4+i)*0.5})`;
+          ctx.lineWidth=2.2; ctx.lineCap='round'; ctx.stroke();
+        }
+      }
+
+      // listening ring
+      if(lst){
+        const lR=orbR+26+Math.sin(t*3)*6;
+        ctx.beginPath(); ctx.arc(cx,cy,lR,0,Math.PI*2);
+        ctx.strokeStyle=`rgba(255,45,155,${0.4+pulse*0.35})`; ctx.lineWidth=2; ctx.stroke();
+      }
+
+      // particles
+      pRef.current.forEach(p=>{
+        p.angle+=p.speed*(prc?3.5:lst?1.8:1);
+        const alpha=Math.min(1,p.opacity*(0.45+pulse*0.55)*gm);
+        ctx.beginPath(); ctx.arc(cx+Math.cos(p.angle)*p.radius,cy+Math.sin(p.angle)*p.radius,p.size,0,Math.PI*2);
+        ctx.fillStyle=p.col+Math.round(alpha*255).toString(16).padStart(2,'0'); ctx.fill();
+      });
+
+      rafRef.current=requestAnimationFrame(draw);
+    }
+    rafRef.current=requestAnimationFrame(draw);
+    return()=>cancelAnimationFrame(rafRef.current);
+  },[state]);
+
+  return <canvas ref={cRef} width={320} height={320} style={{display:'block'}} />;
+}
+
+// ── VOICE HOOK ───────────────────────────────────────────────
+function useVoice({onTranscript,onState}){
+  const recRef=useRef(null);
+  const syn=window.speechSynthesis;
+
+  const start=useCallback(()=>{
+    const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+    if(!SR){alert('Use Chrome for full voice support.');return;}
+    const r=new SR(); r.lang='en-AU'; r.continuous=false; r.interimResults=false;
+    r.onstart=()=>onState('listening');
+    r.onresult=e=>onTranscript(e.results[0][0].transcript);
+    r.onerror=()=>onState('idle');
+    r.onend=()=>{};
+    r.start(); recRef.current=r;
+  },[onTranscript,onState]);
+
+  const stop=useCallback(()=>{
+    if(recRef.current){recRef.current.stop();recRef.current=null;}
+    onState('idle');
+  },[onState]);
+
+  const speak=useCallback((text)=>{
+    syn.cancel();
+    const u=new SpeechSynthesisUtterance(text);
+    u.rate=0.94; u.pitch=0.88; u.volume=0.92;
+    const v=syn.getVoices();
+    const pref=v.find(x=>x.name.includes('Daniel')||x.name.includes('Alex')||x.name.includes('Google UK'));
+    if(pref)u.voice=pref;
+    u.onstart=()=>onState('speaking');
+    u.onend=()=>onState('idle');
+    syn.speak(u);
+  },[onState]);
+
+  return{start,stop,speak};
+}
+
+// ── TOP BAR ──────────────────────────────────────────────────
+function TopBar({onNav}){
+  const [clk,setClk]=useState('');
+  const [profit,setProfit]=useState(11580);
+  const [tasks,setTasks]=useState(28);
+  useEffect(()=>{const i=setInterval(()=>setClk(ts()),1000);setClk(ts());return()=>clearInterval(i);},[]);
+  useEffect(()=>{const i=setInterval(()=>setProfit(p=>p+Math.floor(Math.random()*90)),9000);return()=>clearInterval(i);},[]);
+  return(
+    <div className="tb">
+      <div className="logo" onClick={()=>onNav('mission')}>ACE<span>.</span>AI</div>
+      <div className="tb-sep"/>
+      <div className="tb-m">
+        <div className="met"><div className="met-l">Profit Today</div><div className="met-v y">${profit.toLocaleString()}</div></div>
+        <div className="met"><div className="met-l">Active Tasks</div><div className="met-v b">{tasks}</div></div>
+        <div className="met"><div className="met-l">Alerts</div><div className="met-v o">3</div></div>
+        <div className="met"><div className="met-l">Agents Online</div><div className="met-v g">12/15</div></div>
+      </div>
+      <div className="sp"/>
+      <div className="sys-st"><div className="dot g"/><span style={{color:'var(--green)',fontSize:'10px',letterSpacing:'2px'}}>ALL SYSTEMS GO</span></div>
+      <div className="clk">{clk} AEST</div>
+    </div>
+  );
+}
+
+// ── BOTTOM NAV ───────────────────────────────────────────────
+function BottomNav({cur,onNav}){
+  const items=[
+    {id:'mission',label:'Mission',icon:'◈'},{id:'agents',label:'Agents',icon:'◉'},
+    {id:'trading',label:'Trading',icon:'◆'},{id:'marketing',label:'Marketing',icon:'◐'},
+    {id:'finance',label:'Finance',icon:'◎'},{id:'legal',label:'Legal',icon:'◑'},
+    {id:'product',label:'Product',icon:'◇'},{id:'settings',label:'Settings',icon:'⊙'},
+  ];
+  return(
+    <div className="bn">
+      {items.map(x=>(
+        <button key={x.id} className={`nb${cur===x.id?' act':''}`} onClick={()=>onNav(x.id)}>
+          <div className="ni">{x.icon}</div>{x.label}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+// ── LEFT PANEL ───────────────────────────────────────────────
+function LeftPanel(){
+  const [v,setV]=useState({cpu:28,mem:64,api:22});
+  useEffect(()=>{
+    const i=setInterval(()=>setV({
+      cpu:Math.round(Math.max(10,Math.min(88,28+(Math.random()-.5)*14))),
+      mem:Math.round(Math.max(40,Math.min(84,64+(Math.random()-.5)*9))),
+      api:Math.round(Math.max(5,Math.min(60,22+(Math.random()-.5)*11))),
+    }),3200);return()=>clearInterval(i);
+  },[]);
+  const M=({label,val,col})=>(
+    <div className="mr">
+      <div className="mh"><span className="mk">{label}</span><span className="mv" style={{color:col}}>{val}%</span></div>
+      <div className="mb"><div className="mf" style={{width:val+'%',background:`linear-gradient(90deg,${col}66,${col})`}}/></div>
+    </div>
+  );
+  const ac=AGENTS.filter(a=>a.status==='active').length;
+  const wc=AGENTS.filter(a=>a.status==='working').length;
+  const ic=AGENTS.filter(a=>a.status==='idle').length;
+  return(
+    <div className="lp">
+      <div className="gp" style={{padding:'11px'}}>
+        <div className="ph">System Health</div>
+        <M label="CPU" val={v.cpu} col="var(--blue)"/>
+        <M label="Memory" val={v.mem} col="var(--pink)"/>
+        <M label="API Rate" val={v.api} col="var(--yellow)"/>
+      </div>
+      <div className="gp" style={{padding:'11px'}}>
+        <div className="ph">Agent Status</div>
+        <div className="kv"><span className="kk">Active</span><span className="vv g">{ac}</span></div>
+        <div className="kv"><span className="kk">Working</span><span className="vv b">{wc}</span></div>
+        <div className="kv"><span className="kk">Idle</span><span className="vv">{ic}</span></div>
+        <div className="kv"><span className="kk">Fleet Total</span><span className="vv">{AGENTS.length}</span></div>
+      </div>
+      <div className="gp" style={{padding:'11px'}}>
+        <div className="ph">Trading Systems</div>
+        <div className="kv"><span className="kk">Polymarket</span><span className="vv g">Live</span></div>
+        <div className="kv"><span className="kk">Forex</span><span className="vv g">Live</span></div>
+        <div className="kv"><span className="kk">Futures</span><span className="vv y">Watching</span></div>
+        <div className="kv"><span className="kk">Axiom Model</span><span className="vv b">Cycle 7/20</span></div>
+        <div className="kv"><span className="kk">VPN</span><span className="vv g">Active</span></div>
+      </div>
+      <div className="gp" style={{padding:'11px'}}>
+        <div className="ph">Alerts</div>
+        <div className="albox warn">▲ Pablo: 3 campaigns underperforming</div>
+        <div className="albox warn">▲ Sue: 23 SEO issues queued</div>
+        <div className="albox info">● Sammy: 1 escalation pending</div>
+      </div>
+    </div>
+  );
+}
+
+// ── RIGHT PANEL ──────────────────────────────────────────────
+function RightPanel(){
+  const [logs,setLogs]=useState(()=>
+    LOGS.slice(0,8).map((l,i)=>({...l,ts:ts(),id:i}))
+  );
+  const logEl=useRef(null);
+  const idR=useRef(8);
+  useEffect(()=>{
+    const i=setInterval(()=>{
+      const e=LOGS[Math.floor(Math.random()*LOGS.length)];
+      setLogs(p=>[...p.slice(-22),{...e,ts:ts(),id:idR.current++}]);
+    },3600);return()=>clearInterval(i);
+  },[]);
+  useEffect(()=>{if(logEl.current)logEl.current.scrollTop=logEl.current.scrollHeight;},[logs]);
+
+  const tasks=[
+    {text:'Run weekly SEO audit',agent:'SUE',p:'high'},
+    {text:'Review Q1 P&L report',agent:'BOB',p:'med'},
+    {text:'Deploy Axiom cycle 8',agent:'AXIOM',p:'high'},
+    {text:'Schedule social content',agent:'MEGAN',p:'low'},
+  ];
+  const pc={high:'var(--orange)',med:'var(--yellow)',low:'var(--textd)'};
+  return(
+    <div className="rp">
+      <div className="gp" style={{padding:'11px',flex:1,overflow:'hidden',display:'flex',flexDirection:'column'}}>
+        <div className="ph">Live Activity</div>
+        <div ref={logEl} style={{flex:1,overflowY:'auto'}}>
+          {logs.map(l=>(
+            <div key={l.id} className="le">
+              <span className="lts">{l.ts}</span>
+              <span className="lm">[{l.agent}] {l.msg}</span>
+              <span className={`lt ${l.tag}`}>{l.tag.toUpperCase()}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+      <div className="gp" style={{padding:'11px'}}>
+        <div className="ph">Task Queue</div>
+        {tasks.map((t,i)=>(
+          <div key={i} style={{display:'flex',alignItems:'center',gap:'7px',fontSize:'10px',padding:'4px 0',borderBottom:'1px solid rgba(25,159,216,0.06)'}}>
+            <div style={{width:'5px',height:'5px',borderRadius:'1px',background:pc[t.p],flexShrink:0}}/>
+            <span style={{flex:1,color:'var(--text)'}}>{t.text}</span>
+            <span style={{color:'var(--blue)',fontSize:'9px'}}>{t.agent}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ── CENTER / ORB COMMAND ─────────────────────────────────────
+function CenterPanel({onNav}){
+  const [orbSt,setOrbSt]=useState('idle');
+  const [trn,setTrn]=useState('');
+  const [resp,setResp]=useState('');
+  const [inp,setInp]=useState('');
+  const [mic,setMic]=useState(false);
+  const speakFn=useRef(null);
+
+  const handleTranscript=useCallback((text)=>{
+    setTrn(text); setOrbSt('processing');
+    setTimeout(()=>{
+      const r=cmdReply(text); setResp(r);
+      if(speakFn.current)speakFn.current(r);
+    },750);
+  },[]);
+
+  const handleState=useCallback((s)=>{
+    setOrbSt(s);
+    if(s==='idle')setMic(false);
+    if(s==='listening')setMic(true);
+  },[]);
+
+  const voice=useVoice({onTranscript:handleTranscript,onState:handleState});
+  speakFn.current=voice.speak;
+
+  const fireCmd=(text)=>{
+    if(!text.trim())return;
+    setTrn(text); setOrbSt('processing'); setInp('');
+    setTimeout(()=>{const r=cmdReply(text);setResp(r);voice.speak(r);},600);
+  };
+
+  const toggleMic=()=>{
+    if(mic){voice.stop();setMic(false);setOrbSt('idle');}
+    else voice.start();
+  };
+
+  const stLbl={idle:'ACE CORE // IDLE',listening:'LISTENING...',processing:'PROCESSING...',speaking:'RESPONDING'};
+  const stCol={idle:'var(--blue)',listening:'var(--pink)',processing:'var(--purple)',speaking:'var(--yellow)'};
+
+  return(
+    <div className="cp">
+      <div className="oc">
+        <div className="oname">ACE CORE</div>
+        <AceOrb state={orbSt}/>
+        <div className="ost" style={{color:stCol[orbSt]}}>{stLbl[orbSt]}</div>
+        {trn&&<div className="tbox" style={{marginTop:'4px'}}>"{trn}"</div>}
+        {resp&&orbSt!=='idle'&&<div className="rbox" style={{marginTop:'4px'}}>{resp}</div>}
+      </div>
+      <div className="ca" style={{marginTop:'4px'}}>
+        <div className="cir">
+          <input className="ci" placeholder="Enter command... or use voice ↗" value={inp}
+            onChange={e=>setInp(e.target.value)}
+            onKeyDown={e=>e.key==='Enter'&&fireCmd(inp)}/>
+          <button className={`mb-btn${mic?' on':''}`} onClick={toggleMic} title="Voice command">
+            {mic?'⏹':'🎤'}
+          </button>
+        </div>
+        <div className="qa">
+          <button className="qb" onClick={()=>fireCmd('system status')}>Status</button>
+          <button className="qb y" onClick={()=>fireCmd('trading update')}>Trading</button>
+          <button className="qb pk" onClick={()=>onNav('agents')}>Agents</button>
+          <button className="qb" onClick={()=>fireCmd('revenue report')}>Finance</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── MISSION CONTROL ──────────────────────────────────────────
+function MissionView({onNav}){
+  return(
+    <div className="ml ve">
+      <LeftPanel/>
+      <CenterPanel onNav={onNav}/>
+      <RightPanel/>
+    </div>
+  );
+}
+
+// ── AGENT CARD ───────────────────────────────────────────────
+function AgentCard({agent,onClick}){
+  const as={color:agent.color,background:agent.color+'14',borderColor:agent.color+'55'};
+  return(
+    <div className={`ac ${agent.status}`} onClick={()=>onClick(agent)}>
+      <div className={`ai-ind ${agent.status}`}/>
+      <div className="ach">
+        <div className="aa" style={as}>{agent.name.slice(0,2)}</div>
+        <div className="ai">
+          <div className="an">{agent.name}</div>
+          <div className="ar">{agent.role}</div>
+        </div>
+      </div>
+      <div className="att">{agent.task}</div>
+      <div className="acf">
+        <span className={`asp ${agent.status}`}>{agent.status}</span>
+        <span style={{fontSize:'9px',color:'var(--textd)'}}>{agent.model}</span>
+      </div>
+    </div>
+  );
+}
+
+// ── AGENTS VIEW ──────────────────────────────────────────────
+function AgentsView({onSelect}){
+  const [f,setF]=useState('all');
+  const filt=f==='all'?AGENTS:AGENTS.filter(a=>a.status===f);
+  return(
+    <div className="av ve">
+      <div style={{display:'flex',alignItems:'center',gap:'12px'}}>
+        <div style={{fontFamily:'var(--D)',fontSize:'9px',letterSpacing:'4px',color:'var(--blue)',opacity:0.55,textTransform:'uppercase'}}>// Agent Fleet // {AGENTS.length} Units</div>
+        <div style={{flex:1}}/>
+        {['all','active','working','idle'].map(x=>(
+          <button key={x} onClick={()=>setF(x)} style={{
+            padding:'3px 11px',background:f===x?'rgba(25,159,216,0.15)':'transparent',
+            border:`1px solid ${f===x?'var(--blue)':'rgba(25,159,216,0.15)'}`,borderRadius:'2px',
+            color:f===x?'var(--blue)':'var(--textd)',fontFamily:'var(--M)',fontSize:'9px',
+            letterSpacing:'2px',textTransform:'uppercase',cursor:'pointer'}}>
+            {x}
+          </button>
+        ))}
+      </div>
+      <div className="ag">
+        {filt.map(a=><AgentCard key={a.id} agent={a} onClick={onSelect}/>)}
+      </div>
+    </div>
+  );
+}
+
+// ── AGENT PROFILE ────────────────────────────────────────────
+function AgentProfile({agent,onBack}){
+  if(!agent)return null;
+  const as={color:agent.color,background:agent.color+'14',borderColor:agent.color};
+  return(
+    <div className="pv ve">
+      <button className="bkb" onClick={onBack}>← Back to Agents</button>
+      <div className="ph2">
+        <div className="pa" style={as}>{agent.name.slice(0,2)}</div>
+        <div style={{flex:1}}>
+          <div className="pname">{agent.name}</div>
+          <div className="prole">{agent.role}</div>
+          <div style={{display:'flex',gap:'7px',flexWrap:'wrap'}}>
+            <span className={`asp ${agent.status}`}>{agent.status}</span>
+            <span className="bb b">{agent.dept}</span>
+            <span className="bb pu">{agent.model}</span>
+          </div>
+        </div>
+        <div style={{textAlign:'right'}}>
+          <div style={{fontFamily:'var(--D)',fontSize:'32px',color:agent.color,textShadow:`0 0 24px ${agent.color}80`}}>●</div>
+          <div style={{fontSize:'9px',color:'var(--textd)',marginTop:'3px',letterSpacing:'2px',textTransform:'uppercase'}}>Live</div>
+        </div>
+      </div>
+      <div className="pg">
+        <div className="ps">
+          <div className="ph">Current Task</div>
+          <div style={{fontSize:'12px',color:'var(--text)',lineHeight:'1.6',background:'rgba(25,159,216,0.04)',padding:'10px',border:'1px solid rgba(25,159,216,0.1)',borderLeft:`2px solid ${agent.color}`,borderRadius:'2px'}}>
+            {agent.task}
+          </div>
+        </div>
+        <div className="ps">
+          <div className="ph">Performance Metrics</div>
+          {Object.entries(agent.metrics).map(([k,v])=>(
+            <div key={k} className="kv">
+              <span className="kk">{k}</span>
+              <span className="vv" style={{color:agent.color}}>{v}</span>
+            </div>
+          ))}
+        </div>
+        <div className="ps">
+          <div className="ph">Capabilities</div>
+          <div style={{display:'flex',flexWrap:'wrap',gap:'6px'}}>
+            {agent.caps.map(c=><span key={c} className="bb b">{c}</span>)}
+          </div>
+        </div>
+        <div className="ps">
+          <div className="ph">Connected Systems</div>
+          <div style={{display:'flex',flexWrap:'wrap',gap:'6px'}}>
+            {agent.tools.map(t=><span key={t} className="bb pu">{t}</span>)}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ── DEPT VIEW ────────────────────────────────────────────────
+function DeptView({dept,onSelect}){
+  const dMap={trading:['trading'],marketing:['marketing'],finance:['finance'],legal:['legal'],product:['product'],support:['support']};
+  const agents=AGENTS.filter(a=>dMap[dept]&&dMap[dept].includes(a.dept));
+  const dTitle={trading:'Trading Operations',marketing:'Marketing Division',finance:'Finance Department',legal:'Legal & Compliance',product:'Product Team',support:'Support Division',settings:'System Settings'};
+  return(
+    <div className="av ve">
+      <div style={{fontFamily:'var(--D)',fontSize:'9px',letterSpacing:'4px',color:'var(--blue)',opacity:0.55,textTransform:'uppercase'}}>// {dTitle[dept]||dept}</div>
+      {agents.length>0?(
+        <div className="ag">{agents.map(a=><AgentCard key={a.id} agent={a} onClick={onSelect}/>)}</div>
+      ):(
+        <div style={{color:'var(--textd)',fontSize:'12px',textAlign:'center',paddingTop:'40px',fontFamily:'var(--D)',letterSpacing:'3px'}}>
+          MODULE LOADING...
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ── APP ──────────────────────────────────────────────────────
+function App(){
+  const [view,setView]=useState('mission');
+  const [selAgent,setSelAgent]=useState(null);
+
+  const nav=(v)=>{setSelAgent(null);setView(v);};
+  const selectAgent=(a)=>{setSelAgent(a);setView('agent-profile');};
+
+  const renderContent=()=>{
+    if(view==='mission')return<MissionView onNav={nav}/>;
+    const wrap=(child)=>(
+      <div className="ml ve" style={{overflow:'hidden'}}>
+        {child}
+      </div>
+    );
+    if(view==='agent-profile'&&selAgent)return wrap(<AgentProfile agent={selAgent} onBack={()=>nav('agents')}/>);
+    if(view==='agents')return wrap(<AgentsView onSelect={selectAgent}/>);
+    if(['trading','marketing','finance','legal','product','support'].includes(view))
+      return wrap(<DeptView dept={view} onSelect={selectAgent}/>);
+    return wrap(
+      <div style={{flex:1,display:'flex',alignItems:'center',justifyContent:'center',color:'var(--textd)'}}>
+        <div style={{textAlign:'center'}}>
+          <div style={{fontFamily:'var(--D)',fontSize:'16px',letterSpacing:'5px',marginBottom:'10px',color:'var(--blue)'}}>{view.toUpperCase()}</div>
+          <div style={{fontSize:'11px',letterSpacing:'2px'}}>MODULE ONLINE — WIRING IN PROGRESS</div>
+        </div>
+      </div>
+    );
+  };
+
+  return(
+    <>
+      <TopBar onNav={nav}/>
+      {renderContent()}
+      <BottomNav cur={view} onNav={nav}/>
+    </>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>
