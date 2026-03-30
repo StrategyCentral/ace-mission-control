@@ -1774,17 +1774,6 @@ function OfficeView(){
   );
 }
 
-// ── ORIGINAL AGENTS VIEW (fallback, keep for profile) ──────────
-function AgentsView({sub,onSelect}){
-  const df={agents:null,'agt-trading':'trading','agt-marketing':'marketing','agt-ops':['support','legal','finance','product','command'],'agt-data':'data'};
-  const filt=df[sub]||null;
-  const ags=filt===null?AGENTS:Array.isArray(filt)?AGENTS.filter(function(a){return filt.includes(a.dept);}):AGENTS.filter(function(a){return a.dept===filt;});
-  return React.createElement('div',{className:'fv'},
-    React.createElement('div',{className:'vt'},'// Agent Fleet // '+ags.length+' Units'),
-    React.createElement('div',{className:'ag'},ags.map(function(a){return React.createElement(AgentCard,{key:a.id,a:a,onClick:onSelect});}))
-  );
-}
-
 function App(){
   const[view,setView]=useState('mission');
   const[selAgent,setSelAgent]=useState(null);
