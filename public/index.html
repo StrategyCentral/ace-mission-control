@@ -97,6 +97,107 @@ body::after{content:'';position:fixed;inset:0;z-index:0;background:repeating-lin
 .bn{height:54px;flex-shrink:0;background:rgba(3,9,18,.96);border-top:1px solid var(--gb);display:flex;align-items:center;padding:0 10px;gap:2px;overflow-x:auto;}
 .bn::-webkit-scrollbar{height:2px;}
 .bn::-webkit-scrollbar-thumb{background:rgba(25,159,216,.2);}
+/* MAP */
+.map-canvas{position:relative;width:100%;height:100%;overflow:hidden;cursor:grab;background:radial-gradient(ellipse at center,rgba(25,159,216,0.04) 0%,transparent 70%);}
+.map-canvas.grabbing{cursor:grabbing;}
+.map-node{position:absolute;border-radius:4px;cursor:pointer;transition:box-shadow .3s,transform .2s;user-select:none;}
+.map-node.live{box-shadow:0 0 20px rgba(0,230,118,0.6),0 0 40px rgba(0,230,118,0.3);}
+.map-node.building{box-shadow:0 0 20px rgba(255,107,53,0.6),0 0 40px rgba(255,107,53,0.3);}
+.map-node.notstarted{box-shadow:0 0 20px rgba(255,51,85,0.6),0 0 40px rgba(255,51,85,0.3);}
+.map-node:hover{transform:scale(1.02);}
+.map-node-img{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:3px 3px 0 0;display:block;}
+.map-node-img-ph{width:100%;aspect-ratio:16/9;background:rgba(25,159,216,0.08);border:2px dashed rgba(25,159,216,0.25);display:flex;align-items:center;justify-content:center;font-size:22px;border-radius:3px 3px 0 0;color:var(--textd);}
+.map-node-bar{padding:7px 10px;background:rgba(5,15,32,0.95);border-top:1px solid rgba(25,159,216,0.2);}
+.map-node-name{font-family:var(--D);font-size:10px;font-weight:700;letter-spacing:2px;color:var(--textb);margin-bottom:2px;}
+.map-node-status{font-size:8px;letter-spacing:1px;text-transform:uppercase;}
+.map-node-status.live{color:var(--green);}
+.map-node-status.building{color:var(--orange);}
+.map-node-status.notstarted{color:var(--red);}
+.map-modal{position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:1000;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(8px);}
+.map-modal-box{background:rgba(5,15,32,0.98);border:1px solid var(--gb);border-radius:6px;padding:24px;width:420px;max-width:90vw;}
+.map-modal-title{font-family:var(--D);font-size:12px;letter-spacing:3px;color:var(--blue);margin-bottom:18px;text-transform:uppercase;}
+.map-input{width:100%;background:rgba(25,159,216,0.06);border:1px solid var(--gb);border-radius:3px;color:var(--text);font-family:var(--M);font-size:12px;padding:8px 12px;outline:none;margin-bottom:10px;}
+.map-input:focus{border-color:var(--blue);}
+.map-select{width:100%;background:rgba(25,159,216,0.06);border:1px solid var(--gb);border-radius:3px;color:var(--text);font-family:var(--M);font-size:12px;padding:8px 12px;outline:none;margin-bottom:10px;cursor:pointer;}
+.map-btn{padding:8px 18px;border-radius:3px;border:1px solid;font-family:var(--M);font-size:10px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all .2s;}
+.map-btn.primary{background:rgba(25,159,216,0.15);border-color:var(--blue);color:var(--blue);}
+.map-btn.primary:hover{background:rgba(25,159,216,0.3);}
+.map-btn.danger{background:rgba(255,51,85,0.1);border-color:var(--red);color:var(--red);}
+.map-btn.secondary{background:transparent;border-color:var(--gb);color:var(--textd);}
+.map-toolbar{position:absolute;top:14px;left:50%;transform:translateX(-50%);display:flex;gap:8px;z-index:10;background:rgba(3,9,18,0.9);padding:8px 14px;border-radius:30px;border:1px solid var(--gb);backdrop-filter:blur(10px);}
+.map-tb-btn{padding:5px 14px;border-radius:20px;border:1px solid var(--gb);background:transparent;color:var(--textd);font-family:var(--M);font-size:9px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all .2s;}
+.map-tb-btn:hover,.map-tb-btn.active{border-color:var(--blue);color:var(--blue);background:rgba(25,159,216,0.1);}
+/* OFFICE 3D */
+.office-3d-wrap{flex:1;display:flex;flex-direction:column;overflow:hidden;position:relative;}
+.office-canvas{width:100%;flex:1;display:block;}
+.office-hud{position:absolute;top:14px;right:14px;display:flex;flex-direction:column;gap:8px;z-index:5;}
+.office-agent-popup{position:absolute;background:rgba(3,9,18,0.95);border:1px solid var(--gb);border-radius:4px;padding:12px 16px;pointer-events:none;z-index:10;backdrop-filter:blur(10px);min-width:160px;}
+.office-agent-name{font-family:var(--D);font-size:11px;font-weight:700;letter-spacing:2px;color:var(--textb);margin-bottom:3px;}
+.office-agent-role{font-size:9px;color:var(--textd);text-transform:uppercase;letter-spacing:1px;margin-bottom:5px;}
+/* AGENT CARDS v3 - cinematic */
+.ag3{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;}
+.ac3{border-radius:6px;overflow:hidden;cursor:pointer;position:relative;transition:all .3s;border:1px solid rgba(25,159,216,0.15);background:var(--glass);backdrop-filter:blur(14px);}
+.ac3:hover{transform:translateY(-5px);border-color:rgba(25,159,216,0.5);box-shadow:0 20px 60px rgba(0,0,0,0.6),0 0 30px rgba(25,159,216,0.15);}
+.ac3-hero{aspect-ratio:16/9;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;}
+.ac3-hero-img{width:100%;height:100%;object-fit:cover;transition:transform .4s;}
+.ac3:hover .ac3-hero-img{transform:scale(1.06);}
+.ac3-hero-ph{width:100%;height:100%;display:flex;align-items:center;justify-content:center;position:relative;}
+.ac3-hero-ph-bg{position:absolute;inset:0;}
+.ac3-hero-letter{font-family:var(--D);font-size:64px;font-weight:900;z-index:1;position:relative;}
+.ac3-grad{position:absolute;inset:0;background:linear-gradient(to top,rgba(3,9,18,0.95) 0%,rgba(3,9,18,0.4) 50%,transparent 100%);z-index:2;}
+.ac3-overlay{position:absolute;inset:0;z-index:3;display:flex;flex-direction:column;justify-content:flex-end;padding:14px;}
+.ac3-status{position:absolute;top:10px;right:10px;width:8px;height:8px;border-radius:50%;}
+.ac3-status.active{background:var(--green);box-shadow:0 0 8px var(--green);animation:pd 1.5s infinite;}
+.ac3-status.working{background:var(--blue);box-shadow:0 0 8px var(--blue);animation:pd 2s infinite;}
+.ac3-status.idle{background:rgba(200,232,248,0.25);}
+.ac3-badge{display:inline-flex;align-items:center;padding:3px 9px;border-radius:20px;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:5px;backdrop-filter:blur(4px);}
+.ac3-name{font-family:var(--D);font-size:18px;font-weight:900;letter-spacing:4px;color:white;text-shadow:0 2px 20px rgba(0,0,0,0.8);margin-bottom:3px;line-height:1.1;}
+.ac3-desc{font-size:10px;color:rgba(200,232,248,0.65);letter-spacing:0.5px;line-height:1.4;}
+.ac3-bottom{padding:12px 14px;display:flex;align-items:center;justify-content:space-between;border-top:1px solid rgba(25,159,216,0.1);}
+.ac3-meta{font-size:9px;color:var(--textd);letter-spacing:1px;text-transform:uppercase;}
+.launch-btn{padding:7px 16px;border-radius:20px;border:1px solid;font-family:var(--D);font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:5px;}
+.launch-btn:hover{transform:scale(1.05);}
+/* CHAT PANEL */
+.chat-overlay{position:fixed;inset:0;z-index:500;display:flex;align-items:stretch;justify-content:flex-end;}
+.chat-backdrop{position:absolute;inset:0;background:rgba(0,0,0,0.5);backdrop-filter:blur(4px);}
+.chat-panel{position:relative;z-index:1;width:420px;background:rgba(3,9,18,0.98);border-left:1px solid var(--gb);display:flex;flex-direction:column;animation:slideIn .3s ease;}
+@keyframes slideIn{from{transform:translateX(100%)}to{transform:translateX(0)}}
+.chat-header{padding:16px;border-bottom:1px solid var(--gb);display:flex;align-items:center;gap:12px;flex-shrink:0;}
+.chat-av{width:44px;height:44px;border-radius:3px;display:flex;align-items:center;justify-content:center;font-family:var(--D);font-size:14px;font-weight:700;border:2px solid;flex-shrink:0;}
+.chat-name{font-family:var(--D);font-size:13px;font-weight:700;letter-spacing:3px;color:var(--textb);}
+.chat-role{font-size:10px;color:var(--textd);text-transform:uppercase;letter-spacing:1px;margin-top:1px;}
+.chat-close{margin-left:auto;background:transparent;border:1px solid var(--gb);color:var(--textd);width:28px;height:28px;border-radius:2px;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;}
+.chat-msgs{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px;}
+.chat-msg{display:flex;flex-direction:column;gap:3px;max-width:80%;}
+.chat-msg.agent{align-self:flex-start;}
+.chat-msg.user{align-self:flex-end;align-items:flex-end;}
+.chat-bubble{padding:10px 13px;border-radius:3px;font-size:12px;line-height:1.55;}
+.chat-msg.agent .chat-bubble{background:rgba(25,159,216,0.1);border:1px solid rgba(25,159,216,0.2);color:var(--text);border-radius:3px 14px 14px 14px;}
+.chat-msg.user .chat-bubble{background:rgba(25,159,216,0.2);border:1px solid rgba(25,159,216,0.35);color:var(--textb);border-radius:14px 3px 14px 14px;}
+.chat-ts{font-size:8px;color:var(--textd);letter-spacing:1px;}
+.chat-typing{display:flex;gap:4px;align-items:center;padding:10px 13px;}
+.chat-dot{width:5px;height:5px;border-radius:50%;background:var(--blue);animation:bounce .9s infinite;}
+.chat-dot:nth-child(2){animation-delay:.2s;}
+.chat-dot:nth-child(3){animation-delay:.4s;}
+@keyframes bounce{0%,60%,100%{transform:translateY(0)}30%{transform:translateY(-6px)}}
+.chat-input-row{padding:12px;border-top:1px solid var(--gb);display:flex;gap:8px;flex-shrink:0;}
+.chat-input{flex:1;background:rgba(25,159,216,0.06);border:1px solid var(--gb);border-radius:3px;color:var(--text);font-family:var(--M);font-size:12px;padding:9px 12px;outline:none;}
+.chat-input:focus{border-color:var(--blue);}
+.chat-send{padding:9px 16px;background:rgba(25,159,216,0.15);border:1px solid var(--blue);border-radius:3px;color:var(--blue);font-family:var(--M);font-size:10px;letter-spacing:2px;cursor:pointer;transition:all .2s;}
+.chat-send:hover{background:rgba(25,159,216,0.3);}
+/* AGENT PROFILE v3 */
+.ap3-hero{aspect-ratio:21/9;position:relative;overflow:hidden;border-radius:4px;margin-bottom:14px;display:flex;align-items:center;justify-content:center;}
+.ap3-hero-bg{position:absolute;inset:0;}
+.ap3-hero-letter{font-family:var(--D);font-size:100px;font-weight:900;z-index:1;position:relative;opacity:0.15;}
+.ap3-hero-grad{position:absolute;inset:0;z-index:2;}
+.ap3-hero-content{position:absolute;bottom:0;left:0;right:0;padding:24px;z-index:3;}
+.ap3-hero-name{font-family:var(--D);font-size:36px;font-weight:900;letter-spacing:8px;color:white;text-shadow:0 2px 30px rgba(0,0,0,0.9);margin-bottom:4px;}
+.ap3-hero-role{font-size:12px;color:rgba(200,232,248,0.7);text-transform:uppercase;letter-spacing:3px;}
+.ap3-actions{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;}
+.ap3-btn{padding:9px 20px;border-radius:3px;border:1px solid;font-family:var(--D);font-size:9px;letter-spacing:2px;text-transform:uppercase;cursor:pointer;transition:all .2s;}
+.ap3-btn:hover{transform:translateY(-1px);}
+.ap3-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px;}
+
 .nb{display:flex;flex-direction:column;align-items:center;gap:2px;padding:5px 10px;background:transparent;border:1px solid transparent;border-radius:3px;cursor:pointer;transition:all .2s;color:var(--textd);font-family:var(--M);font-size:8px;letter-spacing:1.5px;text-transform:uppercase;flex-shrink:0;white-space:nowrap;}
 .nb:hover{border-color:var(--gb);color:var(--blue);}
 .nb.act{border-color:var(--blue);color:var(--blue);background:rgba(25,159,216,.09);box-shadow:0 0 14px rgba(25,159,216,.18);}
@@ -262,6 +363,7 @@ body::after{content:'';position:fixed;inset:0;z-index:0;background:repeating-lin
 </head>
 <body>
 <div id="root"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
 <script src="https://unpkg.com/@babel/standalone@7.23.9/babel.min.js"></script>
@@ -465,7 +567,7 @@ const MAINNAV=[
   {id:'tasks',label:'Tasks',icon:'☑'},{id:'marketing',label:'Marketing',icon:'◎'},
   {id:'team',label:'Team',icon:'◑'},{id:'social',label:'Social',icon:'◇'},
   {id:'support',label:'Support',icon:'◉'},{id:'monitor',label:'Monitor',icon:'▣'},
-  {id:'journal',label:'Journal',icon:'≡'},{id:'tradr',label:'TRADR',icon:'★'},
+  {id:'journal',label:'Journal',icon:'≡'},{id:'tradr',label:'TRADR',icon:'★'},{id:'map',label:'MAP',icon:'⬡'},{id:'office',label:'OFFICE',icon:'⬛'},
 ];
 const AGTNAV=[
   {id:'agents',label:'All',icon:'◉'},{id:'agt-trading',label:'Trading',icon:'◆'},
@@ -1181,16 +1283,521 @@ function Placeholder({title}){
   );
 }
 
+
+// ── AGENT CHAT PANEL ────────────────────────────────────────
+function ChatPanel({agent, onClose}){
+  const[msgs,setMsgs]=React.useState([
+    {role:'agent',text:'Hello! I am '+agent.name+'. How can I assist you today?',ts:ts()},
+  ]);
+  const[inp,setInp]=React.useState('');
+  const[typing,setTyping]=React.useState(false);
+  const msgRef=React.useRef(null);
+  React.useEffect(function(){if(msgRef.current)msgRef.current.scrollTop=msgRef.current.scrollHeight;},[msgs,typing]);
+  function send(){
+    if(!inp.trim())return;
+    const user=inp.trim();setInp('');
+    setMsgs(function(m){return m.concat([{role:'user',text:user,ts:ts()}]);});
+    setTyping(true);
+    setTimeout(function(){
+      setTyping(false);
+      const reply=agent.name==='CHAD'?'Understood. I will coordinate with the team on that immediately.':
+        agent.dept==='trading'?'Analysing market data now. I will flag any opportunities.':
+        agent.dept==='marketing'?'On it. I will draft something and add it to the content pipeline.':
+        agent.dept==='support'?'Got it. I will handle this ticket and route a FAQ to Connie.':
+        'Received. Processing your request now.';
+      setMsgs(function(m){return m.concat([{role:'agent',text:reply,ts:ts()}]);});
+    },1200+Math.random()*600);
+  }
+  const col={color:agent.color,background:agent.color+'14',borderColor:agent.color};
+  return React.createElement('div',{className:'chat-overlay'},
+    React.createElement('div',{className:'chat-backdrop',onClick:onClose}),
+    React.createElement('div',{className:'chat-panel'},
+      React.createElement('div',{className:'chat-header'},
+        React.createElement('div',{className:'chat-av',style:col},agent.name.slice(0,2)),
+        React.createElement('div',null,
+          React.createElement('div',{className:'chat-name'},agent.name),
+          React.createElement('div',{className:'chat-role'},agent.role)
+        ),
+        React.createElement('button',{className:'chat-close',onClick:onClose},'✕')
+      ),
+      React.createElement('div',{ref:msgRef,className:'chat-msgs'},
+        msgs.map(function(m,i){
+          return React.createElement('div',{key:i,className:'chat-msg '+m.role},
+            React.createElement('div',{className:'chat-bubble'},m.text),
+            React.createElement('div',{className:'chat-ts'},m.ts)
+          );
+        }),
+        typing&&React.createElement('div',{className:'chat-msg agent'},
+          React.createElement('div',{className:'chat-bubble'},
+            React.createElement('div',{className:'chat-typing'},
+              React.createElement('div',{className:'chat-dot'}),
+              React.createElement('div',{className:'chat-dot'}),
+              React.createElement('div',{className:'chat-dot'})
+            )
+          )
+        )
+      ),
+      React.createElement('div',{className:'chat-input-row'},
+        React.createElement('input',{className:'chat-input',placeholder:'Message '+agent.name+'...',value:inp,onChange:function(e){setInp(e.target.value);},onKeyDown:function(e){if(e.key==='Enter')send();}}),
+        React.createElement('button',{className:'chat-send',onClick:send},'Send')
+      )
+    )
+  );
+}
+
+// ── CINEMATIC AGENT CARD ─────────────────────────────────────
+const AGENT_DESCS={
+  chad:'Central AI commander. Orchestrates all 14 agents with strategic precision.',
+  bob:'Financial intelligence. Real-time P&L tracking and revenue optimisation.',
+  connie:'Content engine. SEO-optimised writing at scale with brand consistency.',
+  dave:'Data analyst. Pipeline architect turning raw data into actionable insight.',
+  frankie:'Forex operative. Technical analysis and macro correlation specialist.',
+  larry:'Legal guardian. Contract review, compliance, and risk mitigation.',
+  megan:'Media strategist. Multi-platform content scheduling and audience growth.',
+  pete:'Product director. Sprint management, roadmaps, and conversion optimisation.',
+  poly:'Prediction market hunter. Oracle lag exploitation and position sizing.',
+  sammy:'Support specialist. Rapid ticket resolution with FAQ pipeline output.',
+  sue:'SEO authority. Technical audits, backlink strategy, and keyword dominance.',
+  sally:'Social commander. Paid social, A/B testing, and engagement growth.',
+  toni:'Futures trader. NinjaTrader automation and momentum strategy execution.',
+  axiom:'Strategy AI. 10-factor ML model with self-optimising weight convergence.',
+  pablo:'PPC architect. Google and Meta campaign optimisation and ROAS maximisation.',
+};
+function AgentCard3({a,onChat,onClick}){
+  const desc=AGENT_DESCS[a.id]||a.task;
+  const deptCol={trading:'#FCC82E',marketing:'#FF2D9B',command:'#199FD8',finance:'#1ABC9C',data:'#199FD8',legal:'#9B59B6',product:'#1ABC9C',support:'#1ABC9C'};
+  const dc=deptCol[a.dept]||a.color;
+  return React.createElement('div',{className:'ac3',onClick:function(){onClick(a);}},
+    React.createElement('div',{className:'ac3-hero'},
+      React.createElement('div',{className:'ac3-hero-ph'},
+        React.createElement('div',{className:'ac3-hero-ph-bg',style:{background:'radial-gradient(135deg at 30% 70%,'+a.color+'33 0%,rgba(3,9,18,.95) 65%)'}}),
+        React.createElement('div',{className:'ac3-hero-letter',style:{color:a.color,textShadow:'0 0 60px '+a.color+'88'}},a.name.slice(0,1))
+      ),
+      React.createElement('div',{className:'ac3-grad'}),
+      React.createElement('div',{className:'ac3-overlay'},
+        React.createElement('div',{className:'ac3-status '+a.status}),
+        React.createElement('div',{className:'ac3-badge',style:{background:dc+'22',border:'1px solid '+dc+'55',color:dc}},a.dept),
+        React.createElement('div',{className:'ac3-name'},a.name),
+        React.createElement('div',{className:'ac3-desc'},desc)
+      )
+    ),
+    React.createElement('div',{className:'ac3-bottom'},
+      React.createElement('div',{className:'ac3-meta'},a.model),
+      React.createElement('button',{
+        className:'launch-btn',
+        style:{borderColor:a.color+'88',color:a.color,background:a.color+'12'},
+        onClick:function(e){e.stopPropagation();onChat(a);}
+      },'⚡ Launch Chat')
+    )
+  );
+}
+
+// ── UPGRADED AGENT PROFILE ────────────────────────────────────
+function AgentProfile3({agent,onBack,onChat}){
+  if(!agent)return null;
+  const desc=AGENT_DESCS[agent.id]||agent.task;
+  return React.createElement('div',{className:'pv'},
+    React.createElement('button',{className:'bkb',onClick:onBack},'← Back'),
+    React.createElement('div',{className:'ap3-hero'},
+      React.createElement('div',{className:'ap3-hero-bg',style:{background:'radial-gradient(135deg at 20% 80%,'+agent.color+'44 0%,rgba(3,9,18,0.98) 60%)'}}),
+      React.createElement('div',{className:'ap3-hero-letter'},agent.name.slice(0,1)),
+      React.createElement('div',{className:'ap3-hero-grad',style:{background:'linear-gradient(to top,rgba(3,9,18,0.95) 0%,rgba(3,9,18,0.3) 60%,transparent 100%)'}}),
+      React.createElement('div',{className:'ap3-hero-content'},
+        React.createElement('div',{className:'ap3-hero-name',style:{color:agent.color}},agent.name),
+        React.createElement('div',{className:'ap3-hero-role'},agent.role),
+        React.createElement('div',{style:{display:'flex',gap:'8px',marginTop:'8px',flexWrap:'wrap'}},
+          React.createElement('span',{className:'asp '+agent.status},agent.status),
+          React.createElement('span',{className:'bb b'},agent.dept),
+          React.createElement('span',{className:'bb pu'},agent.model)
+        )
+      )
+    ),
+    React.createElement('div',{className:'ap3-actions'},
+      React.createElement('button',{className:'ap3-btn',style:{borderColor:agent.color,color:agent.color,background:agent.color+'14'},onClick:function(){onChat(agent);}},'⚡ Launch Chat'),
+      React.createElement('button',{className:'ap3-btn',style:{borderColor:'rgba(25,159,216,0.3)',color:'var(--blue)',background:'rgba(25,159,216,0.08)'}},'🧠 View Memory'),
+      React.createElement('button',{className:'ap3-btn',style:{borderColor:'rgba(252,200,46,0.3)',color:'var(--yellow)',background:'rgba(252,200,46,0.08)'}},'📋 View Tasks'),
+      React.createElement('button',{className:'ap3-btn',style:{borderColor:'rgba(0,230,118,0.3)',color:'var(--green)',background:'rgba(0,230,118,0.08)'}},'+ Assign Task')
+    ),
+    React.createElement('div',{className:'ap3-grid'},
+      React.createElement('div',{className:'ps'},
+        React.createElement('div',{className:'ph'},'Overview'),
+        React.createElement('div',{style:{fontSize:'12px',color:'var(--text)',lineHeight:'1.8'}},desc,React.createElement('br'),React.createElement('br'),agent.task)
+      ),
+      React.createElement('div',{className:'ps'},
+        React.createElement('div',{className:'ph'},'Performance Metrics'),
+        Object.entries(agent.metrics).map(function(e){return React.createElement('div',{key:e[0],className:'kv'},React.createElement('span',{className:'kk'},e[0]),React.createElement('span',{className:'vv',style:{color:agent.color}},e[1]));})
+      ),
+      React.createElement('div',{className:'ps'},
+        React.createElement('div',{className:'ph'},'Capabilities'),
+        React.createElement('div',{style:{display:'flex',flexWrap:'wrap'}},agent.caps.map(function(c){return React.createElement('span',{key:c,className:'bb b'},c);}))
+      ),
+      React.createElement('div',{className:'ps'},
+        React.createElement('div',{className:'ph'},'Connected Systems'),
+        React.createElement('div',{style:{display:'flex',flexWrap:'wrap'}},agent.tools.map(function(t){return React.createElement('span',{key:t,className:'bb pu'},t);}))
+      ),
+      React.createElement('div',{className:'ps',style:{gridColumn:'1/-1'}},
+        React.createElement('div',{className:'ph'},'Recent Activity Log'),
+        LOGS.filter(function(l){return l.agent===agent.name;}).concat(LOGS.slice(0,4)).slice(0,6).map(function(l,i){
+          return React.createElement('div',{key:i,className:'le'},
+            React.createElement('span',{className:'lts'},ts()),
+            React.createElement('span',{className:'lm'},'['+l.agent+'] '+l.msg),
+            React.createElement('span',{className:'lt '+l.tag},l.tag.toUpperCase())
+          );
+        })
+      )
+    )
+  );
+}
+
+// ── AGENTS VIEW v3 ────────────────────────────────────────────
+function AgentsView3({sub,onSelect,onChat}){
+  const[search,setSearch]=React.useState('');
+  const[filter,setFilter]=React.useState('all');
+  const df={agents:null,'agt-trading':'trading','agt-marketing':'marketing','agt-ops':['support','legal','finance','product','command'],'agt-data':'data'};
+  const filt=df[sub]||null;
+  let ags=filt===null?AGENTS:Array.isArray(filt)?AGENTS.filter(function(a){return filt.includes(a.dept);}):AGENTS.filter(function(a){return a.dept===filt;});
+  if(search)ags=ags.filter(function(a){return a.name.toLowerCase().includes(search.toLowerCase())||a.role.toLowerCase().includes(search.toLowerCase());});
+  if(filter!=='all')ags=ags.filter(function(a){return a.status===filter;});
+  return React.createElement('div',{className:'fv'},
+    React.createElement('div',{style:{display:'flex',alignItems:'center',gap:'12px',paddingBottom:'12px',borderBottom:'1px solid var(--gb)'}},
+      React.createElement('div',{className:'vt',style:{paddingBottom:0,borderBottom:'none',flex:1}},'// ACE Agent Fleet // '+ags.length+' Operatives'),
+      React.createElement('input',{style:{background:'rgba(25,159,216,0.06)',border:'1px solid var(--gb)',borderRadius:'3px',color:'var(--text)',fontFamily:'var(--M)',fontSize:'11px',padding:'6px 12px',outline:'none',width:'160px'},placeholder:'Search agents...',value:search,onChange:function(e){setSearch(e.target.value);}}),
+      ['all','active','working','idle'].map(function(s){
+        return React.createElement('button',{key:s,onClick:function(){setFilter(s);},style:{padding:'5px 12px',background:filter===s?'rgba(25,159,216,0.15)':'transparent',border:'1px solid '+(filter===s?'var(--blue)':'rgba(25,159,216,0.15)'),borderRadius:'2px',color:filter===s?'var(--blue)':'var(--textd)',fontFamily:'var(--M)',fontSize:'9px',letterSpacing:'2px',textTransform:'uppercase',cursor:'pointer'}},s);
+      })
+    ),
+    React.createElement('div',{className:'ag3'},
+      ags.map(function(a){return React.createElement(AgentCard3,{key:a.id,a:a,onChat:onChat,onClick:onSelect});})
+    )
+  );
+}
+
+// ── MAP TAB ───────────────────────────────────────────────────
+function MapView(){
+  const[nodes,setNodes]=React.useState([
+    {id:1,name:'ACE Mission Control',url:'https://ace-mission-control-production.up.railway.app',status:'live',img:'',x:400,y:200,w:240},
+    {id:2,name:'Trading Platform',url:'',status:'building',img:'',x:100,y:380,w:220},
+    {id:3,name:'TRADR Shop',url:'',status:'notstarted',img:'',x:680,y:380,w:220},
+  ]);
+  const[connections,setConnections]=React.useState([[1,2],[1,3]]);
+  const[editing,setEditing]=React.useState(null);
+  const[editForm,setEditForm]=React.useState({});
+  const[dragging,setDragging]=React.useState(null);
+  const[connecting,setConnecting]=React.useState(null);
+  const[tool,setTool]=React.useState('select');
+  const[pan,setPan]=React.useState({x:0,y:0});
+  const[panStart,setPanStart]=React.useState(null);
+  const svgRef=React.useRef(null);
+  const canvasRef=React.useRef(null);
+  const dragOff=React.useRef({x:0,y:0});
+  const nextId=React.useRef(4);
+  const fileRef=React.useRef(null);
+  const editingImgNode=React.useRef(null);
+
+  function addNode(){
+    const id=nextId.current++;
+    setNodes(function(n){return n.concat([{id:id,name:'New Platform',url:'',status:'notstarted',img:'',x:100+Math.random()*300,y:100+Math.random()*300,w:220}]);});
+  }
+
+  function startDrag(e,node){
+    if(tool==='connect'){setConnecting(node.id);return;}
+    e.stopPropagation();
+    dragOff.current={x:e.clientX-node.x,y:e.clientY-node.y};
+    setDragging(node.id);
+  }
+  function onMouseMove(e){
+    if(dragging!==null){
+      setNodes(function(ns){return ns.map(function(n){return n.id===dragging?Object.assign({},n,{x:e.clientX-dragOff.current.x,y:e.clientY-dragOff.current.y}):n;});});
+    }
+  }
+  function onMouseUp(e){
+    if(tool==='connect'&&connecting!==null){
+      const target=nodes.find(function(n){const r=n.x,t=n.y;return e.clientX>=r&&e.clientX<=r+n.w&&e.clientY>=t&&e.clientY<=t+n.w*9/16+36&&n.id!==connecting;});
+      if(target)setConnections(function(c){const k=c.find(function(x){return(x[0]===connecting&&x[1]===target.id)||(x[0]===target.id&&x[1]===connecting);});return k?c:c.concat([[connecting,target.id]]);});
+      setConnecting(null);
+    }
+    setDragging(null);
+  }
+
+  function openEdit(e,node){
+    e.stopPropagation();
+    setEditing(node.id);
+    setEditForm({name:node.name,url:node.url,status:node.status,img:node.img,w:node.w});
+  }
+  function saveEdit(){
+    setNodes(function(ns){return ns.map(function(n){return n.id===editing?Object.assign({},n,editForm):n;});});
+    setEditing(null);
+  }
+  function deleteNode(){
+    setNodes(function(ns){return ns.filter(function(n){return n.id!==editing;});});
+    setConnections(function(cs){return cs.filter(function(c){return c[0]!==editing&&c[1]!==editing;});});
+    setEditing(null);
+  }
+  function handleImgUpload(e){
+    const file=e.target.files[0];if(!file)return;
+    const reader=new FileReader();
+    reader.onload=function(ev){setEditForm(function(f){return Object.assign({},f,{img:ev.target.result});});};
+    reader.readAsDataURL(file);
+  }
+  function handleNodeClick(node){
+    if(tool==='select'&&node.url){window.open(node.url,'_blank');}
+  }
+  const glowMap={live:'rgba(0,230,118,0.7)',building:'rgba(255,107,53,0.7)',notstarted:'rgba(255,51,85,0.7)'};
+  const glowMapBorder={live:'rgba(0,230,118,0.4)',building:'rgba(255,107,53,0.4)',notstarted:'rgba(255,51,85,0.4)'};
+  return React.createElement('div',{className:'fv',style:{padding:0,position:'relative',overflow:'hidden'}},
+    editing!==null&&React.createElement('div',{className:'map-modal'},
+      React.createElement('div',{className:'map-modal-box'},
+        React.createElement('div',{className:'map-modal-title'},'Edit Platform Node'),
+        React.createElement('input',{className:'map-input',placeholder:'Platform name',value:editForm.name,onChange:function(e){setEditForm(function(f){return Object.assign({},f,{name:e.target.value});});}}),
+        React.createElement('input',{className:'map-input',placeholder:'URL (https://...)',value:editForm.url,onChange:function(e){setEditForm(function(f){return Object.assign({},f,{url:e.target.value});});}}),
+        React.createElement('select',{className:'map-select',value:editForm.status,onChange:function(e){setEditForm(function(f){return Object.assign({},f,{status:e.target.value});});}},
+          React.createElement('option',{value:'live'},'🟢 LIVE'),
+          React.createElement('option',{value:'building'},'🟠 BUILDING'),
+          React.createElement('option',{value:'notstarted'},'🔴 NOT STARTED')
+        ),
+        React.createElement('div',{style:{marginBottom:'10px'}},
+          React.createElement('div',{style:{fontSize:'9px',color:'var(--textd)',letterSpacing:'2px',marginBottom:'6px',textTransform:'uppercase'}},'16:9 Screenshot'),
+          React.createElement('input',{type:'file',accept:'image/*',onChange:handleImgUpload,style:{display:'none'},ref:fileRef}),
+          React.createElement('button',{className:'map-btn secondary',onClick:function(){fileRef.current&&fileRef.current.click();},style:{width:'100%',marginBottom:'6px'}},'Upload Screenshot / Image'),
+          editForm.img&&React.createElement('img',{src:editForm.img,style:{width:'100%',aspectRatio:'16/9',objectFit:'cover',borderRadius:'3px'}})
+        ),
+        React.createElement('div',{style:{display:'flex',gap:'8px',justifyContent:'space-between'}},
+          React.createElement('button',{className:'map-btn danger',onClick:deleteNode},'Delete'),
+          React.createElement('div',{style:{display:'flex',gap:'8px'}},
+            React.createElement('button',{className:'map-btn secondary',onClick:function(){setEditing(null);}},'Cancel'),
+            React.createElement('button',{className:'map-btn primary',onClick:saveEdit},'Save')
+          )
+        )
+      )
+    ),
+    React.createElement('div',{className:'map-toolbar'},
+      React.createElement('button',{className:'map-tb-btn'+(tool==='select'?' active':''),onClick:function(){setTool('select');}},'Select'),
+      React.createElement('button',{className:'map-tb-btn'+(tool==='connect'?' active':''),onClick:function(){setTool('connect');}},'Connect'),
+      React.createElement('button',{className:'map-tb-btn',onClick:addNode},'+ Add Node'),
+      React.createElement('span',{style:{fontSize:'8px',color:'var(--textd)',letterSpacing:'1px',alignSelf:'center',padding:'0 4px'}},'Click node = open URL · Edit (✎) = settings · Connect mode = draw links')
+    ),
+    React.createElement('div',{
+      ref:canvasRef,
+      className:'map-canvas'+(dragging?' grabbing':''),
+      style:{flex:1,position:'relative'},
+      onMouseMove:onMouseMove,
+      onMouseUp:onMouseUp,
+    },
+      React.createElement('svg',{style:{position:'absolute',inset:0,width:'100%',height:'100%',pointerEvents:'none',zIndex:1}},
+        connections.map(function(c,i){
+          const a=nodes.find(function(n){return n.id===c[0];});
+          const b=nodes.find(function(n){return n.id===c[1];});
+          if(!a||!b)return null;
+          const ax=a.x+a.w/2,ay=a.y+a.w*9/16/2;
+          const bx=b.x+b.w/2,by=b.y+b.w*9/16/2;
+          const mx=(ax+bx)/2,my=(ay+by)/2;
+          return React.createElement('g',{key:i},
+            React.createElement('line',{x1:ax,y1:ay,x2:bx,y2:by,stroke:'rgba(25,159,216,0.4)',strokeWidth:1.5,strokeDasharray:'6 3'}),
+            React.createElement('circle',{cx:mx,cy:my,r:3,fill:'var(--blue)',opacity:0.6}),
+            React.createElement('line',{x1:ax,y1:ay,x2:bx,y2:by,stroke:'rgba(25,159,216,0.1)',strokeWidth:6,style:{cursor:'pointer'},pointerEvents:'all',onClick:function(){setConnections(function(cs){return cs.filter(function(_,j){return j!==i;});});},opacity:0})
+          );
+        })
+      ),
+      nodes.map(function(node){
+        const h=Math.round(node.w*9/16);
+        const bCol=glowMapBorder[node.status]||'rgba(25,159,216,0.3)';
+        const shadowCol=glowMap[node.status]||'rgba(25,159,216,0.5)';
+        return React.createElement('div',{
+          key:node.id,
+          className:'map-node '+node.status,
+          style:{left:node.x,top:node.y,width:node.w,position:'absolute',zIndex:dragging===node.id?10:2,border:'1px solid '+bCol,boxShadow:'0 0 18px '+shadowCol+'44,0 0 40px '+shadowCol+'22'},
+          onMouseDown:function(e){startDrag(e,node);},
+          onClick:function(){handleNodeClick(node);}
+        },
+          node.img
+            ?React.createElement('img',{className:'map-node-img',src:node.img,alt:node.name,draggable:false})
+            :React.createElement('div',{className:'map-node-img-ph',style:{height:h}},'📷'),
+          React.createElement('div',{className:'map-node-bar'},
+            React.createElement('div',{style:{display:'flex',alignItems:'center',justifyContent:'space-between'}},
+              React.createElement('div',{className:'map-node-name'},node.name),
+              React.createElement('button',{onClick:function(e){openEdit(e,node);},style:{background:'transparent',border:'none',color:'var(--blue)',cursor:'pointer',fontSize:'12px',padding:'0 2px'}},'✎')
+            ),
+            React.createElement('div',{className:'map-node-status '+node.status},
+              node.status==='live'?'● LIVE':node.status==='building'?'● BUILDING':'● NOT STARTED'
+            )
+          )
+        );
+      })
+    )
+  );
+}
+
+// ── OFFICE 3D ─────────────────────────────────────────────────
+function OfficeView(){
+  const mountRef=React.useRef(null);
+  const[hovered,setHovered]=React.useState(null);
+  const[hovPos,setHovPos]=React.useState({x:0,y:0});
+  React.useEffect(function(){
+    if(!mountRef.current)return;
+    const THREE=window.THREE;if(!THREE)return;
+    const W=mountRef.current.clientWidth,H=mountRef.current.clientHeight;
+    const renderer=new THREE.WebGLRenderer({antialias:true,alpha:true});
+    renderer.setSize(W,H);renderer.shadowMap.enabled=true;
+    renderer.setPixelRatio(window.devicePixelRatio);
+    mountRef.current.appendChild(renderer.domElement);
+    const scene=new THREE.Scene();
+    scene.fog=new THREE.Fog(0x030912,30,80);
+    const camera=new THREE.PerspectiveCamera(55,W/H,0.1,200);
+    camera.position.set(0,14,22);camera.lookAt(0,0,0);
+
+    // Floor
+    const floorGeo=new THREE.PlaneGeometry(40,40);
+    const floorMat=new THREE.MeshStandardMaterial({color:0x040f22,roughness:0.9,metalness:0.1});
+    const floor=new THREE.Mesh(floorGeo,floorMat);floor.rotation.x=-Math.PI/2;floor.receiveShadow=true;scene.add(floor);
+
+    // Grid overlay
+    const gridHelper=new THREE.GridHelper(40,40,0x0a2040,0x0a2040);gridHelper.position.y=0.01;scene.add(gridHelper);
+
+    // Ambient + directional light
+    scene.add(new THREE.AmbientLight(0x112244,1.2));
+    const dirLight=new THREE.DirectionalLight(0x4488ff,1.8);
+    dirLight.position.set(10,20,10);dirLight.castShadow=true;scene.add(dirLight);
+
+    // Accent lights
+    const pinkLight=new THREE.PointLight(0xff2d9b,2,20);pinkLight.position.set(-8,5,-5);scene.add(pinkLight);
+    const blueLight=new THREE.PointLight(0x199fd8,2,25);blueLight.position.set(8,5,5);scene.add(blueLight);
+
+    // Desk function
+    function makeDesk(x,z,agentColor){
+      const col=new THREE.Color(agentColor);
+      const g=new THREE.Group();g.position.set(x,0,z);
+      // Desk surface
+      const deskG=new THREE.BoxGeometry(2.8,0.12,1.6);
+      const deskM=new THREE.MeshStandardMaterial({color:0x0a1a30,roughness:0.4,metalness:0.3});
+      const desk=new THREE.Mesh(deskG,deskM);desk.position.y=0.76;desk.receiveShadow=true;desk.castShadow=true;g.add(desk);
+      // Legs
+      [[1.2,0.6],[1.2,-0.6],[-1.2,0.6],[-1.2,-0.6]].forEach(function(pos){
+        const legG=new THREE.BoxGeometry(0.1,0.76,0.1);
+        const legM=new THREE.MeshStandardMaterial({color:0x0d2240,roughness:0.5,metalness:0.4});
+        const leg=new THREE.Mesh(legG,legM);leg.position.set(pos[0],0.38,pos[1]);g.add(leg);
+      });
+      // Monitor
+      const monG=new THREE.BoxGeometry(1.8,1.05,0.08);
+      const monM=new THREE.MeshStandardMaterial({color:col,emissive:col,emissiveIntensity:0.4,roughness:0.2,metalness:0.8});
+      const mon=new THREE.Mesh(monG,monM);mon.position.set(0,1.5,-0.5);g.add(mon);
+      // Screen glow (screen panel)
+      const screenG=new THREE.PlaneGeometry(1.6,0.9);
+      const screenM=new THREE.MeshBasicMaterial({color:col,transparent:true,opacity:0.15});
+      const screen=new THREE.Mesh(screenG,screenM);screen.position.set(0,1.5,-0.455);g.add(screen);
+      // Monitor stand
+      const standG=new THREE.BoxGeometry(0.1,0.35,0.1);
+      const standM=new THREE.MeshStandardMaterial({color:0x0d2240,roughness:0.5});
+      const stand=new THREE.Mesh(standG,standM);stand.position.set(0,1.0,-0.5);g.add(stand);
+      // Chair
+      const chairG=new THREE.BoxGeometry(1.0,0.12,1.0);
+      const chairM=new THREE.MeshStandardMaterial({color:0x0c1e38,roughness:0.6});
+      const chair=new THREE.Mesh(chairG,chairM);chair.position.set(0,0.44,0.9);g.add(chair);
+      const backG=new THREE.BoxGeometry(1.0,0.9,0.08);
+      const back=new THREE.Mesh(backG,chairM);back.position.set(0,0.9,1.34);g.add(back);
+      // Point light for desk glow
+      const deskLight=new THREE.PointLight(col,1.5,4);deskLight.position.set(0,2,-0.5);g.add(deskLight);
+      return g;
+    }
+
+    // Agent desk layout
+    const agentDesks=AGENTS.slice(0,12).map(function(a,i){
+      const row=Math.floor(i/4),col=i%4;
+      const x=(col-1.5)*7,z=(row-1)*7;
+      const desk=makeDesk(x,z,a.color);
+      desk.userData={agent:a};
+      scene.add(desk);
+      return desk;
+    });
+
+    // Walls (back)
+    const wallM=new THREE.MeshStandardMaterial({color:0x060f22,roughness:0.9});
+    const backWall=new THREE.Mesh(new THREE.BoxGeometry(40,12,0.3),wallM);backWall.position.set(0,6,-20);scene.add(backWall);
+    const leftWall=new THREE.Mesh(new THREE.BoxGeometry(0.3,12,40),wallM);leftWall.position.set(-20,6,0);scene.add(leftWall);
+    const rightWall=new THREE.Mesh(new THREE.BoxGeometry(0.3,12,40),wallM);rightWall.position.set(20,6,0);scene.add(rightWall);
+
+    // Raycaster for hover
+    const raycaster=new THREE.Raycaster();const mouse=new THREE.Vector2();
+    const allDeskMeshes=[];
+    agentDesks.forEach(function(d){d.traverse(function(c){if(c.isMesh)allDeskMeshes.push(c);});});
+
+    function onMouseMove(e){
+      const rect=renderer.domElement.getBoundingClientRect();
+      mouse.x=((e.clientX-rect.left)/rect.width)*2-1;
+      mouse.y=-((e.clientY-rect.top)/rect.height)*2+1;
+      raycaster.setFromCamera(mouse,camera);
+      const hits=raycaster.intersectObjects(allDeskMeshes);
+      if(hits.length>0){
+        let obj=hits[0].object;
+        while(obj.parent&&!obj.userData.agent)obj=obj.parent;
+        if(obj.userData.agent){
+          setHovered(obj.userData.agent);
+          setHovPos({x:e.clientX,y:e.clientY});
+        }
+      }else{setHovered(null);}
+    }
+    renderer.domElement.addEventListener('mousemove',onMouseMove);
+
+    // Camera orbit
+    let angle=0;
+    function animate(){
+      requestAnimationFrame(animate);
+      angle+=0.002;
+      camera.position.x=Math.sin(angle)*22;
+      camera.position.z=Math.cos(angle)*22;
+      camera.lookAt(0,0,0);
+      // Pulse desk lights
+      agentDesks.forEach(function(d,i){
+        d.traverse(function(c){
+          if(c.isPointLight&&c.color){
+            c.intensity=1.2+Math.sin(Date.now()/800+i)*0.5;
+          }
+        });
+      });
+      renderer.render(scene,camera);
+    }
+    animate();
+    return function(){
+      renderer.domElement.removeEventListener('mousemove',onMouseMove);
+      renderer.dispose();
+      if(mountRef.current&&renderer.domElement.parentNode===mountRef.current){
+        mountRef.current.removeChild(renderer.domElement);
+      }
+    };
+  },[]);
+  return React.createElement('div',{className:'office-3d-wrap',style:{background:'#030912'}},
+    React.createElement('div',{ref:mountRef,style:{flex:1,position:'relative'}}),
+    hovered&&React.createElement('div',{className:'office-agent-popup',style:{left:hovPos.x+14,top:hovPos.y-40}},
+      React.createElement('div',{className:'office-agent-name',style:{color:hovered.color}},hovered.name),
+      React.createElement('div',{className:'office-agent-role'},hovered.role),
+      React.createElement('div',{style:{fontSize:'9px',color:hovered.status==='active'?'var(--green)':hovered.status==='working'?'var(--blue)':'var(--textd)'}},hovered.status.toUpperCase())
+    )
+  );
+}
+
+// ── ORIGINAL AGENTS VIEW (fallback, keep for profile) ──────────
+function AgentsView({sub,onSelect}){
+  const df={agents:null,'agt-trading':'trading','agt-marketing':'marketing','agt-ops':['support','legal','finance','product','command'],'agt-data':'data'};
+  const filt=df[sub]||null;
+  const ags=filt===null?AGENTS:Array.isArray(filt)?AGENTS.filter(function(a){return filt.includes(a.dept);}):AGENTS.filter(function(a){return a.dept===filt;});
+  return React.createElement('div',{className:'fv'},
+    React.createElement('div',{className:'vt'},'// Agent Fleet // '+ags.length+' Units'),
+    React.createElement('div',{className:'ag'},ags.map(function(a){return React.createElement(AgentCard,{key:a.id,a:a,onClick:onSelect});}))
+  );
+}
+
 function App(){
   const[view,setView]=useState('mission');
   const[selAgent,setSelAgent]=useState(null);
+  const[chatAgent,setChatAgent]=useState(null);
   function nav(v){if(!v.startsWith('agt-')&&v!=='agents')setSelAgent(null);setView(v);}
   function selectAgent(a){setSelAgent(a);setView('agent-profile');}
+  function openChat(a){setChatAgent(a);}
+  function closeChat(){setChatAgent(null);}
   function renderContent(){
     if(view==='mission')return React.createElement(MissionView,{onNav:nav});
     function wrap(child){return React.createElement('div',{className:'ml',style:{overflow:'hidden'}},child);}
-    if(view==='agent-profile'&&selAgent)return wrap(React.createElement(AgentProfile,{agent:selAgent,onBack:function(){nav('agents');}}));
-    if(view==='agents'||view.startsWith('agt-'))return wrap(React.createElement(AgentsView,{sub:view,onSelect:selectAgent}));
+    if(view==='agent-profile'&&selAgent)return wrap(React.createElement(AgentProfile3,{agent:selAgent,onBack:function(){nav('agents');},onChat:openChat}));
+    if(view==='agents'||view.startsWith('agt-'))return wrap(React.createElement(AgentsView3,{sub:view,onSelect:selectAgent,onChat:openChat}));
     if(view==='leads')return wrap(React.createElement(LeadsView));
     if(view==='content')return wrap(React.createElement(ContentView));
     if(view==='wavepark')return wrap(React.createElement(WaveParkView));
@@ -1203,12 +1810,15 @@ function App(){
     if(view==='monitor')return wrap(React.createElement(MonitorView));
     if(view==='journal')return wrap(React.createElement(JournalView));
     if(view==='tradr')return wrap(React.createElement(TradrView));
+    if(view==='map')return wrap(React.createElement(MapView));
+    if(view==='office')return wrap(React.createElement(OfficeView));
     return wrap(React.createElement('div',{className:'fv'},React.createElement(Placeholder,{title:view.toUpperCase()})));
   }
   return React.createElement(React.Fragment,null,
     React.createElement(TopBar,{onNav:nav}),
     renderContent(),
-    React.createElement(BotNav,{cur:view,onNav:nav})
+    React.createElement(BotNav,{cur:view,onNav:nav}),
+    chatAgent&&React.createElement(ChatPanel,{agent:chatAgent,onClose:closeChat})
   );
 }
 
