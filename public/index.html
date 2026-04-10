@@ -2550,70 +2550,182 @@ function OfficeView(){
 
 function NexusView(){
   const REPOS=[
-    {name:'claw-code',label:'OpenClaw Core',color:'var(--cyan)',desc:'6,098 symbols · 289 clusters · 300 flows'},
-    {name:'NinjaTrader---Indicators',label:'NinjaTrader Indicators',color:'var(--orange)',desc:'4,998 symbols · 385 clusters · 111 flows'},
-    {name:'ace_sports_bots',label:'ACE Sports Bots',color:'var(--yellow)',desc:'3,022 symbols · 141 clusters · 231 flows'},
-    {name:'polymarket-crypto-toolkit',label:'Polymarket Toolkit',color:'var(--green)',desc:'1,216 symbols · 62 clusters · 93 flows'},
-    {name:'nss-dashboard',label:'NSS Dashboard',color:'var(--pink)',desc:'431 symbols · 28 clusters · 33 flows'},
-    {name:'ace-mission-control',label:'ACE Mission Control',color:'var(--cyan)',desc:'11 symbols · indexed'},
-    {name:'ace-marketing-suite',label:'ACE Marketing Suite',color:'var(--orange)',desc:'120 symbols · 4 clusters · 1 flow'},
-    {name:'ace-relay',label:'ACE Relay',color:'var(--yellow)',desc:'10 symbols · 2 clusters'},
-    {name:'ace-wave-park-licensing',label:'Wave Park Licensing',color:'var(--green)',desc:'Awaiting code push'},
+    {name:'claw-code',label:'OpenClaw Core',color:'#19bde0',sym:6098,clusters:289,flows:300,agents:['CHAD','ALL'],domain:'Agent framework core',gh:'StrategyCentral/claw-code'},
+    {name:'NinjaTrader---Indicators',label:'NinjaTrader Indicators',color:'#f97316',sym:4998,clusters:385,flows:111,agents:['AXIOM'],domain:'Trading strategies & signals',gh:'acetradingstrategies/NinjaTrader---Indicators'},
+    {name:'ace_sports_bots',label:'ACE Sports Bots',color:'#eab308',sym:3022,clusters:141,flows:231,agents:['DAVE','BOB'],domain:'Sports prediction bots',gh:'acetradingstrategies/ace_sports_bots'},
+    {name:'polymarket-crypto-toolkit',label:'Polymarket Toolkit',color:'#22c55e',sym:1216,clusters:62,flows:93,agents:['DAVE'],domain:'SOL prediction market bot',gh:'StrategyCentral/polymarket-crypto-toolkit'},
+    {name:'nss-dashboard',label:'NSS Dashboard',color:'#a855f7',sym:431,clusters:28,flows:33,agents:['PETE'],domain:'NSS monitoring dashboard',gh:'StrategyCentral/nss-dashboard'},
+    {name:'ace-marketing-suite',label:'ACE Marketing Suite',color:'#f97316',sym:120,clusters:4,flows:1,agents:['PABLO','MEGAN'],domain:'Campaign & content tools',gh:'StrategyCentral/ace-marketing-suite'},
+    {name:'ace-mission-control',label:'ACE Mission Control',color:'#19bde0',sym:11,clusters:0,flows:0,agents:['CHAD'],domain:'This dashboard',gh:'StrategyCentral/ace-mission-control'},
+    {name:'ace-relay',label:'ACE Relay',color:'#eab308',sym:10,clusters:2,flows:0,agents:['CHAD','LARRY'],domain:'Signal relay bridge',gh:'StrategyCentral/ace-relay'},
+    {name:'ace-wave-park-licensing',label:'Wave Park Licensing',color:'#22c55e',sym:0,clusters:0,flows:0,agents:['LARRY'],domain:'License validation & Boardshop',gh:'StrategyCentral/ace-wave-park-licensing',empty:true},
+  ];
+  const TOOLS=[
+    {cmd:'gitnexus_impact',desc:'Blast radius before editing — who breaks?',color:'#f97316'},
+    {cmd:'gitnexus_query',desc:'Find code by concept across all repos',color:'#19bde0'},
+    {cmd:'gitnexus_context',desc:'360° view — callers, callees, flows',color:'#a855f7'},
+    {cmd:'gitnexus_detect_changes',desc:'Pre-commit scope check',color:'#22c55e'},
+    {cmd:'gitnexus_rename',desc:'Safe multi-file rename via call graph',color:'#eab308'},
+    {cmd:'gitnexus_cypher',desc:'Raw graph queries (advanced)',color:'#64748b'},
   ];
   const[active,setActive]=React.useState(null);
-  const iframeRef=React.useRef(null);
-  const nexusUrl='https://gitnexus.vercel.app';
+  const activeRepo=REPOS.find(function(r){return r.name===active;})||null;
+  const totalSym=REPOS.reduce(function(a,r){return a+r.sym;},0);
+  const totalFlows=REPOS.reduce(function(a,r){return a+r.flows;},0);
+  const totalClusters=REPOS.reduce(function(a,r){return a+r.clusters;},0);
 
-  return React.createElement('div',{style:{display:'flex',height:'100%',width:'100%',overflow:'hidden',background:'var(--bg)'}},
-    // Left sidebar — repo index
-    React.createElement('div',{style:{width:'220px',flexShrink:0,borderRight:'1px solid var(--b1)',display:'flex',flexDirection:'column',padding:'12px 0',overflowY:'auto'}},
-      React.createElement('div',{style:{padding:'0 12px 10px',borderBottom:'1px solid var(--b1)',marginBottom:'8px'}},
-        React.createElement('div',{style:{fontFamily:'var(--D)',fontSize:'8px',letterSpacing:'3px',color:'var(--cyan)',marginBottom:'2px'}},'// NEXUS MAP'),
-        React.createElement('div',{style:{fontFamily:'var(--D)',fontSize:'7px',color:'var(--dim)',letterSpacing:'1px'}},'9 repos indexed')
+  // SVG node graph
+  const canvasW=340,canvasH=220;
+  const cx=canvasW/2,cy=canvasH/2;
+  const nodes=[
+    {id:'claw-code',x:cx,y:cy,r:22,color:'#19bde0',label:'CORE'},
+    {id:'NinjaTrader---Indicators',x:cx+100,y:cy-70,r:16,color:'#f97316',label:'NT'},
+    {id:'ace_sports_bots',x:cx+110,y:cy+50,r:14,color:'#eab308',label:'BOTS'},
+    {id:'polymarket-crypto-toolkit',x:cx-90,y:cy-75,r:13,color:'#22c55e',label:'SOL'},
+    {id:'nss-dashboard',x:cx-110,y:cy+40,r:11,color:'#a855f7',label:'NSS'},
+    {id:'ace-mission-control',x:cx+30,y:cy+100,r:10,color:'#19bde0',label:'ACE'},
+    {id:'ace-marketing-suite',x:cx-60,y:cy+90,r:9,color:'#f97316',label:'MKT'},
+    {id:'ace-relay',x:cx-20,y:cy-100,r:8,color:'#eab308',label:'RLY'},
+    {id:'ace-wave-park-licensing',x:cx+90,y:cy-10,r:7,color:'#22c55e',label:'WP'},
+  ];
+  const edges=[['claw-code','NinjaTrader---Indicators'],['claw-code','ace_sports_bots'],['claw-code','polymarket-crypto-toolkit'],['claw-code','nss-dashboard'],['claw-code','ace-mission-control'],['claw-code','ace-marketing-suite'],['claw-code','ace-relay'],['ace-relay','ace-wave-park-licensing'],['claw-code','ace-wave-park-licensing']];
+
+  function NodeGraph(){
+    return React.createElement('svg',{width:canvasW,height:canvasH,style:{display:'block'}},
+      React.createElement('defs',null,
+        React.createElement('radialGradient',{id:'nglow',cx:'50%',cy:'50%',r:'50%'},
+          React.createElement('stop',{offset:'0%',stopColor:'#19bde0',stopOpacity:'0.3'}),
+          React.createElement('stop',{offset:'100%',stopColor:'#19bde0',stopOpacity:'0'})
+        )
+      ),
+      edges.map(function(e,i){
+        const a=nodes.find(function(n){return n.id===e[0];});
+        const b=nodes.find(function(n){return n.id===e[1];});
+        const isActive=active&&(e[0]===active||e[1]===active);
+        return React.createElement('line',{key:i,x1:a.x,y1:a.y,x2:b.x,y2:b.y,stroke:isActive?'rgba(25,189,224,0.6)':'rgba(255,255,255,0.08)',strokeWidth:isActive?1.5:1});
+      }),
+      nodes.map(function(n){
+        const isActive=active===n.id;
+        return React.createElement('g',{key:n.id,onClick:function(){setActive(active===n.id?null:n.id);},style:{cursor:'pointer'}},
+          isActive&&React.createElement('circle',{cx:n.x,cy:n.y,r:n.r+8,fill:n.color,opacity:0.15}),
+          React.createElement('circle',{cx:n.x,cy:n.y,r:n.r,fill:n.color+(isActive?'33':'18'),stroke:n.color,strokeWidth:isActive?2:1,opacity:isActive?1:0.7}),
+          React.createElement('text',{x:n.x,y:n.y+1,textAnchor:'middle',dominantBaseline:'middle',fill:n.color,fontSize:Math.max(6,n.r*0.5),fontFamily:'monospace',letterSpacing:'0.5',opacity:isActive?1:0.8},n.label)
+        );
+      })
+    );
+  }
+
+  const D=function(p){return React.createElement('div',p);};
+  const S=function(s){return {fontFamily:'monospace',letterSpacing:'1px',...s};};
+
+  return D({style:{display:'flex',height:'100%',width:'100%',overflow:'hidden',background:'#030912'}},[
+    // LEFT — repo list
+    D({key:'left',style:{width:'210px',flexShrink:0,borderRight:'1px solid rgba(255,255,255,0.06)',display:'flex',flexDirection:'column',overflowY:'auto'}},
+      D({key:'hdr',style:{padding:'12px',borderBottom:'1px solid rgba(255,255,255,0.06)'}},
+        D({style:S({fontSize:'8px',letterSpacing:'3px',color:'#19bde0',marginBottom:'3px'})},'// NEXUS MAP'),
+        D({style:S({fontSize:'7px',color:'rgba(255,255,255,0.3)'})},'9 repos · '+totalSym.toLocaleString()+' symbols')
       ),
       REPOS.map(function(r){
-        const isActive=active===r.name;
-        return React.createElement('div',{
-          key:r.name,
-          onClick:function(){setActive(r.name);},
-          style:{padding:'8px 12px',cursor:'pointer',borderLeft:'2px solid '+(isActive?r.color:'transparent'),background:isActive?r.color+'10':'transparent',transition:'all .15s',marginBottom:'2px'}
-        },
-          React.createElement('div',{style:{fontFamily:'var(--D)',fontSize:'9px',color:isActive?r.color:'var(--fg)',letterSpacing:'1px',marginBottom:'2px'}},(isActive?'▶ ':'')+r.label),
-          React.createElement('div',{style:{fontFamily:'var(--D)',fontSize:'7px',color:'var(--dim)',letterSpacing:'0.5px'}},r.desc)
+        const on=active===r.name;
+        return D({key:r.name,onClick:function(){setActive(on?null:r.name);},style:{padding:'8px 12px',cursor:'pointer',borderLeft:'2px solid '+(on?r.color:'transparent'),background:on?r.color+'12':'transparent',transition:'all .12s'}},
+          D({style:S({fontSize:'9px',color:on?r.color:'rgba(255,255,255,0.7)',marginBottom:'2px'})},(on?'▶ ':'')+r.label),
+          D({style:S({fontSize:'7px',color:'rgba(255,255,255,0.3)'})},r.empty?'⚠ awaiting code push':r.sym.toLocaleString()+' sym · '+r.flows+' flows')
         );
       }),
-      React.createElement('div',{style:{padding:'12px',marginTop:'auto',borderTop:'1px solid var(--b1)'}},
-        React.createElement('div',{style:{fontFamily:'var(--D)',fontSize:'7px',color:'var(--dim)',letterSpacing:'1px',lineHeight:'1.6'}},
-          '// CHAD + AGENTS can query',React.createElement('br',null),
-          'impact · context · detect_changes',React.createElement('br',null),
-          React.createElement('span',{style:{color:'var(--green)'}},'● MCP ACTIVE')
-        )
+      D({key:'foot',style:{marginTop:'auto',padding:'10px 12px',borderTop:'1px solid rgba(255,255,255,0.06)'}},
+        D({style:S({fontSize:'7px',color:'rgba(255,255,255,0.25)',lineHeight:'1.8'})},'CHAD · AXIOM · LARRY · DAVE'),
+        D({style:S({fontSize:'7px',color:'#22c55e',marginTop:'4px'})},'● MCP ACTIVE')
       )
     ),
-    // Main area — iframe + header
-    React.createElement('div',{style:{flex:1,display:'flex',flexDirection:'column',overflow:'hidden'}},
-      // Top bar
-      React.createElement('div',{style:{padding:'8px 16px',borderBottom:'1px solid var(--b1)',display:'flex',alignItems:'center',gap:'12px',flexShrink:0}},
-        React.createElement('div',{style:{fontFamily:'var(--D)',fontSize:'9px',letterSpacing:'2px',color:'var(--cyan)'}},'GITNEXUS'),
-        React.createElement('div',{style:{fontFamily:'var(--D)',fontSize:'8px',color:'var(--dim)'}},active?'// '+active+' — drop the ZIP to explore':'// drop a repo ZIP to build the graph'),
-        React.createElement('div',{style:{marginLeft:'auto',display:'flex',gap:'8px'}},
-          React.createElement('a',{
-            href:nexusUrl,target:'_blank',
-            style:{fontFamily:'var(--D)',fontSize:'8px',color:'var(--cyan)',letterSpacing:'1px',textDecoration:'none',padding:'4px 8px',border:'1px solid var(--cyan)',borderRadius:'2px'}
-          },'↗ OPEN FULL'),
-          React.createElement('div',{style:{fontFamily:'var(--D)',fontSize:'8px',color:'var(--green)',padding:'4px 8px',border:'1px solid var(--green)',borderRadius:'2px'}},'● LIVE')
+    // MAIN
+    D({key:'main',style:{flex:1,display:'flex',flexDirection:'column',overflow:'hidden'}},
+      // Top stats bar
+      D({key:'stats',style:{padding:'10px 16px',borderBottom:'1px solid rgba(255,255,255,0.06)',display:'flex',gap:'24px',alignItems:'center',flexShrink:0}},
+        D({style:S({fontSize:'8px',letterSpacing:'3px',color:'#19bde0'})},'GITNEXUS'),
+        ...[['REPOS','9'],['SYMBOLS',totalSym.toLocaleString()],['CLUSTERS',totalClusters.toLocaleString()],['FLOWS',totalFlows.toLocaleString()]].map(function(s){
+          return D({key:s[0],style:{display:'flex',flexDirection:'column',gap:'1px'}},
+            D({style:S({fontSize:'7px',color:'rgba(255,255,255,0.3)',letterSpacing:'2px'})},s[0]),
+            D({style:S({fontSize:'11px',color:'rgba(255,255,255,0.85)',fontWeight:'bold'})},s[1])
+          );
+        }),
+        D({style:{marginLeft:'auto',display:'flex',gap:'8px'}},
+          React.createElement('a',{href:'https://gitnexus.vercel.app',target:'_blank',style:S({fontSize:'8px',color:'#19bde0',textDecoration:'none',padding:'4px 10px',border:'1px solid rgba(25,189,224,0.4)',borderRadius:'2px',letterSpacing:'1px'})},'↗ OPEN GITNEXUS'),
+          D({style:S({fontSize:'8px',color:'#22c55e',padding:'4px 10px',border:'1px solid rgba(34,197,94,0.4)',borderRadius:'2px',letterSpacing:'1px'})},'● INDEXED')
         )
       ),
-      // iframe
-      React.createElement('iframe',{
-        ref:iframeRef,
-        src:nexusUrl,
-        style:{flex:1,border:'none',width:'100%',background:'#000'},
-        allow:'clipboard-read; clipboard-write',
-        title:'GitNexus Code Intelligence'
-      })
+      // Body
+      D({key:'body',style:{flex:1,display:'flex',overflow:'hidden'}},
+        // Graph + tools
+        D({key:'left2',style:{width:'380px',flexShrink:0,borderRight:'1px solid rgba(255,255,255,0.06)',display:'flex',flexDirection:'column',padding:'16px',gap:'16px',overflowY:'auto'}},
+          D({key:'graphhdr',style:S({fontSize:'8px',color:'rgba(255,255,255,0.3)',letterSpacing:'2px',marginBottom:'4px'})},'// KNOWLEDGE GRAPH'),
+          React.createElement(NodeGraph,{key:'graph'}),
+          D({key:'toolshdr',style:{borderTop:'1px solid rgba(255,255,255,0.06)',paddingTop:'12px'}},
+            D({style:S({fontSize:'8px',color:'rgba(255,255,255,0.3)',letterSpacing:'2px',marginBottom:'8px'})},'// MCP TOOLS'),
+            TOOLS.map(function(t){
+              return D({key:t.cmd,style:{marginBottom:'6px',padding:'6px 8px',background:'rgba(255,255,255,0.02)',border:'1px solid rgba(255,255,255,0.05)',borderRadius:'2px'}},
+                D({style:S({fontSize:'8px',color:t.color,marginBottom:'2px'})},t.cmd),
+                D({style:S({fontSize:'7px',color:'rgba(255,255,255,0.35)'})},t.desc)
+              );
+            })
+          )
+        ),
+        // Detail panel
+        D({key:'detail',style:{flex:1,padding:'16px',overflowY:'auto'}},
+          activeRepo?
+            D({key:'active'},
+              D({style:{display:'flex',alignItems:'center',gap:'10px',marginBottom:'16px'}},
+                D({style:{width:'8px',height:'8px',borderRadius:'50%',background:activeRepo.color,flexShrink:0}}),
+                D({style:S({fontSize:'13px',color:'rgba(255,255,255,0.9)',fontWeight:'bold'})},activeRepo.label),
+                activeRepo.empty&&D({style:S({fontSize:'8px',color:'#f97316',padding:'2px 8px',border:'1px solid rgba(249,115,22,0.4)',borderRadius:'2px',letterSpacing:'1px'})},'AWAITING CODE')
+              ),
+              D({style:S({fontSize:'8px',color:'rgba(255,255,255,0.3)',letterSpacing:'1px',marginBottom:'12px'})},activeRepo.domain),
+              // Stats grid
+              D({style:{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:'8px',marginBottom:'16px'}},
+                ...[['SYMBOLS',activeRepo.sym.toLocaleString()],['CLUSTERS',activeRepo.clusters],['FLOWS',activeRepo.flows]].map(function(s){
+                  return D({key:s[0],style:{padding:'10px',background:'rgba(255,255,255,0.02)',border:'1px solid rgba(255,255,255,0.06)',borderRadius:'3px'}},
+                    D({style:S({fontSize:'7px',color:'rgba(255,255,255,0.3)',letterSpacing:'2px',marginBottom:'4px'})},s[0]),
+                    D({style:S({fontSize:'18px',color:activeRepo.color,fontWeight:'bold'})},s[1])
+                  );
+                })
+              ),
+              // Agents
+              D({key:'agents',style:{marginBottom:'16px'}},
+                D({style:S({fontSize:'7px',color:'rgba(255,255,255,0.3)',letterSpacing:'2px',marginBottom:'8px'})},'// ASSIGNED AGENTS'),
+                D({style:{display:'flex',gap:'6px',flexWrap:'wrap'}},
+                  activeRepo.agents.map(function(a){
+                    return D({key:a,style:S({fontSize:'8px',color:activeRepo.color,padding:'3px 10px',border:'1px solid '+activeRepo.color+'55',borderRadius:'2px',letterSpacing:'1px'})},a);
+                  })
+                )
+              ),
+              // Commands
+              D({key:'cmds'},
+                D({style:S({fontSize:'7px',color:'rgba(255,255,255,0.3)',letterSpacing:'2px',marginBottom:'8px'})},'// QUERY THIS REPO'),
+                ...[
+                  'gitnexus_impact({target: "...", repo: "'+activeRepo.name+'"})',
+                  'gitnexus_query({query: "...", repo: "'+activeRepo.name+'"})',
+                  'gitnexus_detect_changes({repo: "'+activeRepo.name+'"})',
+                ].map(function(cmd,i){
+                  return D({key:i,style:{marginBottom:'6px',padding:'8px 10px',background:'rgba(0,0,0,0.4)',border:'1px solid rgba(255,255,255,0.06)',borderRadius:'2px',fontFamily:'monospace',fontSize:'8px',color:'rgba(255,255,255,0.5)',letterSpacing:'0.5px'}},cmd);
+                }),
+                React.createElement('a',{href:'https://github.com/'+activeRepo.gh,target:'_blank',style:S({display:'inline-block',marginTop:'10px',fontSize:'8px',color:activeRepo.color,textDecoration:'none',padding:'5px 12px',border:'1px solid '+activeRepo.color+'44',borderRadius:'2px',letterSpacing:'1px'})},'↗ VIEW ON GITHUB')
+              )
+            ):
+            D({key:'empty',style:{display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',height:'100%',gap:'12px'}},
+              D({style:S({fontSize:'11px',color:'rgba(255,255,255,0.15)',letterSpacing:'3px'})},'// SELECT A REPO'),
+              D({style:S({fontSize:'8px',color:'rgba(255,255,255,0.1)',textAlign:'center',lineHeight:'2',maxWidth:'280px'})},'Click any repo in the sidebar or a node in the graph to inspect symbols, clusters, flows, assigned agents, and live query commands'),
+              D({style:{display:'flex',gap:'16px',marginTop:'8px'}},
+                ...[['16,075','TOTAL SYMBOLS'],['907','CLUSTERS'],['769','FLOWS']].map(function(s){
+                  return D({key:s[0],style:{textAlign:'center'}},
+                    D({style:S({fontSize:'16px',color:'rgba(25,189,224,0.5)',fontWeight:'bold'})},s[0]),
+                    D({style:S({fontSize:'7px',color:'rgba(255,255,255,0.2)',letterSpacing:'2px',marginTop:'2px'})},s[1])
+                  );
+                })
+              )
+            )
+        )
+      )
     )
-  );
+  ]);
 }
 
 function App(){
