@@ -904,7 +904,7 @@ const MAINNAV=[
   {id:'tasks',label:'Tasks',icon:'☑'},{id:'marketing',label:'Marketing',icon:'◎'},
   {id:'team',label:'Team',icon:'◑'},{id:'social',label:'Social',icon:'◇'},
   {id:'support',label:'Support',icon:'◉'},{id:'monitor',label:'Monitor',icon:'▣'},
-  {id:'journal',label:'Journal',icon:'≡'},{id:'tradr',label:'TRADR',icon:'★'},{id:'map',label:'MAP',icon:'⬡'},{id:'office',label:'OFFICE',icon:'⬛'},
+  {id:'journal',label:'Journal',icon:'≡'},{id:'tradr',label:'TRADR',icon:'★'},{id:'map',label:'MAP',icon:'⬡'},{id:'office',label:'OFFICE',icon:'⬛'},{id:'nexus',label:'NEXUS',icon:'⬡'},
 ];
 const AGTNAV=[
   {id:'agents',label:'All',icon:'◉'},{id:'agt-trading',label:'Trading',icon:'◆'},
@@ -2548,6 +2548,74 @@ function OfficeView(){
 }
 
 
+function NexusView(){
+  const REPOS=[
+    {name:'claw-code',label:'OpenClaw Core',color:'var(--cyan)',desc:'6,098 symbols · 289 clusters · 300 flows'},
+    {name:'NinjaTrader---Indicators',label:'NinjaTrader Indicators',color:'var(--orange)',desc:'4,998 symbols · 385 clusters · 111 flows'},
+    {name:'ace_sports_bots',label:'ACE Sports Bots',color:'var(--yellow)',desc:'3,022 symbols · 141 clusters · 231 flows'},
+    {name:'polymarket-crypto-toolkit',label:'Polymarket Toolkit',color:'var(--green)',desc:'1,216 symbols · 62 clusters · 93 flows'},
+    {name:'nss-dashboard',label:'NSS Dashboard',color:'var(--pink)',desc:'431 symbols · 28 clusters · 33 flows'},
+    {name:'ace-mission-control',label:'ACE Mission Control',color:'var(--cyan)',desc:'11 symbols · indexed'},
+    {name:'ace-marketing-suite',label:'ACE Marketing Suite',color:'var(--orange)',desc:'120 symbols · 4 clusters · 1 flow'},
+    {name:'ace-relay',label:'ACE Relay',color:'var(--yellow)',desc:'10 symbols · 2 clusters'},
+    {name:'ace-wave-park-licensing',label:'Wave Park Licensing',color:'var(--green)',desc:'Awaiting code push'},
+  ];
+  const[active,setActive]=React.useState(null);
+  const iframeRef=React.useRef(null);
+  const nexusUrl='https://gitnexus.vercel.app';
+
+  return React.createElement('div',{style:{display:'flex',height:'100%',width:'100%',overflow:'hidden',background:'var(--bg)'}},
+    // Left sidebar — repo index
+    React.createElement('div',{style:{width:'220px',flexShrink:0,borderRight:'1px solid var(--b1)',display:'flex',flexDirection:'column',padding:'12px 0',overflowY:'auto'}},
+      React.createElement('div',{style:{padding:'0 12px 10px',borderBottom:'1px solid var(--b1)',marginBottom:'8px'}},
+        React.createElement('div',{style:{fontFamily:'var(--D)',fontSize:'8px',letterSpacing:'3px',color:'var(--cyan)',marginBottom:'2px'}},'// NEXUS MAP'),
+        React.createElement('div',{style:{fontFamily:'var(--D)',fontSize:'7px',color:'var(--dim)',letterSpacing:'1px'}},'9 repos indexed')
+      ),
+      REPOS.map(function(r){
+        const isActive=active===r.name;
+        return React.createElement('div',{
+          key:r.name,
+          onClick:function(){setActive(r.name);},
+          style:{padding:'8px 12px',cursor:'pointer',borderLeft:'2px solid '+(isActive?r.color:'transparent'),background:isActive?r.color+'10':'transparent',transition:'all .15s',marginBottom:'2px'}
+        },
+          React.createElement('div',{style:{fontFamily:'var(--D)',fontSize:'9px',color:isActive?r.color:'var(--fg)',letterSpacing:'1px',marginBottom:'2px'}},(isActive?'▶ ':'')+r.label),
+          React.createElement('div',{style:{fontFamily:'var(--D)',fontSize:'7px',color:'var(--dim)',letterSpacing:'0.5px'}},r.desc)
+        );
+      }),
+      React.createElement('div',{style:{padding:'12px',marginTop:'auto',borderTop:'1px solid var(--b1)'}},
+        React.createElement('div',{style:{fontFamily:'var(--D)',fontSize:'7px',color:'var(--dim)',letterSpacing:'1px',lineHeight:'1.6'}},
+          '// CHAD + AGENTS can query',React.createElement('br',null),
+          'impact · context · detect_changes',React.createElement('br',null),
+          React.createElement('span',{style:{color:'var(--green)'}},'● MCP ACTIVE')
+        )
+      )
+    ),
+    // Main area — iframe + header
+    React.createElement('div',{style:{flex:1,display:'flex',flexDirection:'column',overflow:'hidden'}},
+      // Top bar
+      React.createElement('div',{style:{padding:'8px 16px',borderBottom:'1px solid var(--b1)',display:'flex',alignItems:'center',gap:'12px',flexShrink:0}},
+        React.createElement('div',{style:{fontFamily:'var(--D)',fontSize:'9px',letterSpacing:'2px',color:'var(--cyan)'}},'GITNEXUS'),
+        React.createElement('div',{style:{fontFamily:'var(--D)',fontSize:'8px',color:'var(--dim)'}},active?'// '+active+' — drop the ZIP to explore':'// drop a repo ZIP to build the graph'),
+        React.createElement('div',{style:{marginLeft:'auto',display:'flex',gap:'8px'}},
+          React.createElement('a',{
+            href:nexusUrl,target:'_blank',
+            style:{fontFamily:'var(--D)',fontSize:'8px',color:'var(--cyan)',letterSpacing:'1px',textDecoration:'none',padding:'4px 8px',border:'1px solid var(--cyan)',borderRadius:'2px'}
+          },'↗ OPEN FULL'),
+          React.createElement('div',{style:{fontFamily:'var(--D)',fontSize:'8px',color:'var(--green)',padding:'4px 8px',border:'1px solid var(--green)',borderRadius:'2px'}},'● LIVE')
+        )
+      ),
+      // iframe
+      React.createElement('iframe',{
+        ref:iframeRef,
+        src:nexusUrl,
+        style:{flex:1,border:'none',width:'100%',background:'#000'},
+        allow:'clipboard-read; clipboard-write',
+        title:'GitNexus Code Intelligence'
+      })
+    )
+  );
+}
+
 function App(){
   const[view,setView]=useState('mission');
   const[selAgent,setSelAgent]=useState(null);
@@ -2575,6 +2643,7 @@ function App(){
     if(view==='tradr')return wrap(React.createElement(TradrView));
     if(view==='map')return wrap(React.createElement(MapView));
     if(view==='office')return wrap(React.createElement(OfficeView));
+    if(view==='nexus')return React.createElement(NexusView);
     return wrap(React.createElement('div',{className:'fv'},React.createElement(Placeholder,{title:view.toUpperCase()})));
   }
   return React.createElement(React.Fragment,null,
