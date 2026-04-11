@@ -2659,8 +2659,8 @@ function MapView({supabase:sb,session}){sb=sb||null;session=session||null;
               )
             ),
             // Bloom glow behind image
-            React.createElement('circle',{cx:cx,cy:cy,r:R+2,fill:'none',stroke:hex,strokeWidth:32,opacity:0.07,filter:'url(#'+glowId+')'}),
-            React.createElement('circle',{cx:cx,cy:cy,r:R+1,fill:'none',stroke:hex,strokeWidth:10,opacity:0.22,filter:'url(#'+glowId2+')'}),
+            React.createElement('circle',{cx:cx,cy:cy,r:R+2,fill:'none',stroke:hex,strokeWidth:32,opacity:0.12,filter:'url(#'+glowId+')'}),
+            React.createElement('circle',{cx:cx,cy:cy,r:R+1,fill:'none',stroke:hex,strokeWidth:10,opacity:0.35,filter:'url(#'+glowId2+')'}),
             // Image or placeholder
             node.img
               ?React.createElement('image',{href:node.img,x:cx-R,y:cy-R,width:D,height:D,clipPath:'url(#'+clipId+')',preserveAspectRatio:'xMidYMid slice',style:{cursor:'pointer'},onClick:function(){handleNodeClick(node);}})
@@ -2670,8 +2670,9 @@ function MapView({supabase:sb,session}){sb=sb||null;session=session||null;
               ),
             // Outer halo ring
             React.createElement('circle',{cx:cx,cy:cy,r:R+14,fill:'none',stroke:hex,strokeWidth:1,opacity:0.18}),
-            // Main border with SVG glow filter (works in Safari)
-            React.createElement('circle',{cx:cx,cy:cy,r:R,fill:'none',stroke:hex,strokeWidth:3.5,filter:'url(#'+glowId2+')'}),
+            // Main border — colored outer glow + white hot core
+            React.createElement('circle',{cx:cx,cy:cy,r:R,fill:'none',stroke:hex,strokeWidth:5,opacity:0.9,filter:'url(#'+glowId2+')'}),
+            React.createElement('circle',{cx:cx,cy:cy,r:R,fill:'none',stroke:'white',strokeWidth:1.5,opacity:0.7}),
             // Inner stamp dashed ring
             React.createElement('circle',{cx:cx,cy:cy,r:R-9,fill:'none',stroke:hex,strokeWidth:1,opacity:0.5,strokeDasharray:'5 4'}),
             // Name curved top
