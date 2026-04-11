@@ -2094,7 +2094,7 @@ function MapView(){
   function openEdit(e,node){e.stopPropagation();setEditing(node.id);setEditForm({name:node.name,url:node.url,status:node.status,img:node.img,w:node.w});}
   function saveEdit(){setNodes(function(ns){return ns.map(function(n){return n.id===editing?Object.assign({},n,editForm):n;});});setEditing(null);}
   function deleteNode(){setNodes(function(ns){return ns.filter(function(n){return n.id!==editing;});});setConnections(function(cs){return cs.filter(function(c){return c[0]!==editing&&c[1]!==editing;});});setEditing(null);}
-  function handleImgUpload(e){var file=e.target.files[0];if(!file)return;var reader=new FileReader();reader.onload=function(ev){setEditForm(function(f){return Object.assign({},f,{img:ev.target.result});});};reader.readAsDataURL(file);}
+  function handleImgUpload(e){var file=e.target.files[0];if(!file)return;var reader=new FileReader();reader.onload=function(ev){var img=new Image();img.onload=function(){var cv=document.createElement('canvas');var MAX=800;var ratio=Math.min(MAX/img.width,MAX/img.height,1);cv.width=Math.round(img.width*ratio);cv.height=Math.round(img.height*ratio);cv.getContext('2d').drawImage(img,0,0,cv.width,cv.height);var compressed=cv.toDataURL('image/jpeg',0.7);setEditForm(function(f){return Object.assign({},f,{img:compressed});});};img.src=ev.target.result;};reader.readAsDataURL(file);}
   function saveDetails(id,d){setDetails(function(prev){var nxt=Object.assign({},prev);nxt[id]=d;return nxt;});}
   function zoomAround(factor){
     var r=getRect();var cx2=r.width/2,cy2=r.height/2;
