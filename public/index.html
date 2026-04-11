@@ -1828,28 +1828,113 @@ function AgentsView3({sub,onSelect,onChat}){
 }
 
 // ── MAP TAB ───────────────────────────────────────────────────
+// Legacy localStorage keys (for one-time migration)
 const MAP_NODES_KEY='ace_map_nodes_v3';
 const MAP_CONN_KEY='ace_map_connections_v3';
 const MAP_DETAILS_KEY='ace_map_details_v3';
-function loadMapNodes(){
-  try{const s=localStorage.getItem(MAP_NODES_KEY);if(s){const p=JSON.parse(s);if(Array.isArray(p)&&p.length)return p;}}catch(e){}
-  return[
-    {id:1,name:'ACE Mission Control',url:'https://ace-mission-control-production.up.railway.app',status:'live',img:'',x:500,y:280,w:240},
-    {id:2,name:'ACE Trading Bots',url:'',status:'building',img:'',x:200,y:500,w:220},
-    {id:3,name:'TRADR Shop',url:'',status:'notstarted',img:'',x:800,y:500,w:220},
-    {id:4,name:'Wave Park',url:'',status:'building',img:'',x:150,y:720,w:220},
-    {id:5,name:'STAX',url:'',status:'live',img:'',x:500,y:720,w:220},
-    {id:6,name:'ACE Tube',url:'',status:'building',img:'',x:850,y:720,w:220},
-  ];
+
+const DEFAULT_NODES=[
+  {id:1,name:'ACE Mission Control',url:'https://ace-mission-control-production.up.railway.app',status:'live',img_url:'',x:500,y:280,w:240},
+  {id:2,name:'ACE Trading Bots',url:'',status:'building',img_url:'',x:200,y:500,w:220},
+  {id:3,name:'TRADR Shop',url:'',status:'notstarted',img_url:'',x:800,y:500,w:220},
+  {id:4,name:'Wave Park',url:'',status:'building',img_url:'',x:150,y:720,w:220},
+  {id:5,name:'STAX',url:'',status:'live',img_url:'',x:500,y:720,w:220},
+  {id:6,name:'ACE Tube',url:'',status:'building',img_url:'',x:850,y:720,w:220},
+];
+const DEFAULT_CONNS=[[1,2],[1,3],[2,4],[1,5],[3,6]];
+
+// ── Supabase helpers ──
+async function sbLoadNodes(sb){
+  const{data,error}=await sb.from('map_nodes').select('*').order('id');
+  if(error||!data||!data.length)return null;
+  return data.map(function(r){return{id:r.id,name:r.name,url:r.url||'',status:r.status,img:r.img_url||'',x:r.x,y:r.y,w:r.w};});
 }
-function loadMapConnections(){
-  try{const s=localStorage.getItem(MAP_CONN_KEY);if(s){const p=JSON.parse(s);if(Array.isArray(p))return p;}}catch(e){}
-  return[[1,2],[1,3],[2,4],[1,5],[3,6]];
+async function sbLoadConns(sb){
+  const{data,error}=await sb.from('map_connections').select('*');
+  if(error||!data)return[];
+  return data.map(function(r){return[r.node_a,r.node_b,r.id];});
 }
-function loadMapDetails(){
-  try{const s=localStorage.getItem(MAP_DETAILS_KEY);if(s){const p=JSON.parse(s);if(p&&typeof p==='object')return p;}}catch(e){}
-  return{};
+async function sbLoadDetails(sb){
+  const{data,error}=await sb.from('map_node_details').select('*');
+  if(error||!data)return{};
+  var out={};
+  data.forEach(function(r){out[r.node_id]={description:r.description||'',notes:r.notes||'',tags:r.tags||[],links:r.links||[]};});
+  return out;
 }
+async function sbUpsertNode(sb,node){
+  await sb.from('map_nodes').upsert({id:node.id,name:node.name,url:node.url||'',status:node.status,img_url:node.img||'',x:node.x,y:node.y,w:node.w,updated_at:new Date().toISOString()},{onConflict:'id'});
+}
+async function sbDeleteNode(sb,id){
+  await sb.from('map_nodes').delete().eq('id',id);
+}
+async function sbAddConn(sb,a,b){
+  const{data}=await sb.from('map_connections').insert({node_a:a,node_b:b}).select().single();
+  return data?data.id:null;
+}
+async function sbDeleteConn(sb,connId){
+  if(connId)await sb.from('map_connections').delete().eq('id',connId);
+}
+async function sbUpsertDetails(sb,nodeId,d){
+  await sb.from('map_node_details').upsert({node_id:nodeId,description:d.description||'',notes:d.notes||'',tags:d.tags||[],links:d.links||[],updated_at:new Date().toISOString()},{onConflict:'node_id'});
+}
+async function uploadImageToSupa(sb,file,nodeId){
+  var ext=file.name.split('.').pop()||'jpg';
+  var path='node-'+nodeId+'-'+Date.now()+'.'+ext;
+  // Compress first
+  var compressed=await new Promise(function(res){
+    var img=new Image();
+    img.onload=function(){
+      var cv=document.createElement('canvas');
+      var MAX=800;var ratio=Math.min(MAX/img.width,MAX/img.height,1);
+      cv.width=Math.round(img.width*ratio);cv.height=Math.round(img.height*ratio);
+      cv.getContext('2d').drawImage(img,0,0,cv.width,cv.height);
+      cv.toBlob(function(b){res(b);},'image/jpeg',0.75);
+    };
+    var r=new FileReader();r.onload=function(e){img.src=e.target.result;};r.readAsDataURL(file);
+  });
+  var{error}=await sb.storage.from('map-images').upload(path,compressed,{contentType:'image/jpeg',upsert:true});
+  if(error)return null;
+  var{data}=sb.storage.from('map-images').getPublicUrl(path);
+  return data.publicUrl;
+}
+async function migrateLocalToSupa(sb){
+  var migratedAnything=false;
+  try{
+    var lsNodes=localStorage.getItem(MAP_NODES_KEY);
+    var lsConns=localStorage.getItem(MAP_CONN_KEY);
+    var lsDets=localStorage.getItem(MAP_DETAILS_KEY);
+    if(lsNodes){
+      var nodes=JSON.parse(lsNodes);
+      for(var i=0;i<nodes.length;i++){
+        var n=nodes[i];
+        // base64 images can't go to storage via migration (no file object), keep as-is for now
+        await sb.from('map_nodes').upsert({id:n.id,name:n.name,url:n.url||'',status:n.status,img_url:n.img||'',x:n.x,y:n.y,w:n.w},{onConflict:'id',ignoreDuplicates:true});
+        migratedAnything=true;
+      }
+    }
+    if(lsConns){
+      var conns=JSON.parse(lsConns);
+      for(var j=0;j<conns.length;j++){
+        await sb.from('map_connections').insert({node_a:conns[j][0],node_b:conns[j][1]}).select();
+      }
+    }
+    if(lsDets){
+      var dets=JSON.parse(lsDets);
+      var keys=Object.keys(dets);
+      for(var k=0;k<keys.length;k++){
+        var d=dets[keys[k]];
+        await sb.from('map_node_details').upsert({node_id:parseInt(keys[k]),description:d.description||'',notes:d.notes||'',tags:d.tags||[],links:d.links||[]},{onConflict:'node_id',ignoreDuplicates:true});
+      }
+    }
+    if(migratedAnything){
+      localStorage.removeItem(MAP_NODES_KEY);
+      localStorage.removeItem(MAP_CONN_KEY);
+      localStorage.removeItem(MAP_DETAILS_KEY);
+    }
+  }catch(e){console.error('Migration error',e);}
+  return migratedAnything;
+}
+
 function DD3DCanvas(props){
   var centerNode=props.centerNode,orbitNodes=props.orbitNodes;
   var cvRef=React.useRef(null);
@@ -1876,39 +1961,30 @@ function DD3DCanvas(props){
       ctx.textAlign='center';ctx.fillText((n.name||'').substring(0,15),x,y+3.5*scale);
     }
     function frame(){
-      ctx.clearRect(0,0,W,H);
-      angRef.current+=0.007;
-      var a=angRef.current;
+      ctx.clearRect(0,0,W,H);angRef.current+=0.007;var a=angRef.current;
       var cx=W/2,cy=H/2;
-      // Grid dots
       ctx.fillStyle='rgba(25,159,216,0.05)';
       for(var gx=0;gx<W;gx+=50){for(var gy=0;gy<H;gy+=50){ctx.beginPath();ctx.arc(gx,gy,1,0,Math.PI*2);ctx.fill();}}
-      // Orbit ring
       var rx=Math.min(W,H)*0.37,ry=Math.min(W,H)*0.14;
       ctx.beginPath();ctx.ellipse(cx,cy,rx,ry,0,0,Math.PI*2);
       ctx.strokeStyle='rgba(25,159,216,0.07)';ctx.lineWidth=1;ctx.setLineDash([4,8]);ctx.stroke();ctx.setLineDash([]);
-      // Sort nodes by depth for painter's algo
       var sorted=orbitNodes.map(function(n,i){
         var ang=a+(i/Math.max(orbitNodes.length,1))*Math.PI*2;
         var x=cx+rx*Math.cos(ang),y=cy+ry*Math.sin(ang);
         var depth=(Math.sin(ang)+1)/2;
-        return{n:n,x:x,y:y,depth:depth,ang:ang};
+        return{n:n,x:x,y:y,depth:depth};
       }).sort(function(a,b){return a.depth-b.depth;});
-      // Draw back connections + nodes
       sorted.forEach(function(item){
         if(item.depth<0.5){
           var sc=SC[item.n.status]||'rgba(25,159,216,';
           ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(item.x,item.y);
           ctx.strokeStyle=sc+'0.18)';ctx.lineWidth=1;ctx.setLineDash([4,6]);ctx.stroke();ctx.setLineDash([]);
-          var scale=0.55+item.depth*0.45;
-          drawONode(item.x,item.y,item.n,0.3+item.depth*0.3,scale);
+          drawONode(item.x,item.y,item.n,0.3+item.depth*0.3,0.55+item.depth*0.45);
         }
       });
-      // Center glow
       var cg=ctx.createRadialGradient(cx,cy,0,cx,cy,68);
       cg.addColorStop(0,'rgba(25,159,216,0.28)');cg.addColorStop(1,'rgba(25,159,216,0)');
       ctx.fillStyle=cg;ctx.beginPath();ctx.arc(cx,cy,68,0,Math.PI*2);ctx.fill();
-      // Center node box
       var bw=152,bh=58;
       ctx.fillStyle='rgba(3,9,20,0.97)';ctx.strokeStyle='rgba(25,159,216,0.9)';ctx.lineWidth=1.5;
       rr(ctx,cx-bw/2,cy-bh/2,bw,bh,5);ctx.fill();ctx.stroke();
@@ -1917,14 +1993,12 @@ function DD3DCanvas(props){
       var sc2=SC[centerNode.status]||'rgba(25,159,216,';
       ctx.fillStyle=sc2+'1)';ctx.font='8px "Share Tech Mono",monospace';
       ctx.fillText('● '+(centerNode.status||'live').toUpperCase(),cx,cy+12);
-      // Front connections + nodes
       sorted.forEach(function(item){
         if(item.depth>=0.5){
           var sc=SC[item.n.status]||'rgba(25,159,216,';
           ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(item.x,item.y);
           ctx.strokeStyle=sc+'0.28)';ctx.lineWidth=1.2;ctx.setLineDash([4,6]);ctx.stroke();ctx.setLineDash([]);
-          var scale=0.55+item.depth*0.45;
-          drawONode(item.x,item.y,item.n,0.55+item.depth*0.45,scale);
+          drawONode(item.x,item.y,item.n,0.55+item.depth*0.45,0.55+item.depth*0.45);
         }
       });
       rafRef.current=requestAnimationFrame(frame);
@@ -1934,8 +2008,10 @@ function DD3DCanvas(props){
   },[centerNode.id,orbitNodes.length]);
   return React.createElement('canvas',{ref:cvRef,style:{width:'100%',height:'100%',display:'block'}});
 }
+
 function DeepDiveView(props){
-  var node=props.node,nodes=props.nodes,connections=props.connections,details=props.details,onBack=props.onBack,onSave=props.onSave,onNavigate=props.onNavigate;
+  var node=props.node,nodes=props.nodes,connections=props.connections,details=props.details,
+      onBack=props.onBack,onSaveDetails=props.onSaveDetails,onNavigate=props.onNavigate,sb=props.supabase;
   var nd=details[node.id]||{};
   var[desc,setDesc]=React.useState(nd.description||'');
   var[links,setLinks]=React.useState(nd.links||[]);
@@ -1944,17 +2020,22 @@ function DeepDiveView(props){
   var[newLL,setNewLL]=React.useState('');
   var[newLU,setNewLU]=React.useState('');
   var[newTag,setNewTag]=React.useState('');
-  React.useEffect(function(){
-    var t=setTimeout(function(){onSave(node.id,{description:desc,links:links,tags:tags,notes:notes});},600);
-    return function(){clearTimeout(t);};
-  },[desc,links,tags,notes]);
+  var saveTimer=React.useRef(null);
+  function scheduleSave(d){
+    clearTimeout(saveTimer.current);
+    saveTimer.current=setTimeout(function(){onSaveDetails(node.id,d);},800);
+  }
+  function up(field,val){
+    var d={description:desc,links:links,tags:tags,notes:notes};
+    d[field]=val;scheduleSave(d);
+  }
   var connIds=connections.filter(function(c){return c[0]===node.id||c[1]===node.id;}).map(function(c){return c[0]===node.id?c[1]:c[0];});
   var connNodes=nodes.filter(function(n){return connIds.indexOf(n.id)>=0;});
   var sColor={live:'var(--green)',building:'var(--orange)',notstarted:'var(--red)'};
   var sBg={live:'rgba(0,230,118,0.1)',building:'rgba(255,107,53,0.1)',notstarted:'rgba(255,51,85,0.1)'};
   var sBorder={live:'rgba(0,230,118,0.3)',building:'rgba(255,107,53,0.3)',notstarted:'rgba(255,51,85,0.3)'};
-  function addLink(){if(!newLL||!newLU)return;setLinks(function(l){return l.concat([{label:newLL,url:newLU}]);});setNewLL('');setNewLU('');}
-  function addTag(){if(!newTag)return;setTags(function(t){return t.indexOf(newTag)<0?t.concat([newTag]):t;});setNewTag('');}
+  function addLink(){if(!newLL||!newLU)return;var nl=links.concat([{label:newLL,url:newLU}]);setLinks(nl);up('links',nl);setNewLL('');setNewLU('');}
+  function addTag(){if(!newTag)return;var nt=tags.indexOf(newTag)<0?tags.concat([newTag]):tags;setTags(nt);up('tags',nt);setNewTag('');}
   return React.createElement('div',{className:'dd-overlay'},
     React.createElement('div',{className:'dd-header'},
       React.createElement('button',{className:'dd-back',onClick:onBack},'← MAP'),
@@ -1966,17 +2047,15 @@ function DeepDiveView(props){
       React.createElement('div',{className:'dd-left'},
         React.createElement('div',{className:'dd-section'},
           React.createElement('div',{className:'dd-section-title'},'DESCRIPTION'),
-          React.createElement('textarea',{className:'dd-textarea',placeholder:'Vision, goals, current state of this project...',value:desc,onChange:function(e){setDesc(e.target.value);},rows:5})
+          React.createElement('textarea',{className:'dd-textarea',placeholder:'Vision, goals, current state...',value:desc,onChange:function(e){setDesc(e.target.value);up('description',e.target.value);},rows:5})
         ),
         React.createElement('div',{className:'dd-section'},
           React.createElement('div',{className:'dd-section-title'},'NOTES & UPDATES'),
-          React.createElement('textarea',{className:'dd-textarea',placeholder:'Progress, blockers, ideas...',value:notes,onChange:function(e){setNotes(e.target.value);},rows:4})
+          React.createElement('textarea',{className:'dd-textarea',placeholder:'Progress, blockers, ideas...',value:notes,onChange:function(e){setNotes(e.target.value);up('notes',e.target.value);},rows:4})
         ),
         React.createElement('div',{className:'dd-section'},
           React.createElement('div',{className:'dd-section-title'},'TAGS'),
-          React.createElement('div',{className:'dd-tags'},
-            tags.map(function(tag,i){return React.createElement('div',{key:i,className:'dd-tag'},tag,React.createElement('button',{className:'dd-tag-del',onClick:function(){setTags(function(t){return t.filter(function(_,j){return j!==i;});});}},'×'));})
-          ),
+          React.createElement('div',{className:'dd-tags'},tags.map(function(tag,i){return React.createElement('div',{key:i,className:'dd-tag'},tag,React.createElement('button',{className:'dd-tag-del',onClick:function(){var nt=tags.filter(function(_,j){return j!==i;});setTags(nt);up('tags',nt);}}, '×'));})),
           React.createElement('div',{className:'dd-add-link'},
             React.createElement('input',{className:'dd-mini-input',placeholder:'Add tag...',value:newTag,onChange:function(e){setNewTag(e.target.value);},onKeyDown:function(e){if(e.key==='Enter')addTag();}}),
             React.createElement('button',{className:'dd-add-btn',onClick:addTag},'+ ADD')
@@ -1984,13 +2063,11 @@ function DeepDiveView(props){
         ),
         React.createElement('div',{className:'dd-section'},
           React.createElement('div',{className:'dd-section-title'},'LINKED RESOURCES'),
-          links.map(function(lk,i){
-            return React.createElement('div',{key:i,className:'dd-link-row'},
-              React.createElement('span',{className:'dd-link-label'},lk.label),
-              React.createElement('a',{href:lk.url,target:'_blank',className:'dd-link-url'},lk.url),
-              React.createElement('button',{className:'dd-link-del',onClick:function(){setLinks(function(l){return l.filter(function(_,j){return j!==i;});});}},'✕')
-            );
-          }),
+          links.map(function(lk,i){return React.createElement('div',{key:i,className:'dd-link-row'},
+            React.createElement('span',{className:'dd-link-label'},lk.label),
+            React.createElement('a',{href:lk.url,target:'_blank',className:'dd-link-url'},lk.url),
+            React.createElement('button',{className:'dd-link-del',onClick:function(){var nl=links.filter(function(_,j){return j!==i;});setLinks(nl);up('links',nl);}},'✕')
+          );}),
           React.createElement('div',{className:'dd-add-link'},
             React.createElement('input',{className:'dd-mini-input',placeholder:'Label',value:newLL,onChange:function(e){setNewLL(e.target.value);},style:{flex:'0 0 75px'}}),
             React.createElement('input',{className:'dd-mini-input',placeholder:'https://...',value:newLU,onChange:function(e){setNewLU(e.target.value);},onKeyDown:function(e){if(e.key==='Enter')addLink();}}),
@@ -1999,34 +2076,30 @@ function DeepDiveView(props){
         )
       ),
       React.createElement('div',{className:'dd-center'},
-        React.createElement('div',{className:'dd-3d-wrap'},
-          React.createElement(DD3DCanvas,{centerNode:node,orbitNodes:connNodes})
-        ),
+        React.createElement('div',{className:'dd-3d-wrap'},React.createElement(DD3DCanvas,{centerNode:node,orbitNodes:connNodes})),
         React.createElement('div',{className:'dd-nexus'},
-          React.createElement('div',{className:'dd-nexus-title'},'NEXUS CONNECTIONS  —  '+connNodes.length+' LINKED'),
+          React.createElement('div',{className:'dd-nexus-title'},'NEXUS CONNECTIONS — '+connNodes.length+' LINKED'),
           React.createElement('div',{className:'dd-nexus-cards'},
             connNodes.length===0
-              ?React.createElement('div',{style:{fontSize:'10px',color:'var(--textd)',padding:'10px',alignSelf:'center'}},'No connections yet. Use Connect mode on the map to link nodes.')
-              :connNodes.map(function(cn){
-                return React.createElement('div',{key:cn.id,className:'dd-nexus-card',onClick:function(){onNavigate(cn);}},
-                  cn.img?React.createElement('img',{src:cn.img,style:{width:'100%',aspectRatio:'16/9',objectFit:'cover',borderRadius:'2px',marginBottom:'6px',display:'block'}}):null,
-                  React.createElement('div',{className:'dd-nexus-card-name'},cn.name.toUpperCase()),
-                  React.createElement('div',{className:'dd-nexus-card-status',style:{color:sColor[cn.status]}},'● '+(cn.status==='live'?'LIVE':cn.status==='building'?'BUILDING':'NOT STARTED'))
-                );
-              })
+              ?React.createElement('div',{style:{fontSize:'10px',color:'var(--textd)',padding:'10px',alignSelf:'center'}},'No connections yet.')
+              :connNodes.map(function(cn){return React.createElement('div',{key:cn.id,className:'dd-nexus-card',onClick:function(){onNavigate(cn);}},
+                cn.img?React.createElement('img',{src:cn.img,style:{width:'100%',aspectRatio:'16/9',objectFit:'cover',borderRadius:'2px',marginBottom:'6px',display:'block'}}):null,
+                React.createElement('div',{className:'dd-nexus-card-name'},cn.name.toUpperCase()),
+                React.createElement('div',{className:'dd-nexus-card-status',style:{color:sColor[cn.status]}},'● '+(cn.status==='live'?'LIVE':cn.status==='building'?'BUILDING':'NOT STARTED'))
+              );})
           )
         )
       )
     )
   );
 }
-function MapView(){
-  var[nodes,setNodes]=React.useState(loadMapNodes);
-  var[connections,setConnections]=React.useState(loadMapConnections);
-  var[details,setDetails]=React.useState(loadMapDetails);
-  React.useEffect(function(){try{localStorage.setItem(MAP_NODES_KEY,JSON.stringify(nodes));}catch(e){}},[nodes]);
-  React.useEffect(function(){try{localStorage.setItem(MAP_CONN_KEY,JSON.stringify(connections));}catch(e){}},[connections]);
-  React.useEffect(function(){try{localStorage.setItem(MAP_DETAILS_KEY,JSON.stringify(details));}catch(e){}},[details]);
+
+function MapView({supabase:sb,session}){
+  var[nodes,setNodes]=React.useState([]);
+  var[connections,setConnections]=React.useState([]);
+  var[details,setDetails]=React.useState({});
+  var[loading,setLoading]=React.useState(true);
+  var[migrating,setMigrating]=React.useState(false);
   var[editing,setEditing]=React.useState(null);
   var[editForm,setEditForm]=React.useState({});
   var[dragging,setDragging]=React.useState(null);
@@ -2035,6 +2108,7 @@ function MapView(){
   var[panSt,setPanSt]=React.useState({x:60,y:40});
   var[zoom,setZoom]=React.useState(0.9);
   var[deepDive,setDeepDive]=React.useState(null);
+  var[uploadingImg,setUploadingImg]=React.useState(false);
   var canvasRef=React.useRef(null);
   var dragOff=React.useRef({x:0,y:0});
   var dragMoved=React.useRef(false);
@@ -2043,11 +2117,45 @@ function MapView(){
   var panRef=React.useRef({x:60,y:40});
   var zoomRef=React.useRef(0.9);
   var fileRef=React.useRef(null);
-  var nextId=React.useRef(React.useMemo(function(){var ns=loadMapNodes();return ns.reduce(function(m,n){return Math.max(m,n.id);},0)+1;},[]));;
+  var nextId=React.useRef(100);
+
+  // Load from Supabase on mount
+  React.useEffect(function(){
+    async function load(){
+      setLoading(true);
+      // Check for localStorage data to migrate
+      var hasLocal=localStorage.getItem(MAP_NODES_KEY)||localStorage.getItem(MAP_CONN_KEY);
+      if(hasLocal){
+        setMigrating(true);
+        await migrateLocalToSupa(sb);
+        setMigrating(false);
+      }
+      var dbNodes=await sbLoadNodes(sb);
+      if(!dbNodes){
+        // First ever load — seed defaults
+        for(var i=0;i<DEFAULT_NODES.length;i++) await sbUpsertNode(sb,DEFAULT_NODES[i]);
+        for(var j=0;j<DEFAULT_CONNS.length;j++) await sbAddConn(sb,DEFAULT_CONNS[j][0],DEFAULT_CONNS[j][1]);
+        dbNodes=DEFAULT_NODES.map(function(n){return Object.assign({},n,{img:n.img_url||''});});
+        setConnections(DEFAULT_CONNS.map(function(c,i){return[c[0],c[1],null];}));
+      } else {
+        var dbConns=await sbLoadConns(sb);
+        setConnections(dbConns);
+      }
+      var dbDets=await sbLoadDetails(sb);
+      setDetails(dbDets);
+      setNodes(dbNodes);
+      var maxId=dbNodes.reduce(function(m,n){return Math.max(m,n.id);},0);
+      nextId.current=maxId+1;
+      setLoading(false);
+    }
+    load();
+  },[]);
+
   function updatePan(p){panRef.current=p;setPanSt(p);}
   function updateZoom(z){zoomRef.current=z;setZoom(z);}
   function getRect(){return canvasRef.current?canvasRef.current.getBoundingClientRect():{left:0,top:0,width:800,height:600};}
   function toWorld(cx,cy){var r=getRect();return{x:(cx-r.left-panRef.current.x)/zoomRef.current,y:(cy-r.top-panRef.current.y)/zoomRef.current};}
+
   React.useEffect(function(){
     var el=canvasRef.current;if(!el)return;
     function handleWheel(e){
@@ -2062,21 +2170,23 @@ function MapView(){
     }
     el.addEventListener('wheel',handleWheel,{passive:false});
     return function(){el.removeEventListener('wheel',handleWheel);};
-  },[]);
+  },[loading]);
+
   function addNode(){
     var id=nextId.current++;
     var r=getRect();
     var wx=(r.width/2-panRef.current.x)/zoomRef.current;
     var wy=(r.height/2-panRef.current.y)/zoomRef.current;
-    setNodes(function(n){return n.concat([{id:id,name:'New Project',url:'',status:'notstarted',img:'',x:wx-110,y:wy-80,w:220}]);});
+    var node={id:id,name:'New Project',url:'',status:'notstarted',img:'',x:wx-110,y:wy-80,w:220};
+    setNodes(function(n){return n.concat([node]);});
+    sbUpsertNode(sb,node);
   }
   function startDrag(e,node){
     if(tool==='connect'){e.stopPropagation();setConnecting(node.id);return;}
     e.stopPropagation();
     var w=toWorld(e.clientX,e.clientY);
     dragOff.current={x:w.x-node.x,y:w.y-node.y};
-    dragMoved.current=false;
-    setDragging(node.id);
+    dragMoved.current=false;setDragging(node.id);
   }
   function canvasMouseDown(e){
     if(tool==='connect')return;
@@ -2085,26 +2195,42 @@ function MapView(){
     dragMoved.current=false;
     if(canvasRef.current)canvasRef.current.style.cursor='grabbing';
   }
+  var saveTimer=React.useRef({});
+  function debounceSaveNode(node){
+    clearTimeout(saveTimer.current[node.id]);
+    saveTimer.current[node.id]=setTimeout(function(){sbUpsertNode(sb,node);},500);
+  }
   function onMouseMove(e){
     if(dragging!==null){
       var w=toWorld(e.clientX,e.clientY);
       dragMoved.current=true;
-      setNodes(function(ns){return ns.map(function(n){return n.id===dragging?Object.assign({},n,{x:w.x-dragOff.current.x,y:w.y-dragOff.current.y}):n;});});
+      setNodes(function(ns){
+        var updated=ns.map(function(n){return n.id===dragging?Object.assign({},n,{x:w.x-dragOff.current.x,y:w.y-dragOff.current.y}):n;});
+        var moved=updated.find(function(n){return n.id===dragging;});
+        if(moved)debounceSaveNode(moved);
+        return updated;
+      });
     }else if(isPanning.current&&panStart.current){
       dragMoved.current=true;
-      var np={x:panStart.current.px+(e.clientX-panStart.current.cx),y:panStart.current.py+(e.clientY-panStart.current.cy)};
-      updatePan(np);
+      updatePan({x:panStart.current.px+(e.clientX-panStart.current.cx),y:panStart.current.py+(e.clientY-panStart.current.cy)});
     }
   }
   function onMouseUp(e){
     if(tool==='connect'&&connecting!==null){
       var w=toWorld(e.clientX,e.clientY);
       var target=nodes.find(function(n){var h=n.w*9/16;return w.x>=n.x&&w.x<=n.x+n.w&&w.y>=n.y&&w.y<=n.y+h+50&&n.id!==connecting;});
-      if(target)setConnections(function(c){var k=c.find(function(x){return(x[0]===connecting&&x[1]===target.id)||(x[0]===target.id&&x[1]===connecting);});return k?c:c.concat([[connecting,target.id]]);});
+      if(target){
+        var fromId=connecting,toId=target.id;
+        sbAddConn(sb,fromId,toId).then(function(cid){
+          setConnections(function(c){
+            var k=c.find(function(x){return(x[0]===fromId&&x[1]===toId)||(x[0]===toId&&x[1]===fromId);});
+            return k?c:c.concat([[fromId,toId,cid]]);
+          });
+        });
+      }
       setConnecting(null);
     }
-    setDragging(null);
-    isPanning.current=false;panStart.current=null;
+    setDragging(null);isPanning.current=false;panStart.current=null;
     if(canvasRef.current)canvasRef.current.style.cursor=tool==='connect'?'crosshair':'grab';
   }
   function handleNodeClick(node){
@@ -2112,20 +2238,54 @@ function MapView(){
     if(tool==='select')setDeepDive(node);
   }
   function openEdit(e,node){e.stopPropagation();setEditing(node.id);setEditForm({name:node.name,url:node.url,status:node.status,img:node.img,w:node.w});}
-  function saveEdit(){setNodes(function(ns){return ns.map(function(n){return n.id===editing?Object.assign({},n,editForm):n;});});setEditing(null);}
-  function deleteNode(){setNodes(function(ns){return ns.filter(function(n){return n.id!==editing;});});setConnections(function(cs){return cs.filter(function(c){return c[0]!==editing&&c[1]!==editing;});});setEditing(null);}
-  function handleImgUpload(e){var file=e.target.files[0];if(!file)return;var reader=new FileReader();reader.onload=function(ev){var img=new Image();img.onload=function(){var cv=document.createElement('canvas');var MAX=800;var ratio=Math.min(MAX/img.width,MAX/img.height,1);cv.width=Math.round(img.width*ratio);cv.height=Math.round(img.height*ratio);cv.getContext('2d').drawImage(img,0,0,cv.width,cv.height);var compressed=cv.toDataURL('image/jpeg',0.7);setEditForm(function(f){return Object.assign({},f,{img:compressed});});};img.src=ev.target.result;};reader.readAsDataURL(file);}
-  function saveDetails(id,d){setDetails(function(prev){var nxt=Object.assign({},prev);nxt[id]=d;return nxt;});}
+  function saveEdit(){
+    setNodes(function(ns){
+      var updated=ns.map(function(n){return n.id===editing?Object.assign({},n,editForm):n;});
+      var saved=updated.find(function(n){return n.id===editing;});
+      if(saved)sbUpsertNode(sb,saved);
+      return updated;
+    });
+    setEditing(null);
+  }
+  function deleteNode(){
+    sbDeleteNode(sb,editing);
+    setNodes(function(ns){return ns.filter(function(n){return n.id!==editing;});});
+    setConnections(function(cs){return cs.filter(function(c){return c[0]!==editing&&c[1]!==editing;});});
+    setEditing(null);
+  }
+  async function handleImgUpload(e){
+    var file=e.target.files[0];if(!file)return;
+    setUploadingImg(true);
+    var url=await uploadImageToSupa(sb,file,editing||'tmp');
+    setUploadingImg(false);
+    if(url)setEditForm(function(f){return Object.assign({},f,{img:url});});
+    else{
+      // fallback: compress to base64
+      var reader=new FileReader();
+      reader.onload=function(ev){var img=new Image();img.onload=function(){var cv=document.createElement('canvas');var MAX=800;var ratio=Math.min(MAX/img.width,MAX/img.height,1);cv.width=Math.round(img.width*ratio);cv.height=Math.round(img.height*ratio);cv.getContext('2d').drawImage(img,0,0,cv.width,cv.height);setEditForm(function(f){return Object.assign({},f,{img:cv.toDataURL('image/jpeg',0.7)});});};img.src=ev.target.result;};
+      reader.readAsDataURL(file);
+    }
+  }
+  function saveDetails(id,d){
+    setDetails(function(prev){var nxt=Object.assign({},prev);nxt[id]=d;return nxt;});
+    sbUpsertDetails(sb,id,d);
+  }
   function zoomAround(factor){
     var r=getRect();var cx2=r.width/2,cy2=r.height/2;
-    var wx=(cx2-panRef.current.x)/zoomRef.current;
-    var wy=(cy2-panRef.current.y)/zoomRef.current;
+    var wx=(cx2-panRef.current.x)/zoomRef.current,wy=(cy2-panRef.current.y)/zoomRef.current;
     var nz=Math.min(Math.max(zoomRef.current*factor,0.1),5);
     updatePan({x:cx2-wx*nz,y:cy2-wy*nz});updateZoom(nz);
   }
   var gBorder={live:'rgba(0,230,118,0.4)',building:'rgba(255,107,53,0.4)',notstarted:'rgba(255,51,85,0.4)'};
   var gShadow={live:'rgba(0,230,118,0.5)',building:'rgba(255,107,53,0.5)',notstarted:'rgba(255,51,85,0.5)'};
-  if(deepDive)return React.createElement(DeepDiveView,{node:deepDive,nodes:nodes,connections:connections,details:details,onBack:function(){setDeepDive(null);},onSave:saveDetails,onNavigate:function(n){setDeepDive(n);}});
+
+  if(loading||migrating)return React.createElement('div',{className:'fv',style:{display:'flex',alignItems:'center',justifyContent:'center',flexDirection:'column',gap:'12px'}},
+    React.createElement('div',{style:{fontFamily:'var(--M)',fontSize:'10px',letterSpacing:'3px',color:'var(--blue)'}}),
+    React.createElement('div',{style:{fontFamily:'var(--M)',fontSize:'9px',letterSpacing:'2px',color:'var(--textd)'}},migrating?'MIGRATING LOCAL DATA TO CLOUD...':'LOADING MAP FROM CLOUD...')
+  );
+
+  if(deepDive)return React.createElement(DeepDiveView,{node:deepDive,nodes:nodes,connections:connections,details:details,onBack:function(){setDeepDive(null);},onSaveDetails:saveDetails,onNavigate:function(n){setDeepDive(n);},supabase:sb});
+
   return React.createElement('div',{className:'fv',style:{padding:0,position:'relative',overflow:'hidden',display:'flex',flexDirection:'column'}},
     editing!==null&&React.createElement('div',{className:'map-modal'},
       React.createElement('div',{className:'map-modal-box'},
@@ -2140,7 +2300,7 @@ function MapView(){
         React.createElement('div',{style:{marginBottom:'10px'}},
           React.createElement('div',{style:{fontSize:'9px',color:'var(--textd)',letterSpacing:'2px',marginBottom:'6px',textTransform:'uppercase'}},'Screenshot / Image'),
           React.createElement('input',{type:'file',accept:'image/*',onChange:handleImgUpload,style:{display:'none'},ref:fileRef}),
-          React.createElement('button',{className:'map-btn secondary',onClick:function(){fileRef.current&&fileRef.current.click();},style:{width:'100%',marginBottom:'6px'}},'Upload Image'),
+          React.createElement('button',{className:'map-btn secondary',onClick:function(){fileRef.current&&fileRef.current.click();},style:{width:'100%',marginBottom:'6px'},disabled:uploadingImg},uploadingImg?'UPLOADING...':'Upload Image'),
           editForm.img?React.createElement('img',{src:editForm.img,style:{width:'100%',aspectRatio:'16/9',objectFit:'cover',borderRadius:'3px'}}):null
         ),
         React.createElement('div',{style:{display:'flex',gap:'8px',justifyContent:'space-between'}},
@@ -2156,16 +2316,9 @@ function MapView(){
       React.createElement('button',{className:'map-tb-btn'+(tool==='select'?' active':''),onClick:function(){setTool('select');if(canvasRef.current)canvasRef.current.style.cursor='grab';}},'Select'),
       React.createElement('button',{className:'map-tb-btn'+(tool==='connect'?' active':''),onClick:function(){setTool('connect');if(canvasRef.current)canvasRef.current.style.cursor='crosshair';}},'Connect'),
       React.createElement('button',{className:'map-tb-btn',onClick:addNode},'+ Add Node'),
-      React.createElement('span',{style:{fontSize:'8px',color:'var(--textd)',letterSpacing:'1px',alignSelf:'center',padding:'0 4px'}},'Drag canvas to pan · Scroll to zoom · Click node image to dive deeper')
+      React.createElement('span',{style:{fontSize:'8px',color:'var(--textd)',letterSpacing:'1px',alignSelf:'center',padding:'0 4px'}},'Drag canvas to pan · Scroll to zoom · Click image to dive deeper')
     ),
-    React.createElement('div',{
-      ref:canvasRef,
-      className:'map-world-wrap',
-      style:{flex:1,position:'relative',cursor:tool==='connect'?'crosshair':'grab'},
-      onMouseDown:canvasMouseDown,
-      onMouseMove:onMouseMove,
-      onMouseUp:onMouseUp,
-    },
+    React.createElement('div',{ref:canvasRef,className:'map-world-wrap',style:{flex:1,position:'relative',cursor:tool==='connect'?'crosshair':'grab'},onMouseDown:canvasMouseDown,onMouseMove:onMouseMove,onMouseUp:onMouseUp},
       React.createElement('div',{style:{position:'absolute',top:0,left:0,transformOrigin:'0 0',transform:'translate('+panSt.x+'px,'+panSt.y+'px) scale('+zoom+')',width:'5000px',height:'5000px'}},
         React.createElement('svg',{style:{position:'absolute',inset:0,width:'5000px',height:'5000px',pointerEvents:'none',zIndex:1}},
           connections.map(function(c,i){
@@ -2179,7 +2332,7 @@ function MapView(){
               React.createElement('line',{x1:ax,y1:ay,x2:bx,y2:by,stroke:'rgba(25,159,216,0.35)',strokeWidth:1.5,strokeDasharray:'6 3'}),
               React.createElement('circle',{cx:mx,cy:my,r:3,fill:'rgba(25,159,216,0.8)',opacity:0.7}),
               React.createElement('line',{x1:ax,y1:ay,x2:bx,y2:by,stroke:'transparent',strokeWidth:10,pointerEvents:'all',style:{cursor:'pointer'},
-                onClick:function(e){e.stopPropagation();if(!dragMoved.current)setConnections(function(cs){return cs.filter(function(_,j){return j!==i;});}); }})
+                onClick:function(e){e.stopPropagation();if(!dragMoved.current){var cid=connections[i]?connections[i][2]:null;sbDeleteConn(sb,cid);setConnections(function(cs){return cs.filter(function(_,j){return j!==i;});});}}})
             );
           })
         ),
@@ -2187,16 +2340,11 @@ function MapView(){
           var h=Math.round(node.w*9/16);
           var bCol=gBorder[node.status]||'rgba(25,159,216,0.3)';
           var sCol=gShadow[node.status]||'rgba(25,159,216,0.5)';
-          return React.createElement('div',{
-            key:node.id,
-            className:'map-node '+node.status,
+          return React.createElement('div',{key:node.id,className:'map-node '+node.status,
             style:{left:node.x,top:node.y,width:node.w,zIndex:dragging===node.id?10:2,border:'1px solid '+bCol,boxShadow:'0 0 18px '+sCol+'55,0 0 40px '+sCol+'22'},
-            onMouseDown:function(e){startDrag(e,node);}
-          },
+            onMouseDown:function(e){startDrag(e,node);}},
             React.createElement('div',{className:'map-node-img-wrap',onClick:function(){handleNodeClick(node);}},
-              node.img
-                ?React.createElement('img',{className:'map-node-img',src:node.img,alt:node.name,draggable:false})
-                :React.createElement('div',{className:'map-node-img-ph',style:{height:h}},'📷'),
+              node.img?React.createElement('img',{className:'map-node-img',src:node.img,alt:node.name,draggable:false}):React.createElement('div',{className:'map-node-img-ph',style:{height:h}},'📷'),
               React.createElement('div',{className:'map-node-dive-overlay'},'DIVE IN ↗')
             ),
             React.createElement('div',{className:'map-node-bar'},
