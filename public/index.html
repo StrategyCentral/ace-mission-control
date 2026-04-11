@@ -2289,7 +2289,8 @@ function SubMindMap({nodeId,nodeName,details,onSaveDetails}){
 
 function DeepDiveView(props){
   var node=props.node,nodes=props.nodes,connections=props.connections,details=props.details,
-      onBack=props.onBack,onSaveDetails=props.onSaveDetails,onNavigate=props.onNavigate,sb=props.supabase;
+      onBack=props.onBack,onSaveDetails=props.onSaveDetails,onNavigate=props.onNavigate,
+      sb=props.supabase,onUpdateNode=props.onUpdateNode;
   var nd=details[node.id]||{};
   var[desc,setDesc]=React.useState(nd.description||'');
   var[links,setLinks]=React.useState(nd.links||[]);
@@ -2298,6 +2299,10 @@ function DeepDiveView(props){
   var[newLL,setNewLL]=React.useState('');
   var[newLU,setNewLU]=React.useState('');
   var[newTag,setNewTag]=React.useState('');
+  var[editOpen,setEditOpen]=React.useState(false);
+  var[editForm,setEditForm]=React.useState({name:node.name,url:node.url||'',status:node.status,img:node.img||''});
+  var[uploadingImg,setUploadingImg]=React.useState(false);
+  var ddFileRef=React.useRef(null);
   var saveTimer=React.useRef(null);
   function scheduleSave(d){
     clearTimeout(saveTimer.current);
@@ -2320,11 +2325,61 @@ function DeepDiveView(props){
   var sBorder={live:'rgba(0,230,118,0.3)',building:'rgba(255,107,53,0.3)',notstarted:'rgba(255,51,85,0.3)'};
   function addLink(){if(!newLL||!newLU)return;var nl=links.concat([{label:newLL,url:newLU}]);setLinks(nl);up('links',nl);setNewLL('');setNewLU('');}
   function addTag(){if(!newTag)return;var nt=tags.indexOf(newTag)<0?tags.concat([newTag]):tags;setTags(nt);up('tags',nt);setNewTag('');}
+  async function handleDDImgUpload(e){
+    var file=e.target.files[0];if(!file)return;
+    setUploadingImg(true);
+    var url=null;
+    if(sb){
+      try{
+        var ext=file.name.split('.').pop()||'jpg';
+        var path='node-'+node.id+'-'+Date.now()+'.'+ext;
+        var compressed=await new Promise(function(res){var img=new Image();img.onload=function(){var cv=document.createElement('canvas');var MAX=800;var r=Math.min(MAX/img.width,MAX/img.height,1);cv.width=Math.round(img.width*r);cv.height=Math.round(img.height*r);cv.getContext('2d').drawImage(img,0,0,cv.width,cv.height);cv.toBlob(function(b){res(b);},'image/jpeg',0.75);};var rd=new FileReader();rd.onload=function(ev){img.src=ev.target.result;};rd.readAsDataURL(file);});
+        var{error}=await sb.storage.from('map-images').upload(path,compressed,{contentType:'image/jpeg',upsert:true});
+        if(!error){var{data}=sb.storage.from('map-images').getPublicUrl(path);url=data.publicUrl;}
+      }catch(err){}
+    }
+    if(!url){var reader=new FileReader();reader.onload=function(ev){var img=new Image();img.onload=function(){var cv=document.createElement('canvas');var MAX=800;var ratio=Math.min(MAX/img.width,MAX/img.height,1);cv.width=Math.round(img.width*ratio);cv.height=Math.round(img.height*ratio);cv.getContext('2d').drawImage(img,0,0,cv.width,cv.height);url=cv.toDataURL('image/jpeg',0.7);setEditForm(function(f){return Object.assign({},f,{img:url});});setUploadingImg(false);};img.src=ev.target.result;};reader.readAsDataURL(file);return;}
+    setEditForm(function(f){return Object.assign({},f,{img:url});});
+    setUploadingImg(false);
+  }
+  function saveNodeEdit(){
+    if(onUpdateNode)onUpdateNode(node.id,editForm);
+    setEditOpen(false);
+  }
   return React.createElement('div',{className:'dd-overlay'},
+    // Node edit modal
+    editOpen&&React.createElement('div',{className:'map-modal',style:{zIndex:700}},
+      React.createElement('div',{className:'map-modal-box'},
+        React.createElement('div',{className:'map-modal-title'},'EDIT NODE'),
+        React.createElement('input',{className:'map-input',placeholder:'Name',value:editForm.name,onChange:function(e){setEditForm(function(f){return Object.assign({},f,{name:e.target.value});});}}),
+        React.createElement('input',{className:'map-input',placeholder:'URL (https://...)',value:editForm.url,onChange:function(e){setEditForm(function(f){return Object.assign({},f,{url:e.target.value});});}}),
+        React.createElement('select',{className:'map-select',value:editForm.status,onChange:function(e){setEditForm(function(f){return Object.assign({},f,{status:e.target.value});})}},
+          React.createElement('option',{value:'live'},'🟢 LIVE'),
+          React.createElement('option',{value:'building'},'🟠 BUILDING'),
+          React.createElement('option',{value:'notstarted'},'🔴 NOT STARTED')
+        ),
+        React.createElement('div',{style:{marginBottom:'12px'}},
+          React.createElement('div',{style:{fontSize:'9px',color:'var(--textd)',letterSpacing:'2px',marginBottom:'6px',textTransform:'uppercase'}},'Screenshot / Image'),
+          React.createElement('input',{type:'file',accept:'image/*',onChange:handleDDImgUpload,style:{display:'none'},ref:ddFileRef}),
+          React.createElement('button',{className:'map-btn secondary',onClick:function(){ddFileRef.current&&ddFileRef.current.click();},style:{width:'100%',marginBottom:'8px'},disabled:uploadingImg},uploadingImg?'UPLOADING...':'Upload Image'),
+          editForm.img&&React.createElement('img',{src:editForm.img,style:{width:'100%',aspectRatio:'16/9',objectFit:'cover',borderRadius:'3px'}})
+        ),
+        React.createElement('div',{style:{display:'flex',gap:'8px',justifyContent:'flex-end'}},
+          React.createElement('button',{className:'map-btn secondary',onClick:function(){setEditOpen(false);}},'Cancel'),
+          React.createElement('button',{className:'map-btn primary',onClick:saveNodeEdit},'Save')
+        )
+      )
+    ),
     React.createElement('div',{className:'dd-header'},
       React.createElement('button',{className:'dd-back',onClick:onBack},'← MAP'),
       React.createElement('div',{className:'dd-title'},node.name.toUpperCase()),
       React.createElement('div',{className:'dd-status-badge',style:{background:sBg[node.status],color:sColor[node.status],border:'1px solid '+sBorder[node.status]}},'● '+(node.status==='live'?'LIVE':node.status==='building'?'BUILDING':'NOT STARTED')),
+      React.createElement('button',{
+        onClick:function(){setEditOpen(true);setEditForm({name:node.name,url:node.url||'',status:node.status,img:node.img||'',w:node.w});},
+        style:{background:'rgba(255,255,255,0.08)',border:'1px solid rgba(255,255,255,0.3)',borderRadius:'20px',color:'white',fontFamily:'var(--M)',fontSize:'11px',letterSpacing:'2px',padding:'5px 14px',cursor:'pointer',transition:'all .2s',flexShrink:0},
+        onMouseOver:function(e){e.target.style.background='rgba(255,255,255,0.18)';},
+        onMouseOut:function(e){e.target.style.background='rgba(255,255,255,0.08)';}
+      },'✎ EDIT NODE'),
       node.url?React.createElement('button',{className:'map-visit-btn',style:{width:'auto',marginLeft:'auto',padding:'6px 16px',flex:'none'},onClick:function(){window.open(node.url,'_blank');}},'VISIT ↗'):null
     ),
     React.createElement('div',{className:'dd-body'},
@@ -2569,7 +2624,7 @@ function MapView({supabase:sb,session}){sb=sb||null;session=session||null;
     React.createElement('div',{style:{fontFamily:'var(--M)',fontSize:'9px',letterSpacing:'2px',color:'var(--textd)'}},migrating?'MIGRATING LOCAL DATA TO CLOUD...':'LOADING MAP FROM CLOUD...')
   );
 
-  if(deepDive)return React.createElement(DeepDiveView,{node:deepDive,nodes:nodes,connections:connections,details:details,onBack:function(){setDeepDive(null);},onSaveDetails:saveDetails,onNavigate:function(n){setDeepDive(n);},supabase:sb});
+  if(deepDive)return React.createElement(DeepDiveView,{node:deepDive,nodes:nodes,connections:connections,details:details,onBack:function(){setDeepDive(null);},onSaveDetails:saveDetails,onNavigate:function(n){setDeepDive(n);},supabase:sb,onUpdateNode:function(id,form){setNodes(function(ns){var updated=ns.map(function(n){return n.id===id?Object.assign({},n,{name:form.name,url:form.url,status:form.status,img:form.img}):n;});var saved=updated.find(function(n){return n.id===id;});if(saved)sbUpsertNode(sb,saved);return updated;});setDeepDive(function(dd){return dd&&dd.id===id?Object.assign({},dd,{name:form.name,url:form.url,status:form.status,img:form.img}):dd;});}});
 
   return React.createElement('div',{className:'fv',style:{padding:0,position:'relative',overflow:'hidden',display:'flex',flexDirection:'column'}},
     editing!==null&&React.createElement('div',{className:'map-modal'},
@@ -2683,10 +2738,10 @@ function MapView({supabase:sb,session}){sb=sb||null;session=session||null;
             React.createElement('text',{fontFamily:'var(--M)',fontSize:8,letterSpacing:1.5,fill:hex,opacity:0.9,style:{pointerEvents:'none'}},
               React.createElement('textPath',{href:'#'+pathIdBot,startOffset:'50%',textAnchor:'middle'},statusLabel)
             ),
-            // Edit button
+            // Edit button — larger, white
             React.createElement('g',{onClick:function(e){openEdit(e,node);},style:{cursor:'pointer'}},
-              React.createElement('circle',{cx:cx+R*0.72,cy:cy-R*0.72,r:12,fill:'rgba(3,9,18,0.92)',stroke:'rgba(25,159,216,0.5)',strokeWidth:1}),
-              React.createElement('text',{x:cx+R*0.72,y:cy-R*0.72+1,textAnchor:'middle',dominantBaseline:'middle',fill:'rgba(25,159,216,0.9)',fontFamily:'var(--M)',fontSize:12},'✎')
+              React.createElement('circle',{cx:cx+R*0.72,cy:cy-R*0.72,r:16,fill:'rgba(3,9,18,0.92)',stroke:'rgba(255,255,255,0.5)',strokeWidth:1.5}),
+              React.createElement('text',{x:cx+R*0.72,y:cy-R*0.72+1,textAnchor:'middle',dominantBaseline:'middle',fill:'white',fontFamily:'var(--M)',fontSize:14},'✎')
             ),
             // VISIT pill
             node.url&&React.createElement('g',{onClick:function(e){e.stopPropagation();window.open(node.url,'_blank');},style:{cursor:'pointer'}},
