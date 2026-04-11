@@ -2549,7 +2549,8 @@ function OfficeView(){
 
 
 function NexusView(){
-  const REPOS=[
+  var ce=React.createElement;
+  var REPOS=[
     {name:'claw-code',label:'OpenClaw Core',color:'#19bde0',sym:6098,clusters:289,flows:300,agents:['CHAD','ALL'],domain:'Agent framework core',gh:'StrategyCentral/claw-code'},
     {name:'NinjaTrader---Indicators',label:'NinjaTrader Indicators',color:'#f97316',sym:4998,clusters:385,flows:111,agents:['AXIOM'],domain:'Trading strategies & signals',gh:'acetradingstrategies/NinjaTrader---Indicators'},
     {name:'ace_sports_bots',label:'ACE Sports Bots',color:'#eab308',sym:3022,clusters:141,flows:231,agents:['DAVE','BOB'],domain:'Sports prediction bots',gh:'acetradingstrategies/ace_sports_bots'},
@@ -2560,172 +2561,135 @@ function NexusView(){
     {name:'ace-relay',label:'ACE Relay',color:'#eab308',sym:10,clusters:2,flows:0,agents:['CHAD','LARRY'],domain:'Signal relay bridge',gh:'StrategyCentral/ace-relay'},
     {name:'ace-wave-park-licensing',label:'Wave Park Licensing',color:'#22c55e',sym:0,clusters:0,flows:0,agents:['LARRY'],domain:'License validation & Boardshop',gh:'StrategyCentral/ace-wave-park-licensing',empty:true},
   ];
-  const TOOLS=[
-    {cmd:'gitnexus_impact',desc:'Blast radius before editing — who breaks?',color:'#f97316'},
+  var TOOLS=[
+    {cmd:'gitnexus_impact',desc:'Blast radius — who breaks?',color:'#f97316'},
     {cmd:'gitnexus_query',desc:'Find code by concept across all repos',color:'#19bde0'},
-    {cmd:'gitnexus_context',desc:'360° view — callers, callees, flows',color:'#a855f7'},
+    {cmd:'gitnexus_context',desc:'360 view — callers, callees, flows',color:'#a855f7'},
     {cmd:'gitnexus_detect_changes',desc:'Pre-commit scope check',color:'#22c55e'},
     {cmd:'gitnexus_rename',desc:'Safe multi-file rename via call graph',color:'#eab308'},
     {cmd:'gitnexus_cypher',desc:'Raw graph queries (advanced)',color:'#64748b'},
   ];
-  const[active,setActive]=React.useState(null);
-  const activeRepo=REPOS.find(function(r){return r.name===active;})||null;
-  const totalSym=REPOS.reduce(function(a,r){return a+r.sym;},0);
-  const totalFlows=REPOS.reduce(function(a,r){return a+r.flows;},0);
-  const totalClusters=REPOS.reduce(function(a,r){return a+r.clusters;},0);
-
-  // SVG node graph
-  const canvasW=340,canvasH=220;
-  const cx=canvasW/2,cy=canvasH/2;
-  const nodes=[
-    {id:'claw-code',x:cx,y:cy,r:22,color:'#19bde0',label:'CORE'},
-    {id:'NinjaTrader---Indicators',x:cx+100,y:cy-70,r:16,color:'#f97316',label:'NT'},
-    {id:'ace_sports_bots',x:cx+110,y:cy+50,r:14,color:'#eab308',label:'BOTS'},
-    {id:'polymarket-crypto-toolkit',x:cx-90,y:cy-75,r:13,color:'#22c55e',label:'SOL'},
-    {id:'nss-dashboard',x:cx-110,y:cy+40,r:11,color:'#a855f7',label:'NSS'},
-    {id:'ace-mission-control',x:cx+30,y:cy+100,r:10,color:'#19bde0',label:'ACE'},
-    {id:'ace-marketing-suite',x:cx-60,y:cy+90,r:9,color:'#f97316',label:'MKT'},
-    {id:'ace-relay',x:cx-20,y:cy-100,r:8,color:'#eab308',label:'RLY'},
-    {id:'ace-wave-park-licensing',x:cx+90,y:cy-10,r:7,color:'#22c55e',label:'WP'},
+  var active=React.useState(null);
+  var activeState=active[0];
+  var setActive=active[1];
+  var activeRepo=REPOS.find(function(r){return r.name===activeState;})||null;
+  var totalSym=REPOS.reduce(function(a,r){return a+r.sym;},0);
+  var totalFlows=REPOS.reduce(function(a,r){return a+r.flows;},0);
+  var totalClusters=REPOS.reduce(function(a,r){return a+r.clusters;},0);
+  var mono={fontFamily:'monospace',letterSpacing:'1px'};
+  var dim='rgba(255,255,255,0.3)';
+  var faint='1px solid rgba(255,255,255,0.06)';
+  // graph data
+  var gcx=165,gcy=105;
+  var gnodes=[
+    {id:'claw-code',x:gcx,y:gcy,r:20,color:'#19bde0',label:'CORE'},
+    {id:'NinjaTrader---Indicators',x:gcx+95,y:gcy-65,r:15,color:'#f97316',label:'NT'},
+    {id:'ace_sports_bots',x:gcx+100,y:gcy+48,r:13,color:'#eab308',label:'BOTS'},
+    {id:'polymarket-crypto-toolkit',x:gcx-88,y:gcy-68,r:12,color:'#22c55e',label:'SOL'},
+    {id:'nss-dashboard',x:gcx-105,y:gcy+38,r:10,color:'#a855f7',label:'NSS'},
+    {id:'ace-mission-control',x:gcx+25,y:gcy+95,r:9,color:'#19bde0',label:'ACE'},
+    {id:'ace-marketing-suite',x:gcx-58,y:gcy+85,r:8,color:'#f97316',label:'MKT'},
+    {id:'ace-relay',x:gcx-18,y:gcy-95,r:8,color:'#eab308',label:'RLY'},
+    {id:'ace-wave-park-licensing',x:gcx+88,y:gcy-8,r:7,color:'#22c55e',label:'WP'},
   ];
-  const edges=[['claw-code','NinjaTrader---Indicators'],['claw-code','ace_sports_bots'],['claw-code','polymarket-crypto-toolkit'],['claw-code','nss-dashboard'],['claw-code','ace-mission-control'],['claw-code','ace-marketing-suite'],['claw-code','ace-relay'],['ace-relay','ace-wave-park-licensing'],['claw-code','ace-wave-park-licensing']];
+  var gedges=[['claw-code','NinjaTrader---Indicators'],['claw-code','ace_sports_bots'],['claw-code','polymarket-crypto-toolkit'],['claw-code','nss-dashboard'],['claw-code','ace-mission-control'],['claw-code','ace-marketing-suite'],['claw-code','ace-relay'],['ace-relay','ace-wave-park-licensing'],['claw-code','ace-wave-park-licensing']];
 
-  function NodeGraph(){
-    return React.createElement('svg',{width:canvasW,height:canvasH,style:{display:'block'}},
-      React.createElement('defs',null,
-        React.createElement('radialGradient',{id:'nglow',cx:'50%',cy:'50%',r:'50%'},
-          React.createElement('stop',{offset:'0%',stopColor:'#19bde0',stopOpacity:'0.3'}),
-          React.createElement('stop',{offset:'100%',stopColor:'#19bde0',stopOpacity:'0'})
-        )
-      ),
-      edges.map(function(e,i){
-        const a=nodes.find(function(n){return n.id===e[0];});
-        const b=nodes.find(function(n){return n.id===e[1];});
-        const isActive=active&&(e[0]===active||e[1]===active);
-        return React.createElement('line',{key:i,x1:a.x,y1:a.y,x2:b.x,y2:b.y,stroke:isActive?'rgba(25,189,224,0.6)':'rgba(255,255,255,0.08)',strokeWidth:isActive?1.5:1});
-      }),
-      nodes.map(function(n){
-        const isActive=active===n.id;
-        return React.createElement('g',{key:n.id,onClick:function(){setActive(active===n.id?null:n.id);},style:{cursor:'pointer'}},
-          isActive&&React.createElement('circle',{cx:n.x,cy:n.y,r:n.r+8,fill:n.color,opacity:0.15}),
-          React.createElement('circle',{cx:n.x,cy:n.y,r:n.r,fill:n.color+(isActive?'33':'18'),stroke:n.color,strokeWidth:isActive?2:1,opacity:isActive?1:0.7}),
-          React.createElement('text',{x:n.x,y:n.y+1,textAnchor:'middle',dominantBaseline:'middle',fill:n.color,fontSize:Math.max(6,n.r*0.5),fontFamily:'monospace',letterSpacing:'0.5',opacity:isActive?1:0.8},n.label)
-        );
-      })
-    );
-  }
-
-  const D=function(p){return React.createElement('div',p);};
-  const S=function(s){return {fontFamily:'monospace',letterSpacing:'1px',...s};};
-
-  return D({style:{display:'flex',height:'100%',width:'100%',overflow:'hidden',background:'#030912'}},[
-    // LEFT — repo list
-    D({key:'left',style:{width:'210px',flexShrink:0,borderRight:'1px solid rgba(255,255,255,0.06)',display:'flex',flexDirection:'column',overflowY:'auto'}},
-      D({key:'hdr',style:{padding:'12px',borderBottom:'1px solid rgba(255,255,255,0.06)'}},
-        D({style:S({fontSize:'8px',letterSpacing:'3px',color:'#19bde0',marginBottom:'3px'})},'// NEXUS MAP'),
-        D({style:S({fontSize:'7px',color:'rgba(255,255,255,0.3)'})},'9 repos · '+totalSym.toLocaleString()+' symbols')
+  return ce('div',{style:{display:'flex',height:'100%',width:'100%',overflow:'hidden',background:'#030912'}},
+    ce('div',{style:{width:'200px',flexShrink:0,borderRight:faint,display:'flex',flexDirection:'column',overflowY:'auto'}},
+      ce('div',{style:{padding:'12px',borderBottom:faint}},
+        ce('div',{style:Object.assign({},mono,{fontSize:'8px',letterSpacing:'3px',color:'#19bde0',marginBottom:'3px'})},'// NEXUS MAP'),
+        ce('div',{style:Object.assign({},mono,{fontSize:'7px',color:dim})},'9 repos indexed')
       ),
       REPOS.map(function(r){
-        const on=active===r.name;
-        return D({key:r.name,onClick:function(){setActive(on?null:r.name);},style:{padding:'8px 12px',cursor:'pointer',borderLeft:'2px solid '+(on?r.color:'transparent'),background:on?r.color+'12':'transparent',transition:'all .12s'}},
-          D({style:S({fontSize:'9px',color:on?r.color:'rgba(255,255,255,0.7)',marginBottom:'2px'})},(on?'▶ ':'')+r.label),
-          D({style:S({fontSize:'7px',color:'rgba(255,255,255,0.3)'})},r.empty?'⚠ awaiting code push':r.sym.toLocaleString()+' sym · '+r.flows+' flows')
+        var on=activeState===r.name;
+        return ce('div',{key:r.name,onClick:function(){setActive(on?null:r.name);},style:{padding:'8px 12px',cursor:'pointer',borderLeft:'2px solid '+(on?r.color:'transparent'),background:on?r.color+'12':'transparent',transition:'all .12s'}},
+          ce('div',{style:Object.assign({},mono,{fontSize:'9px',color:on?r.color:'rgba(255,255,255,0.65)',marginBottom:'2px'})},(on?'\u25B6 ':'')+r.label),
+          ce('div',{style:Object.assign({},mono,{fontSize:'7px',color:dim})},r.empty?'\u26A0 awaiting code':r.sym.toLocaleString()+' sym \u00B7 '+r.flows+' flows')
         );
       }),
-      D({key:'foot',style:{marginTop:'auto',padding:'10px 12px',borderTop:'1px solid rgba(255,255,255,0.06)'}},
-        D({style:S({fontSize:'7px',color:'rgba(255,255,255,0.25)',lineHeight:'1.8'})},'CHAD · AXIOM · LARRY · DAVE'),
-        D({style:S({fontSize:'7px',color:'#22c55e',marginTop:'4px'})},'● MCP ACTIVE')
+      ce('div',{style:{marginTop:'auto',padding:'10px 12px',borderTop:faint}},
+        ce('div',{style:Object.assign({},mono,{fontSize:'7px',color:'rgba(255,255,255,0.2)',lineHeight:'1.8'})},'CHAD \u00B7 AXIOM \u00B7 LARRY \u00B7 DAVE'),
+        ce('div',{style:Object.assign({},mono,{fontSize:'7px',color:'#22c55e',marginTop:'4px'})},'\u25CF MCP ACTIVE')
       )
     ),
-    // MAIN
-    D({key:'main',style:{flex:1,display:'flex',flexDirection:'column',overflow:'hidden'}},
-      // Top stats bar
-      D({key:'stats',style:{padding:'10px 16px',borderBottom:'1px solid rgba(255,255,255,0.06)',display:'flex',gap:'24px',alignItems:'center',flexShrink:0}},
-        D({style:S({fontSize:'8px',letterSpacing:'3px',color:'#19bde0'})},'GITNEXUS'),
-        ...[['REPOS','9'],['SYMBOLS',totalSym.toLocaleString()],['CLUSTERS',totalClusters.toLocaleString()],['FLOWS',totalFlows.toLocaleString()]].map(function(s){
-          return D({key:s[0],style:{display:'flex',flexDirection:'column',gap:'1px'}},
-            D({style:S({fontSize:'7px',color:'rgba(255,255,255,0.3)',letterSpacing:'2px'})},s[0]),
-            D({style:S({fontSize:'11px',color:'rgba(255,255,255,0.85)',fontWeight:'bold'})},s[1])
-          );
-        }),
-        D({style:{marginLeft:'auto',display:'flex',gap:'8px'}},
-          React.createElement('a',{href:'https://gitnexus.vercel.app',target:'_blank',style:S({fontSize:'8px',color:'#19bde0',textDecoration:'none',padding:'4px 10px',border:'1px solid rgba(25,189,224,0.4)',borderRadius:'2px',letterSpacing:'1px'})},'↗ OPEN GITNEXUS'),
-          D({style:S({fontSize:'8px',color:'#22c55e',padding:'4px 10px',border:'1px solid rgba(34,197,94,0.4)',borderRadius:'2px',letterSpacing:'1px'})},'● INDEXED')
-        )
+    ce('div',{style:{flex:1,display:'flex',flexDirection:'column',overflow:'hidden'}},
+      ce('div',{style:{padding:'8px 14px',borderBottom:faint,display:'flex',gap:'18px',alignItems:'center',flexShrink:0}},
+        ce('div',{style:Object.assign({},mono,{fontSize:'8px',letterSpacing:'3px',color:'#19bde0'})},'GITNEXUS'),
+        ce('div',{style:{display:'flex',gap:'14px'}},
+          ce('div',{style:{display:'flex',flexDirection:'column'}},ce('div',{style:Object.assign({},mono,{fontSize:'6px',color:dim,letterSpacing:'2px'})},'SYMBOLS'),ce('div',{style:Object.assign({},mono,{fontSize:'11px',color:'rgba(255,255,255,0.8)',fontWeight:'bold'})},totalSym.toLocaleString())),
+          ce('div',{style:{display:'flex',flexDirection:'column'}},ce('div',{style:Object.assign({},mono,{fontSize:'6px',color:dim,letterSpacing:'2px'})},'CLUSTERS'),ce('div',{style:Object.assign({},mono,{fontSize:'11px',color:'rgba(255,255,255,0.8)',fontWeight:'bold'})},totalClusters.toLocaleString())),
+          ce('div',{style:{display:'flex',flexDirection:'column'}},ce('div',{style:Object.assign({},mono,{fontSize:'6px',color:dim,letterSpacing:'2px'})},'FLOWS'),ce('div',{style:Object.assign({},mono,{fontSize:'11px',color:'rgba(255,255,255,0.8)',fontWeight:'bold'})},totalFlows.toLocaleString()))
+        ),
+        ce('a',{href:'https://gitnexus.vercel.app',target:'_blank',style:Object.assign({},mono,{marginLeft:'auto',fontSize:'8px',color:'#19bde0',textDecoration:'none',padding:'4px 10px',border:'1px solid rgba(25,189,224,0.35)',borderRadius:'2px',letterSpacing:'1px'})},'\u2197 OPEN GITNEXUS')
       ),
-      // Body
-      D({key:'body',style:{flex:1,display:'flex',overflow:'hidden'}},
-        // Graph + tools
-        D({key:'left2',style:{width:'380px',flexShrink:0,borderRight:'1px solid rgba(255,255,255,0.06)',display:'flex',flexDirection:'column',padding:'16px',gap:'16px',overflowY:'auto'}},
-          D({key:'graphhdr',style:S({fontSize:'8px',color:'rgba(255,255,255,0.3)',letterSpacing:'2px',marginBottom:'4px'})},'// KNOWLEDGE GRAPH'),
-          React.createElement(NodeGraph,{key:'graph'}),
-          D({key:'toolshdr',style:{borderTop:'1px solid rgba(255,255,255,0.06)',paddingTop:'12px'}},
-            D({style:S({fontSize:'8px',color:'rgba(255,255,255,0.3)',letterSpacing:'2px',marginBottom:'8px'})},'// MCP TOOLS'),
+      ce('div',{style:{flex:1,display:'flex',overflow:'hidden'}},
+        ce('div',{style:{width:'350px',flexShrink:0,borderRight:faint,display:'flex',flexDirection:'column',padding:'12px',overflowY:'auto',gap:'10px'}},
+          ce('div',{style:Object.assign({},mono,{fontSize:'7px',color:dim,letterSpacing:'2px'})},'// KNOWLEDGE GRAPH'),
+          ce('svg',{width:330,height:210,style:{display:'block',flexShrink:0}},
+            gedges.map(function(e,i){
+              var a=gnodes.find(function(n){return n.id===e[0];});
+              var b=gnodes.find(function(n){return n.id===e[1];});
+              var hi=activeState&&(e[0]===activeState||e[1]===activeState);
+              return ce('line',{key:i,x1:a.x,y1:a.y,x2:b.x,y2:b.y,stroke:hi?'rgba(25,189,224,0.55)':'rgba(255,255,255,0.07)',strokeWidth:hi?1.5:0.8});
+            }),
+            gnodes.map(function(n){
+              var on=activeState===n.id;
+              return ce('g',{key:n.id,onClick:function(){setActive(activeState===n.id?null:n.id);},style:{cursor:'pointer'}},
+                on&&ce('circle',{cx:n.x,cy:n.y,r:n.r+7,fill:n.color,opacity:0.12}),
+                ce('circle',{cx:n.x,cy:n.y,r:n.r,fill:n.color+(on?'30':'15'),stroke:n.color,strokeWidth:on?2:1,opacity:on?1:0.75}),
+                ce('text',{x:n.x,y:n.y+0.5,textAnchor:'middle',dominantBaseline:'middle',fill:n.color,fontSize:Math.max(5,n.r*0.48),fontFamily:'monospace',opacity:on?1:0.85},n.label)
+              );
+            })
+          ),
+          ce('div',{style:{borderTop:faint,paddingTop:'10px'}},
+            ce('div',{style:Object.assign({},mono,{fontSize:'7px',color:dim,letterSpacing:'2px',marginBottom:'7px'})},'// MCP TOOLS'),
             TOOLS.map(function(t){
-              return D({key:t.cmd,style:{marginBottom:'6px',padding:'6px 8px',background:'rgba(255,255,255,0.02)',border:'1px solid rgba(255,255,255,0.05)',borderRadius:'2px'}},
-                D({style:S({fontSize:'8px',color:t.color,marginBottom:'2px'})},t.cmd),
-                D({style:S({fontSize:'7px',color:'rgba(255,255,255,0.35)'})},t.desc)
+              return ce('div',{key:t.cmd,style:{marginBottom:'5px',padding:'5px 7px',background:'rgba(255,255,255,0.02)',border:'1px solid rgba(255,255,255,0.05)',borderRadius:'2px'}},
+                ce('div',{style:Object.assign({},mono,{fontSize:'8px',color:t.color,marginBottom:'2px'})},t.cmd),
+                ce('div',{style:Object.assign({},mono,{fontSize:'7px',color:'rgba(255,255,255,0.3)'})},t.desc)
               );
             })
           )
         ),
-        // Detail panel
-        D({key:'detail',style:{flex:1,padding:'16px',overflowY:'auto'}},
+        ce('div',{style:{flex:1,padding:'14px',overflowY:'auto'}},
           activeRepo?
-            D({key:'active'},
-              D({style:{display:'flex',alignItems:'center',gap:'10px',marginBottom:'16px'}},
-                D({style:{width:'8px',height:'8px',borderRadius:'50%',background:activeRepo.color,flexShrink:0}}),
-                D({style:S({fontSize:'13px',color:'rgba(255,255,255,0.9)',fontWeight:'bold'})},activeRepo.label),
-                activeRepo.empty&&D({style:S({fontSize:'8px',color:'#f97316',padding:'2px 8px',border:'1px solid rgba(249,115,22,0.4)',borderRadius:'2px',letterSpacing:'1px'})},'AWAITING CODE')
+            ce('div',null,
+              ce('div',{style:{display:'flex',alignItems:'center',gap:'10px',marginBottom:'12px'}},
+                ce('div',{style:{width:'8px',height:'8px',borderRadius:'50%',background:activeRepo.color,flexShrink:0}}),
+                ce('div',{style:Object.assign({},mono,{fontSize:'12px',color:'rgba(255,255,255,0.9)',fontWeight:'bold'})},activeRepo.label),
+                activeRepo.empty?ce('div',{style:Object.assign({},mono,{fontSize:'8px',color:'#f97316',padding:'2px 7px',border:'1px solid rgba(249,115,22,0.4)',borderRadius:'2px'})},'AWAITING CODE'):null
               ),
-              D({style:S({fontSize:'8px',color:'rgba(255,255,255,0.3)',letterSpacing:'1px',marginBottom:'12px'})},activeRepo.domain),
-              // Stats grid
-              D({style:{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:'8px',marginBottom:'16px'}},
-                ...[['SYMBOLS',activeRepo.sym.toLocaleString()],['CLUSTERS',activeRepo.clusters],['FLOWS',activeRepo.flows]].map(function(s){
-                  return D({key:s[0],style:{padding:'10px',background:'rgba(255,255,255,0.02)',border:'1px solid rgba(255,255,255,0.06)',borderRadius:'3px'}},
-                    D({style:S({fontSize:'7px',color:'rgba(255,255,255,0.3)',letterSpacing:'2px',marginBottom:'4px'})},s[0]),
-                    D({style:S({fontSize:'18px',color:activeRepo.color,fontWeight:'bold'})},s[1])
-                  );
-                })
+              ce('div',{style:Object.assign({},mono,{fontSize:'8px',color:dim,marginBottom:'12px'})},activeRepo.domain),
+              ce('div',{style:{display:'flex',gap:'7px',marginBottom:'14px'}},
+                ce('div',{style:{flex:1,padding:'9px',background:'rgba(255,255,255,0.02)',border:'1px solid rgba(255,255,255,0.06)',borderRadius:'3px'}},ce('div',{style:Object.assign({},mono,{fontSize:'6px',color:dim,letterSpacing:'2px',marginBottom:'3px'})},'SYMBOLS'),ce('div',{style:Object.assign({},mono,{fontSize:'16px',color:activeRepo.color,fontWeight:'bold'})},activeRepo.sym.toLocaleString())),
+                ce('div',{style:{flex:1,padding:'9px',background:'rgba(255,255,255,0.02)',border:'1px solid rgba(255,255,255,0.06)',borderRadius:'3px'}},ce('div',{style:Object.assign({},mono,{fontSize:'6px',color:dim,letterSpacing:'2px',marginBottom:'3px'})},'CLUSTERS'),ce('div',{style:Object.assign({},mono,{fontSize:'16px',color:activeRepo.color,fontWeight:'bold'})},String(activeRepo.clusters))),
+                ce('div',{style:{flex:1,padding:'9px',background:'rgba(255,255,255,0.02)',border:'1px solid rgba(255,255,255,0.06)',borderRadius:'3px'}},ce('div',{style:Object.assign({},mono,{fontSize:'6px',color:dim,letterSpacing:'2px',marginBottom:'3px'})},'FLOWS'),ce('div',{style:Object.assign({},mono,{fontSize:'16px',color:activeRepo.color,fontWeight:'bold'})},String(activeRepo.flows)))
               ),
-              // Agents
-              D({key:'agents',style:{marginBottom:'16px'}},
-                D({style:S({fontSize:'7px',color:'rgba(255,255,255,0.3)',letterSpacing:'2px',marginBottom:'8px'})},'// ASSIGNED AGENTS'),
-                D({style:{display:'flex',gap:'6px',flexWrap:'wrap'}},
-                  activeRepo.agents.map(function(a){
-                    return D({key:a,style:S({fontSize:'8px',color:activeRepo.color,padding:'3px 10px',border:'1px solid '+activeRepo.color+'55',borderRadius:'2px',letterSpacing:'1px'})},a);
-                  })
+              ce('div',{style:{marginBottom:'14px'}},
+                ce('div',{style:Object.assign({},mono,{fontSize:'7px',color:dim,letterSpacing:'2px',marginBottom:'7px'})},'// AGENTS'),
+                ce('div',{style:{display:'flex',gap:'5px',flexWrap:'wrap'}},
+                  activeRepo.agents.map(function(a){return ce('div',{key:a,style:Object.assign({},mono,{fontSize:'8px',color:activeRepo.color,padding:'3px 9px',border:'1px solid '+activeRepo.color+'55',borderRadius:'2px'})},a);})
                 )
               ),
-              // Commands
-              D({key:'cmds'},
-                D({style:S({fontSize:'7px',color:'rgba(255,255,255,0.3)',letterSpacing:'2px',marginBottom:'8px'})},'// QUERY THIS REPO'),
-                ...[
-                  'gitnexus_impact({target: "...", repo: "'+activeRepo.name+'"})',
-                  'gitnexus_query({query: "...", repo: "'+activeRepo.name+'"})',
-                  'gitnexus_detect_changes({repo: "'+activeRepo.name+'"})',
-                ].map(function(cmd,i){
-                  return D({key:i,style:{marginBottom:'6px',padding:'8px 10px',background:'rgba(0,0,0,0.4)',border:'1px solid rgba(255,255,255,0.06)',borderRadius:'2px',fontFamily:'monospace',fontSize:'8px',color:'rgba(255,255,255,0.5)',letterSpacing:'0.5px'}},cmd);
-                }),
-                React.createElement('a',{href:'https://github.com/'+activeRepo.gh,target:'_blank',style:S({display:'inline-block',marginTop:'10px',fontSize:'8px',color:activeRepo.color,textDecoration:'none',padding:'5px 12px',border:'1px solid '+activeRepo.color+'44',borderRadius:'2px',letterSpacing:'1px'})},'↗ VIEW ON GITHUB')
-              )
+              ce('div',{style:Object.assign({},mono,{fontSize:'7px',color:dim,letterSpacing:'2px',marginBottom:'7px'})},'// QUERY'),
+              ce('div',{style:{marginBottom:'5px',padding:'7px 8px',background:'rgba(0,0,0,0.5)',border:'1px solid rgba(255,255,255,0.06)',borderRadius:'2px',fontFamily:'monospace',fontSize:'8px',color:'rgba(255,255,255,0.4)'}},'gitnexus_impact({target:"...",repo:"'+activeRepo.name+'"})'),
+              ce('div',{style:{marginBottom:'5px',padding:'7px 8px',background:'rgba(0,0,0,0.5)',border:'1px solid rgba(255,255,255,0.06)',borderRadius:'2px',fontFamily:'monospace',fontSize:'8px',color:'rgba(255,255,255,0.4)'}},'gitnexus_query({query:"...",repo:"'+activeRepo.name+'"})'),
+              ce('div',{style:{marginBottom:'10px',padding:'7px 8px',background:'rgba(0,0,0,0.5)',border:'1px solid rgba(255,255,255,0.06)',borderRadius:'2px',fontFamily:'monospace',fontSize:'8px',color:'rgba(255,255,255,0.4)'}},'gitnexus_detect_changes({repo:"'+activeRepo.name+'"})'),
+              ce('a',{href:'https://github.com/'+activeRepo.gh,target:'_blank',style:Object.assign({},mono,{display:'inline-block',fontSize:'8px',color:activeRepo.color,textDecoration:'none',padding:'5px 11px',border:'1px solid '+activeRepo.color+'44',borderRadius:'2px'})},'\u2197 GITHUB')
             ):
-            D({key:'empty',style:{display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',height:'100%',gap:'12px'}},
-              D({style:S({fontSize:'11px',color:'rgba(255,255,255,0.15)',letterSpacing:'3px'})},'// SELECT A REPO'),
-              D({style:S({fontSize:'8px',color:'rgba(255,255,255,0.1)',textAlign:'center',lineHeight:'2',maxWidth:'280px'})},'Click any repo in the sidebar or a node in the graph to inspect symbols, clusters, flows, assigned agents, and live query commands'),
-              D({style:{display:'flex',gap:'16px',marginTop:'8px'}},
-                ...[['16,075','TOTAL SYMBOLS'],['907','CLUSTERS'],['769','FLOWS']].map(function(s){
-                  return D({key:s[0],style:{textAlign:'center'}},
-                    D({style:S({fontSize:'16px',color:'rgba(25,189,224,0.5)',fontWeight:'bold'})},s[0]),
-                    D({style:S({fontSize:'7px',color:'rgba(255,255,255,0.2)',letterSpacing:'2px',marginTop:'2px'})},s[1])
-                  );
-                })
+            ce('div',{style:{display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',height:'100%',gap:'12px',textAlign:'center'}},
+              ce('div',{style:Object.assign({},mono,{fontSize:'9px',color:'rgba(255,255,255,0.1)',letterSpacing:'4px'})},'// SELECT A REPO'),
+              ce('div',{style:Object.assign({},mono,{fontSize:'7px',color:'rgba(255,255,255,0.08)',lineHeight:'2',maxWidth:'260px'})},'Click a repo in the sidebar or tap a node in the graph'),
+              ce('div',{style:{display:'flex',gap:'18px',marginTop:'4px'}},
+                ce('div',{style:{textAlign:'center'}},ce('div',{style:Object.assign({},mono,{fontSize:'15px',color:'rgba(25,189,224,0.35)',fontWeight:'bold'})},'16,075'),ce('div',{style:Object.assign({},mono,{fontSize:'6px',color:'rgba(255,255,255,0.15)',letterSpacing:'2px',marginTop:'2px'})},'SYMBOLS')),
+                ce('div',{style:{textAlign:'center'}},ce('div',{style:Object.assign({},mono,{fontSize:'15px',color:'rgba(25,189,224,0.35)',fontWeight:'bold'})},'907'),ce('div',{style:Object.assign({},mono,{fontSize:'6px',color:'rgba(255,255,255,0.15)',letterSpacing:'2px',marginTop:'2px'})},'CLUSTERS')),
+                ce('div',{style:{textAlign:'center'}},ce('div',{style:Object.assign({},mono,{fontSize:'15px',color:'rgba(25,189,224,0.35)',fontWeight:'bold'})},'769'),ce('div',{style:Object.assign({},mono,{fontSize:'6px',color:'rgba(255,255,255,0.15)',letterSpacing:'2px',marginTop:'2px'})},'FLOWS'))
               )
             )
         )
       )
     )
-  ]);
+  );
 }
 
 function App(){
