@@ -2643,38 +2643,20 @@ function MapView({supabase:sb,session}){sb=sb||null;session=session||null;
               React.createElement('path',{id:pathIdBot,d:'M '+(cx-(R-8))+','+cy+' A '+(R-8)+','+(R-8)+' 0 0,0 '+(cx+(R-8))+','+cy,fill:'none'})
             ),
             // Outer glow rings
-            React.createElement('circle',{cx:cx,cy:cy,r:R+10,fill:'none',stroke:col+'0.08)',strokeWidth:1}),
-            React.createElement('circle',{cx:cx,cy:cy,r:R+5,fill:'none',stroke:col+'0.18)',strokeWidth:1}),
+            React.createElement('circle',{cx:cx,cy:cy,r:R+18,fill:'none',stroke:col+'0.06)',strokeWidth:2}),
+            React.createElement('circle',{cx:cx,cy:cy,r:R+10,fill:'none',stroke:col+'0.15)',strokeWidth:2}),
+            React.createElement('circle',{cx:cx,cy:cy,r:R+4,fill:'none',stroke:col+'0.35)',strokeWidth:1.5}),
             // Image clipped to circle
             node.img
               ?React.createElement('image',{href:node.img,x:cx-R,y:cy-R,width:D,height:D,clipPath:'url(#'+clipId+')',preserveAspectRatio:'xMidYMid slice',style:{cursor:'pointer'},onClick:function(){handleNodeClick(node);}})
               :React.createElement('circle',{cx:cx,cy:cy,r:R,fill:'rgba(5,15,32,0.9)',stroke:col+'0.15)',strokeWidth:1,style:{cursor:'pointer'},onClick:function(){handleNodeClick(node);}}),
             // Photo placeholder icon
             !node.img&&React.createElement('text',{x:cx,y:cy,textAnchor:'middle',dominantBaseline:'middle',fontSize:28,style:{pointerEvents:'none'}},'📷'),
-            // Dark gradient overlay (bottom half) for text readability
-            React.createElement('defs',null,
-              React.createElement('radialGradient',{id:'og-'+node.id,cx:'50%',cy:'80%',r:'60%'},
-                React.createElement('stop',{offset:'0%',stopColor:'rgba(2,6,14,0.85)'}),
-                React.createElement('stop',{offset:'100%',stopColor:'rgba(2,6,14,0)'})
-              )
-            ),
-            node.img&&React.createElement('circle',{cx:cx,cy:cy,r:R-1,fill:'url(#og-'+node.id+')',clipPath:'url(#'+clipId+')',style:{pointerEvents:'none'}}),
-            // Dive-in hover overlay
-            React.createElement('circle',{cx:cx,cy:cy,r:R-1,fill:'rgba(3,9,18,0.0)',clipPath:'url(#'+clipId+')',
-              style:{cursor:'pointer',transition:'fill .2s'},
-              onClick:function(){handleNodeClick(node);},
-              onMouseOver:function(e){e.target.setAttribute('fill','rgba(3,9,18,0.55)');},
-              onMouseOut:function(e){e.target.setAttribute('fill','rgba(3,9,18,0.0)');}}),
-            // Dive in text (shown on hover via js — simple approach: always faint)
-            React.createElement('text',{x:cx,y:cy,textAnchor:'middle',dominantBaseline:'middle',
-              fill:'rgba(200,232,248,0.0)',fontFamily:'var(--D)',fontSize:9,fontWeight:700,letterSpacing:3,
-              style:{pointerEvents:'none',transition:'fill .2s'},
-              className:'node-dive-txt'},'DIVE IN ↗'),
-            // Border ring
-            React.createElement('circle',{cx:cx,cy:cy,r:R,fill:'none',stroke:col+'0.9)',strokeWidth:2,
-              style:{filter:'drop-shadow(0 0 10px '+col+'0.6))',pointerEvents:'none'}}),
+            // Border ring with strong glow
+            React.createElement('circle',{cx:cx,cy:cy,r:R,fill:'none',stroke:col+'1)',strokeWidth:3,
+              style:{filter:'drop-shadow(0 0 8px '+col+'1)) drop-shadow(0 0 20px '+col+'0.8)) drop-shadow(0 0 40px '+col+'0.4))',pointerEvents:'none'}}),
             // Inner dashed decorative ring
-            React.createElement('circle',{cx:cx,cy:cy,r:R-8,fill:'none',stroke:col+'0.3)',strokeWidth:0.5,strokeDasharray:'4 5',style:{pointerEvents:'none'}}),
+            React.createElement('circle',{cx:cx,cy:cy,r:R-8,fill:'none',stroke:col+'0.5)',strokeWidth:1,strokeDasharray:'4 5',style:{pointerEvents:'none'}}),
             // Node name — curved stamp text on top arc
             React.createElement('text',{fill:'white',fontFamily:'var(--D)',fontSize:9.5,fontWeight:700,letterSpacing:2.5,style:{pointerEvents:'none'},
               filter:'url(#txt-shadow)'},
