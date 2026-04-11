@@ -148,8 +148,28 @@ body::after{content:'';position:fixed;inset:0;z-index:0;background:repeating-lin
 .dd-left{width:340px;flex-shrink:0;border-right:1px solid var(--gb);display:flex;flex-direction:column;overflow-y:auto;padding:18px 16px;}
 .dd-left::-webkit-scrollbar{width:3px;}
 .dd-left::-webkit-scrollbar-thumb{background:rgba(25,159,216,0.2);}
-.dd-center{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0;}
-.dd-3d-wrap{flex:1;position:relative;overflow:hidden;background:radial-gradient(ellipse at center,rgba(25,159,216,0.03) 0%,transparent 70%);}
+.dd-center{flex:1;display:flex;flex-direction:column;overflow-y:auto;overflow-x:hidden;min-width:0;}
+.dd-center::-webkit-scrollbar{width:3px;}
+.dd-center::-webkit-scrollbar-thumb{background:rgba(25,159,216,0.2);}
+.dd-3d-wrap{height:240px;flex-shrink:0;position:relative;overflow:hidden;background:radial-gradient(ellipse at center,rgba(25,159,216,0.03) 0%,transparent 70%);}
+/* SUB MIND MAP */
+.smm-wrap{flex-shrink:0;border-top:1px solid var(--gb);background:rgba(3,9,18,0.7);}
+.smm-header{padding:10px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(25,159,216,0.08);}
+.smm-title{font-family:var(--D);font-size:9px;letter-spacing:3px;color:rgba(25,159,216,0.6);text-transform:uppercase;}
+.smm-canvas-wrap{position:relative;overflow:hidden;cursor:grab;user-select:none;}
+.smm-canvas-wrap.grabbing{cursor:grabbing;}
+.smm-node{position:absolute;border-radius:4px;cursor:pointer;user-select:none;}
+.smm-center{position:absolute;transform:translate(-50%,-50%);background:rgba(3,9,20,0.97);border:1.5px solid rgba(25,159,216,0.8);border-radius:6px;padding:10px 16px;font-family:var(--D);font-size:10px;font-weight:700;letter-spacing:2px;color:var(--textb);white-space:nowrap;box-shadow:0 0 20px rgba(25,159,216,0.2);pointer-events:none;z-index:5;}
+.smm-branch{position:absolute;transform:translate(-50%,-50%);border-radius:4px;padding:7px 12px;font-family:var(--D);font-size:9px;font-weight:700;letter-spacing:1.5px;color:rgba(3,9,18,0.95);cursor:pointer;transition:transform .15s,box-shadow .15s;z-index:4;min-width:80px;text-align:center;white-space:nowrap;}
+.smm-branch:hover{transform:translate(-50%,-50%) scale(1.06);}
+.smm-child-list{position:absolute;display:flex;flex-direction:column;gap:3px;z-index:3;}
+.smm-child{background:rgba(25,159,216,0.06);border:1px solid rgba(25,159,216,0.2);border-radius:3px;padding:4px 8px;font-family:var(--M);font-size:9px;color:var(--textd);display:flex;align-items:center;gap:5px;cursor:default;white-space:nowrap;}
+.smm-child-del{background:none;border:none;color:rgba(255,51,85,0.4);cursor:pointer;font-size:10px;padding:0;line-height:1;flex-shrink:0;}
+.smm-child-del:hover{color:var(--red);}
+.smm-add-child{background:rgba(25,159,216,0.04);border:1px dashed rgba(25,159,216,0.2);border-radius:3px;padding:3px 8px;font-family:var(--M);font-size:9px;color:rgba(25,159,216,0.4);cursor:pointer;white-space:nowrap;transition:all .15s;}
+.smm-add-child:hover{border-color:var(--blue);color:var(--blue);}
+.smm-branch-del{position:absolute;top:-7px;right:-7px;width:15px;height:15px;border-radius:50%;background:rgba(255,51,85,0.8);border:none;color:white;font-size:9px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1;padding:0;opacity:0;transition:opacity .15s;z-index:6;}
+.smm-branch-wrap:hover .smm-branch-del{opacity:1;}
 .dd-nexus{height:190px;flex-shrink:0;border-top:1px solid var(--gb);padding:12px 16px;display:flex;flex-direction:column;gap:8px;background:rgba(11,9,24,0.6);}
 .dd-nexus-title{font-family:var(--D);font-size:13px;letter-spacing:3px;color:var(--textd);text-transform:uppercase;flex-shrink:0;}
 .dd-nexus-cards{display:flex;gap:10px;overflow-x:auto;padding-bottom:4px;flex:1;}
@@ -1875,7 +1895,7 @@ async function sbLoadDetails(sb){
   const{data,error}=await sb.from('map_node_details').select('*');
   if(error||!data)return{};
   var out={};
-  data.forEach(function(r){out[r.node_id]={description:r.description||'',notes:r.notes||'',tags:r.tags||[],links:r.links||[]};});
+  data.forEach(function(r){out[r.node_id]={description:r.description||'',notes:r.notes||'',tags:r.tags||[],links:r.links||[],subnodes:r.subnodes||[]};});
   return out;
 }
 async function sbUpsertNode(sb,node){
@@ -1892,7 +1912,7 @@ async function sbDeleteConn(sb,connId){
   if(connId)await sb.from('map_connections').delete().eq('id',connId);
 }
 async function sbUpsertDetails(sb,nodeId,d){
-  await sb.from('map_node_details').upsert({node_id:nodeId,description:d.description||'',notes:d.notes||'',tags:d.tags||[],links:d.links||[],updated_at:new Date().toISOString()},{onConflict:'node_id'});
+  await sb.from('map_node_details').upsert({node_id:nodeId,description:d.description||'',notes:d.notes||'',tags:d.tags||[],links:d.links||[],subnodes:d.subnodes||[],updated_at:new Date().toISOString()},{onConflict:'node_id'});
 }
 async function uploadImageToSupa(sb,file,nodeId){
   var ext=file.name.split('.').pop()||'jpg';
@@ -2026,6 +2046,174 @@ function DD3DCanvas(props){
   return React.createElement('canvas',{ref:cvRef,style:{width:'100%',height:'100%',display:'block'}});
 }
 
+function SubMindMap({nodeId,nodeName,details,onSaveDetails}){
+  var nd=details[nodeId]||{};
+  var COLORS=['#00e676','#19a0d8','#ff6b35','#a78bfa','#fb923c','#34d399','#f472b6','#60a5fa'];
+  var[branches,setBranches]=React.useState(nd.subnodes||[]);
+  var[panX,setPanX]=React.useState(0);
+  var[panY,setPanY]=React.useState(0);
+  var[isPanning,setIsPanning]=React.useState(false);
+  var[editingBranch,setEditingBranch]=React.useState(null); // {id, field} inline edit
+  var panRef=React.useRef({x:0,y:0});
+  var panStart=React.useRef(null);
+  var dragRef=React.useRef(null);
+  var dragOff=React.useRef({x:0,y:0});
+  var dragMoved=React.useRef(false);
+  var wrapRef=React.useRef(null);
+  var saveTimer=React.useRef(null);
+  var nextBId=React.useRef((nd.subnodes||[]).reduce(function(m,b){return Math.max(m,b.id||0);},0)+1);
+  var CX=400,CY=300,H=600;
+
+  function saveBranches(nb){
+    clearTimeout(saveTimer.current);
+    saveTimer.current=setTimeout(function(){
+      var d=Object.assign({},details[nodeId]||{},{subnodes:nb});
+      onSaveDetails(nodeId,d);
+    },600);
+  }
+  function addBranch(){
+    var angle=(branches.length*(Math.PI*2/Math.max(branches.length+1,1)));
+    var r=160;
+    var b={id:nextBId.current++,label:'New Branch',color:COLORS[branches.length%COLORS.length],x:CX+Math.cos(angle)*r,y:CY+Math.sin(angle)*r,items:[]};
+    var nb=branches.concat([b]);setBranches(nb);saveBranches(nb);
+  }
+  function updateBranchLabel(id,label){
+    var nb=branches.map(function(b){return b.id===id?Object.assign({},b,{label:label}):b;});
+    setBranches(nb);saveBranches(nb);
+  }
+  function deleteBranch(id){
+    var nb=branches.filter(function(b){return b.id!==id;});setBranches(nb);saveBranches(nb);
+  }
+  function addItem(branchId){
+    var nb=branches.map(function(b){
+      if(b.id!==branchId)return b;
+      return Object.assign({},b,{items:(b.items||[]).concat([{id:Date.now(),label:'New item'}])});
+    });setBranches(nb);saveBranches(nb);
+  }
+  function updateItem(branchId,itemId,label){
+    var nb=branches.map(function(b){
+      if(b.id!==branchId)return b;
+      return Object.assign({},b,{items:(b.items||[]).map(function(it){return it.id===itemId?Object.assign({},it,{label:label}):it;})});
+    });setBranches(nb);saveBranches(nb);
+  }
+  function deleteItem(branchId,itemId){
+    var nb=branches.map(function(b){
+      if(b.id!==branchId)return b;
+      return Object.assign({},b,{items:(b.items||[]).filter(function(it){return it.id!==itemId;})});
+    });setBranches(nb);saveBranches(nb);
+  }
+  function getWrapRect(){return wrapRef.current?wrapRef.current.getBoundingClientRect():{left:0,top:0};}
+  function toCanvas(cx,cy){var r=getWrapRect();return{x:cx-r.left-panRef.current.x,y:cy-r.top-panRef.current.y};}
+
+  function onWrapMouseDown(e){
+    if(e.target!==wrapRef.current&&e.target.tagName!=='svg'&&e.target.tagName!=='line')return;
+    setIsPanning(true);
+    panStart.current={cx:e.clientX,cy:e.clientY,px:panRef.current.x,py:panRef.current.y};
+  }
+  function onBranchMouseDown(e,branch){
+    e.stopPropagation();
+    var r=getWrapRect();
+    dragRef.current=branch.id;
+    dragOff.current={x:e.clientX-r.left-panRef.current.x-branch.x,y:e.clientY-r.top-panRef.current.y-branch.y};
+    dragMoved.current=false;
+  }
+  function onMouseMove(e){
+    if(dragRef.current!==null){
+      dragMoved.current=true;
+      var r=getWrapRect();
+      var nx=e.clientX-r.left-panRef.current.x-dragOff.current.x;
+      var ny=e.clientY-r.top-panRef.current.y-dragOff.current.y;
+      setBranches(function(bs){return bs.map(function(b){return b.id===dragRef.current?Object.assign({},b,{x:nx,y:ny}):b;});});
+    } else if(isPanning&&panStart.current){
+      var np={x:panStart.current.px+(e.clientX-panStart.current.cx),y:panStart.current.py+(e.clientY-panStart.current.cy)};
+      panRef.current=np;setPanX(np.x);setPanY(np.y);
+    }
+  }
+  function onMouseUp(){
+    if(dragRef.current!==null){
+      if(dragMoved.current){
+        saveBranches(branches);
+      }
+      dragRef.current=null;
+    }
+    setIsPanning(false);panStart.current=null;dragMoved.current=false;
+  }
+
+  // Sync branches if details change externally
+  React.useEffect(function(){
+    var ext=(details[nodeId]||{}).subnodes;
+    if(ext&&JSON.stringify(ext)!==JSON.stringify(branches))setBranches(ext);
+  },[nodeId]);
+
+  var W=800;
+  return React.createElement('div',{className:'smm-wrap'},
+    React.createElement('div',{className:'smm-header'},
+      React.createElement('div',{className:'smm-title'},'MIND MAP'),
+      React.createElement('button',{className:'dd-add-btn',onClick:addBranch,style:{fontSize:'9px',padding:'4px 10px'}},'+ ADD BRANCH')
+    ),
+    React.createElement('div',{
+      ref:wrapRef,
+      className:'smm-canvas-wrap'+(isPanning?' grabbing':''),
+      style:{height:H+'px',position:'relative',overflow:'hidden'},
+      onMouseDown:onWrapMouseDown,
+      onMouseMove:onMouseMove,
+      onMouseUp:onMouseUp,
+      onMouseLeave:onMouseUp
+    },
+      // SVG lines layer
+      React.createElement('svg',{style:{position:'absolute',inset:0,width:'100%',height:'100%',pointerEvents:'none',zIndex:1}},
+        branches.map(function(b){
+          var bx=b.x+panX,by=b.y+panY;
+          return React.createElement('g',{key:b.id},
+            React.createElement('line',{x1:CX+panX,y1:CY+panY,x2:bx,y2:by,stroke:b.color,strokeWidth:2,opacity:0.5,strokeDasharray:'none'})
+          );
+        })
+      ),
+      // Center node
+      React.createElement('div',{className:'smm-center',style:{left:CX+panX,top:CY+panY}},nodeName.toUpperCase()),
+      // Branch nodes
+      branches.map(function(b){
+        var bx=b.x+panX,by=b.y+panY;
+        // Child list position: offset to right of branch
+        var itemsX=bx+60,itemsY=by-((b.items||[]).length*22)/2;
+        return React.createElement(React.Fragment,{key:b.id},
+          // Branch box wrapper (for delete button)
+          React.createElement('div',{
+            className:'smm-branch-wrap',
+            style:{position:'absolute',left:bx,top:by,transform:'translate(-50%,-50%)',zIndex:4}
+          },
+            React.createElement('div',{
+              className:'smm-branch',
+              style:{position:'relative',background:b.color,boxShadow:'0 0 14px '+b.color+'55',transform:'none',left:'auto',top:'auto'},
+              onMouseDown:function(e){onBranchMouseDown(e,b);},
+              onDoubleClick:function(e){e.stopPropagation();var lbl=prompt('Branch name:',b.label);if(lbl!==null)updateBranchLabel(b.id,lbl);}
+            },b.label),
+            React.createElement('button',{className:'smm-branch-del',onClick:function(e){e.stopPropagation();deleteBranch(b.id);},'title':'Delete branch'},'×')
+          ),
+          // Child items
+          React.createElement('div',{
+            className:'smm-child-list',
+            style:{left:bx+50,top:itemsY,position:'absolute',zIndex:3}
+          },
+            (b.items||[]).map(function(it){
+              return React.createElement('div',{key:it.id,className:'smm-child'},
+                React.createElement('span',{
+                  contentEditable:true,
+                  suppressContentEditableWarning:true,
+                  style:{outline:'none',minWidth:'60px'},
+                  onBlur:function(e){updateItem(b.id,it.id,e.target.innerText);}
+                },it.label),
+                React.createElement('button',{className:'smm-child-del',onClick:function(){deleteItem(b.id,it.id);}},'×')
+              );
+            }),
+            React.createElement('div',{className:'smm-add-child',onClick:function(){addItem(b.id);},'title':'Add item'},'+ item')
+          )
+        );
+      })
+    )
+  );
+}
+
 function DeepDiveView(props){
   var node=props.node,nodes=props.nodes,connections=props.connections,details=props.details,
       onBack=props.onBack,onSaveDetails=props.onSaveDetails,onNavigate=props.onNavigate,sb=props.supabase;
@@ -2043,8 +2231,14 @@ function DeepDiveView(props){
     saveTimer.current=setTimeout(function(){onSaveDetails(node.id,d);},800);
   }
   function up(field,val){
-    var d={description:desc,links:links,tags:tags,notes:notes};
+    var d={description:desc,links:links,tags:tags,notes:notes,subnodes:(details[node.id]||{}).subnodes||[]};
     d[field]=val;scheduleSave(d);
+  }
+  function handleSaveDetails(id,d){
+    // merge so subnodes and text fields don't clobber each other
+    var existing=details[id]||{};
+    var merged=Object.assign({},existing,d);
+    onSaveDetails(id,merged);
   }
   var connIds=connections.filter(function(c){return c[0]===node.id||c[1]===node.id;}).map(function(c){return c[0]===node.id?c[1]:c[0];});
   var connNodes=nodes.filter(function(n){return connIds.indexOf(n.id)>=0;});
@@ -2072,7 +2266,7 @@ function DeepDiveView(props){
         ),
         React.createElement('div',{className:'dd-section'},
           React.createElement('div',{className:'dd-section-title'},'TAGS'),
-          React.createElement('div',{className:'dd-tags'},tags.map(function(tag,i){return React.createElement('div',{key:i,className:'dd-tag'},tag,React.createElement('button',{className:'dd-tag-del',onClick:function(){var nt=tags.filter(function(_,j){return j!==i;});setTags(nt);up('tags',nt);}}, '×'));})),
+          React.createElement('div',{className:'dd-tags'},tags.map(function(tag,i){return React.createElement('div',{key:i,className:'dd-tag'},tag,React.createElement('button',{className:'dd-tag-del',onClick:function(){var nt=tags.filter(function(_,j){return j!==i;});setTags(nt);up('tags',nt);}},'×'));})),
           React.createElement('div',{className:'dd-add-link'},
             React.createElement('input',{className:'dd-mini-input',placeholder:'Add tag...',value:newTag,onChange:function(e){setNewTag(e.target.value);},onKeyDown:function(e){if(e.key==='Enter')addTag();}}),
             React.createElement('button',{className:'dd-add-btn',onClick:addTag},'+ ADD')
@@ -2094,6 +2288,7 @@ function DeepDiveView(props){
       ),
       React.createElement('div',{className:'dd-center'},
         React.createElement('div',{className:'dd-3d-wrap'},React.createElement(DD3DCanvas,{centerNode:node,orbitNodes:connNodes})),
+        React.createElement(SubMindMap,{nodeId:node.id,nodeName:node.name,details:details,onSaveDetails:handleSaveDetails}),
         React.createElement('div',{className:'dd-nexus'},
           React.createElement('div',{className:'dd-nexus-title'},'NEXUS CONNECTIONS — '+connNodes.length+' LINKED'),
           React.createElement('div',{className:'dd-nexus-cards'},
