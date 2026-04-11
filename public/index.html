@@ -433,7 +433,9 @@ body::after{content:'';position:fixed;inset:0;z-index:0;background:repeating-lin
 <script type="text/babel">
 const SUPABASE_URL='https://fmnnrxksbdyfiufpmoaq.supabase.co';
 const SUPABASE_ANON='sb_publishable_yCKTSVd2LJbaGnQ3W6ou3g_WF7b1EPI';
-const supabase=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON);
+// The supabase-js UMD CDN exposes window.supabase as an already-initialized client
+// when SUPABASE_URL/SUPABASE_ANON are present as globals — use it directly
+const supabase=window.supabase;
 const {useState,useEffect,useRef,useCallback}=React;
 const AGENTS=[
   {id:'chad',name:'CHAD',role:'CEO / Orchestrator',status:'active',dept:'command',task:'Coordinating all 14 agents. System alerts nominal.',model:'claude-sonnet-4-6',color:'#199FD8',metrics:{'Agents':'14','Tasks':'28','Alerts':'7','Status':'Nominal'},tools:['OpenClaw','Discord','All Agents'],caps:['Orchestration','Planning','Alert mgmt']},
