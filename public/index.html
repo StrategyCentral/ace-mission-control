@@ -2622,64 +2622,78 @@ function MapView({supabase:sb,session}){sb=sb||null;session=session||null;
           })
         ),
         nodes.map(function(node){
-          var col={live:'rgba(0,230,118,',building:'rgba(255,107,53,',notstarted:'rgba(255,51,85,'}[node.status]||'rgba(25,159,216,';
-          var R=90; var D=R*2; var PAD=22; var SZ=D+PAD*2;
+          var colMap={live:['#00e676','0,230,118'],building:['#ff6b35','255,107,53'],notstarted:['#ff3355','255,51,85']};
+          var cv=colMap[node.status]||['#19a0d8','25,159,216'];
+          var hex=cv[0]; var rgb=cv[1];
+          var R=95; var D=R*2; var PAD=32; var SZ=D+PAD*2;
           var cx=R+PAD; var cy=R+PAD;
           var clipId='nc-'+node.id;
+          var glowId='glow-'+node.id;
+          var glowId2='glow2-'+node.id;
           var pathIdTop='np-top-'+node.id;
           var pathIdBot='np-bot-'+node.id;
-          var statusLabel=node.status==='live'?'● LIVE':node.status==='building'?'● BUILDING':'● NOT STARTED';
+          var statusLabel=node.status==='live'?'\u25cf LIVE':node.status==='building'?'\u25cf BUILDING':'\u25cf NOT STARTED';
           return React.createElement('svg',{
             key:node.id,
-            width:SZ,height:SZ+28,
+            width:SZ,height:SZ+22,
             style:{position:'absolute',left:node.x-PAD,top:node.y-PAD,zIndex:dragging===node.id?10:2,overflow:'visible',cursor:'grab'},
             onMouseDown:function(e){startDrag(e,node);}
           },
             React.createElement('defs',null,
-              React.createElement('clipPath',{id:clipId},
-                React.createElement('circle',{cx:cx,cy:cy,r:R-2})
+              React.createElement('clipPath',{id:clipId},React.createElement('circle',{cx:cx,cy:cy,r:R-1})),
+              React.createElement('path',{id:pathIdTop,d:'M '+(cx-(R-10))+','+cy+' A '+(R-10)+','+(R-10)+' 0 1,1 '+(cx+(R-10))+','+cy,fill:'none'}),
+              React.createElement('path',{id:pathIdBot,d:'M '+(cx-(R-10))+','+cy+' A '+(R-10)+','+(R-10)+' 0 0,0 '+(cx+(R-10))+','+cy,fill:'none'}),
+              React.createElement('filter',{id:glowId,x:'-80%',y:'-80%',width:'260%',height:'260%'},
+                React.createElement('feGaussianBlur',{in:'SourceGraphic',stdDeviation:'14',result:'blur1'}),
+                React.createElement('feGaussianBlur',{in:'SourceGraphic',stdDeviation:'6',result:'blur2'}),
+                React.createElement('feMerge',null,
+                  React.createElement('feMergeNode',{in:'blur1'}),
+                  React.createElement('feMergeNode',{in:'blur1'}),
+                  React.createElement('feMergeNode',{in:'blur2'}),
+                  React.createElement('feMergeNode',{in:'SourceGraphic'})
+                )
               ),
-              React.createElement('path',{id:pathIdTop,d:'M '+(cx-R+8)+','+(cy)+' A '+(R-8)+','+(R-8)+' 0 1,1 '+(cx+R-8)+','+cy,fill:'none'}),
-              React.createElement('path',{id:pathIdBot,d:'M '+(cx-(R-8))+','+cy+' A '+(R-8)+','+(R-8)+' 0 0,0 '+(cx+(R-8))+','+cy,fill:'none'})
+              React.createElement('filter',{id:glowId2,x:'-40%',y:'-40%',width:'180%',height:'180%'},
+                React.createElement('feGaussianBlur',{in:'SourceGraphic',stdDeviation:'4',result:'b'}),
+                React.createElement('feMerge',null,React.createElement('feMergeNode',{in:'b'}),React.createElement('feMergeNode',{in:'b'}),React.createElement('feMergeNode',{in:'SourceGraphic'}))
+              )
             ),
-            // Outer glow rings
-            React.createElement('circle',{cx:cx,cy:cy,r:R+18,fill:'none',stroke:col+'0.06)',strokeWidth:2}),
-            React.createElement('circle',{cx:cx,cy:cy,r:R+10,fill:'none',stroke:col+'0.15)',strokeWidth:2}),
-            React.createElement('circle',{cx:cx,cy:cy,r:R+4,fill:'none',stroke:col+'0.35)',strokeWidth:1.5}),
-            // Image clipped to circle
+            // Bloom glow behind image
+            React.createElement('circle',{cx:cx,cy:cy,r:R+2,fill:'none',stroke:hex,strokeWidth:32,opacity:0.07,filter:'url(#'+glowId+')'}),
+            React.createElement('circle',{cx:cx,cy:cy,r:R+1,fill:'none',stroke:hex,strokeWidth:10,opacity:0.22,filter:'url(#'+glowId2+')'}),
+            // Image or placeholder
             node.img
               ?React.createElement('image',{href:node.img,x:cx-R,y:cy-R,width:D,height:D,clipPath:'url(#'+clipId+')',preserveAspectRatio:'xMidYMid slice',style:{cursor:'pointer'},onClick:function(){handleNodeClick(node);}})
-              :React.createElement('circle',{cx:cx,cy:cy,r:R,fill:'rgba(5,15,32,0.9)',stroke:col+'0.15)',strokeWidth:1,style:{cursor:'pointer'},onClick:function(){handleNodeClick(node);}}),
-            // Photo placeholder icon
-            !node.img&&React.createElement('text',{x:cx,y:cy,textAnchor:'middle',dominantBaseline:'middle',fontSize:28,style:{pointerEvents:'none'}},'📷'),
-            // Border ring with strong glow
-            React.createElement('circle',{cx:cx,cy:cy,r:R,fill:'none',stroke:col+'1)',strokeWidth:3,
-              style:{filter:'drop-shadow(0 0 8px '+col+'1)) drop-shadow(0 0 20px '+col+'0.8)) drop-shadow(0 0 40px '+col+'0.4))',pointerEvents:'none'}}),
-            // Inner dashed decorative ring
-            React.createElement('circle',{cx:cx,cy:cy,r:R-8,fill:'none',stroke:col+'0.5)',strokeWidth:1,strokeDasharray:'4 5',style:{pointerEvents:'none'}}),
-            // Node name — curved stamp text on top arc
-            React.createElement('text',{fill:'white',fontFamily:'var(--D)',fontSize:9.5,fontWeight:700,letterSpacing:2.5,style:{pointerEvents:'none'},
-              filter:'url(#txt-shadow)'},
-              React.createElement('textPath',{href:'#'+pathIdTop,startOffset:'50%',textAnchor:'middle'},node.name.toUpperCase().substring(0,16))
+              :React.createElement('g',{style:{cursor:'pointer'},onClick:function(){handleNodeClick(node);}},
+                React.createElement('circle',{cx:cx,cy:cy,r:R-1,fill:'rgba(4,12,28,0.95)'}),
+                React.createElement('text',{x:cx,y:cy+2,textAnchor:'middle',dominantBaseline:'middle',fontSize:32,style:{pointerEvents:'none'}},'\ud83d\udcf7')
+              ),
+            // Outer halo ring
+            React.createElement('circle',{cx:cx,cy:cy,r:R+14,fill:'none',stroke:hex,strokeWidth:1,opacity:0.18}),
+            // Main border with SVG glow filter (works in Safari)
+            React.createElement('circle',{cx:cx,cy:cy,r:R,fill:'none',stroke:hex,strokeWidth:3.5,filter:'url(#'+glowId2+')'}),
+            // Inner stamp dashed ring
+            React.createElement('circle',{cx:cx,cy:cy,r:R-9,fill:'none',stroke:hex,strokeWidth:1,opacity:0.5,strokeDasharray:'5 4'}),
+            // Name curved top
+            React.createElement('text',{fontFamily:'var(--D)',fontSize:10.5,fontWeight:700,letterSpacing:2.5,fill:'white',opacity:0.95,style:{pointerEvents:'none'}},
+              React.createElement('textPath',{href:'#'+pathIdTop,startOffset:'50%',textAnchor:'middle'},node.name.toUpperCase().substring(0,18))
             ),
-            // Status — curved text on bottom arc
-            React.createElement('text',{fill:col+'0.9)',fontFamily:'var(--M)',fontSize:7.5,letterSpacing:1.5,style:{pointerEvents:'none'}},
+            // Status curved bottom
+            React.createElement('text',{fontFamily:'var(--M)',fontSize:8,letterSpacing:1.5,fill:hex,opacity:0.9,style:{pointerEvents:'none'}},
               React.createElement('textPath',{href:'#'+pathIdBot,startOffset:'50%',textAnchor:'middle'},statusLabel)
             ),
-            // Edit button — top right of circle
+            // Edit button
             React.createElement('g',{onClick:function(e){openEdit(e,node);},style:{cursor:'pointer'}},
-              React.createElement('circle',{cx:cx+R*0.72,cy:cy-R*0.72,r:11,fill:'rgba(3,9,18,0.88)',stroke:'rgba(25,159,216,0.4)',strokeWidth:1}),
-              React.createElement('text',{x:cx+R*0.72,y:cy-R*0.72+1,textAnchor:'middle',dominantBaseline:'middle',fill:'rgba(25,159,216,0.8)',fontFamily:'var(--M)',fontSize:11},'✎')
+              React.createElement('circle',{cx:cx+R*0.72,cy:cy-R*0.72,r:12,fill:'rgba(3,9,18,0.92)',stroke:'rgba(25,159,216,0.5)',strokeWidth:1}),
+              React.createElement('text',{x:cx+R*0.72,y:cy-R*0.72+1,textAnchor:'middle',dominantBaseline:'middle',fill:'rgba(25,159,216,0.9)',fontFamily:'var(--M)',fontSize:12},'\u270e')
             ),
-            // VISIT button — bottom of circle if URL set
+            // VISIT pill
             node.url&&React.createElement('g',{onClick:function(e){e.stopPropagation();window.open(node.url,'_blank');},style:{cursor:'pointer'}},
-              React.createElement('rect',{x:cx-26,y:cy+R-2,width:52,height:16,rx:8,fill:'rgba(25,159,216,0.15)',stroke:'rgba(25,159,216,0.5)',strokeWidth:1}),
-              React.createElement('text',{x:cx,y:cy+R+9,textAnchor:'middle',dominantBaseline:'middle',fill:'rgba(25,159,216,0.9)',fontFamily:'var(--D)',fontSize:7,fontWeight:700,letterSpacing:2},'VISIT ↗')
+              React.createElement('rect',{x:cx-30,y:cy+R+4,width:60,height:17,rx:8,fill:'rgba('+rgb+',0.15)',stroke:hex,strokeWidth:1,opacity:0.85}),
+              React.createElement('text',{x:cx,y:cy+R+14,textAnchor:'middle',dominantBaseline:'middle',fill:hex,fontFamily:'var(--D)',fontSize:7.5,fontWeight:700,letterSpacing:2},'VISIT \u2197')
             )
           );
         })
-      )
-    ),
     React.createElement('div',{className:'map-zoom-ctrl'},
       React.createElement('button',{className:'map-zoom-btn',onClick:function(){zoomAround(1.25);}},'+'),
       React.createElement('div',{className:'map-zoom-label'},Math.round(zoom*100)+'%'),
