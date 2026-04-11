@@ -2470,7 +2470,7 @@ function MapView({supabase:sb,session}){sb=sb||null;session=session||null;
     if(tool==='connect'){e.stopPropagation();setConnecting(node.id);return;}
     e.stopPropagation();
     var w=toWorld(e.clientX,e.clientY);
-    dragOff.current={x:w.x-node.x,y:w.y-node.y};
+    dragOff.current={x:w.x-node.x-90,y:w.y-node.y-90};
     dragMoved.current=false;setDragging(node.id);
   }
   function canvasMouseDown(e){
@@ -2490,7 +2490,7 @@ function MapView({supabase:sb,session}){sb=sb||null;session=session||null;
       var w=toWorld(e.clientX,e.clientY);
       dragMoved.current=true;
       setNodes(function(ns){
-        var updated=ns.map(function(n){return n.id===dragging?Object.assign({},n,{x:w.x-dragOff.current.x,y:w.y-dragOff.current.y}):n;});
+        var updated=ns.map(function(n){return n.id===dragging?Object.assign({},n,{x:w.x-dragOff.current.x-90,y:w.y-dragOff.current.y-90}):n;});
         var moved=updated.find(function(n){return n.id===dragging;});
         if(moved)debounceSaveNode(moved);
         return updated;
@@ -2503,7 +2503,7 @@ function MapView({supabase:sb,session}){sb=sb||null;session=session||null;
   function onMouseUp(e){
     if(tool==='connect'&&connecting!==null){
       var w=toWorld(e.clientX,e.clientY);
-      var target=nodes.find(function(n){var h=n.w*9/16;return w.x>=n.x&&w.x<=n.x+n.w&&w.y>=n.y&&w.y<=n.y+h+50&&n.id!==connecting;});
+      var target=nodes.find(function(n){var dx=w.x-(n.x+90),dy=w.y-(n.y+90);return Math.sqrt(dx*dx+dy*dy)<=90&&n.id!==connecting;});
       if(target){
         var fromId=connecting,toId=target.id;
         sbAddConn(sb,fromId,toId).then(function(cid){
@@ -2610,8 +2610,8 @@ function MapView({supabase:sb,session}){sb=sb||null;session=session||null;
             var a=nodes.find(function(n){return n.id===c[0];});
             var b=nodes.find(function(n){return n.id===c[1];});
             if(!a||!b)return null;
-            var ax=a.x+a.w/2,ay=a.y+(a.w*9/16)/2+20;
-            var bx=b.x+b.w/2,by=b.y+(b.w*9/16)/2+20;
+            var ax=a.x+90,ay=a.y+90;
+            var bx=b.x+90,by=b.y+90;
             var mx=(ax+bx)/2,my=(ay+by)/2;
             return React.createElement('g',{key:i},
               React.createElement('line',{x1:ax,y1:ay,x2:bx,y2:by,stroke:'rgba(25,159,216,0.35)',strokeWidth:1.5,strokeDasharray:'6 3'}),
@@ -2622,23 +2622,77 @@ function MapView({supabase:sb,session}){sb=sb||null;session=session||null;
           })
         ),
         nodes.map(function(node){
-          var h=Math.round(node.w*9/16);
-          var bCol=gBorder[node.status]||'rgba(25,159,216,0.3)';
-          var sCol=gShadow[node.status]||'rgba(25,159,216,0.5)';
-          return React.createElement('div',{key:node.id,className:'map-node '+node.status,
-            style:{left:node.x,top:node.y,width:node.w,zIndex:dragging===node.id?10:2,border:'1px solid '+bCol,boxShadow:'0 0 18px '+sCol+'55,0 0 40px '+sCol+'22'},
-            onMouseDown:function(e){startDrag(e,node);}},
-            React.createElement('div',{className:'map-node-img-wrap',onClick:function(){handleNodeClick(node);}},
-              node.img?React.createElement('img',{className:'map-node-img',src:node.img,alt:node.name,draggable:false}):React.createElement('div',{className:'map-node-img-ph',style:{height:h}},'📷'),
-              React.createElement('div',{className:'map-node-dive-overlay'},'DIVE IN ↗')
-            ),
-            React.createElement('div',{className:'map-node-bar'},
-              React.createElement('div',{className:'map-node-name'},node.name),
-              React.createElement('div',{className:'map-node-actions'},
-                node.url?React.createElement('button',{className:'map-visit-btn',onClick:function(e){e.stopPropagation();window.open(node.url,'_blank');}},'VISIT ↗'):null,
-                React.createElement('button',{className:'map-edit-btn',onClick:function(e){openEdit(e,node);}},'✎')
+          var col={live:'rgba(0,230,118,',building:'rgba(255,107,53,',notstarted:'rgba(255,51,85,'}[node.status]||'rgba(25,159,216,';
+          var R=90; var D=R*2; var PAD=22; var SZ=D+PAD*2;
+          var cx=R+PAD; var cy=R+PAD;
+          var clipId='nc-'+node.id;
+          var pathIdTop='np-top-'+node.id;
+          var pathIdBot='np-bot-'+node.id;
+          var statusLabel=node.status==='live'?'● LIVE':node.status==='building'?'● BUILDING':'● NOT STARTED';
+          return React.createElement('svg',{
+            key:node.id,
+            width:SZ,height:SZ+28,
+            style:{position:'absolute',left:node.x-PAD,top:node.y-PAD,zIndex:dragging===node.id?10:2,overflow:'visible',cursor:'grab'},
+            onMouseDown:function(e){startDrag(e,node);}
+          },
+            React.createElement('defs',null,
+              React.createElement('clipPath',{id:clipId},
+                React.createElement('circle',{cx:cx,cy:cy,r:R-2})
               ),
-              React.createElement('div',{className:'map-node-status '+node.status},node.status==='live'?'● LIVE':node.status==='building'?'● BUILDING':'● NOT STARTED')
+              React.createElement('path',{id:pathIdTop,d:'M '+(cx-R+8)+','+(cy)+' A '+(R-8)+','+(R-8)+' 0 1,1 '+(cx+R-8)+','+cy,fill:'none'}),
+              React.createElement('path',{id:pathIdBot,d:'M '+(cx-(R-8))+','+cy+' A '+(R-8)+','+(R-8)+' 0 0,0 '+(cx+(R-8))+','+cy,fill:'none'})
+            ),
+            // Outer glow rings
+            React.createElement('circle',{cx:cx,cy:cy,r:R+10,fill:'none',stroke:col+'0.08)',strokeWidth:1}),
+            React.createElement('circle',{cx:cx,cy:cy,r:R+5,fill:'none',stroke:col+'0.18)',strokeWidth:1}),
+            // Image clipped to circle
+            node.img
+              ?React.createElement('image',{href:node.img,x:cx-R,y:cy-R,width:D,height:D,clipPath:'url(#'+clipId+')',preserveAspectRatio:'xMidYMid slice',style:{cursor:'pointer'},onClick:function(){handleNodeClick(node);}})
+              :React.createElement('circle',{cx:cx,cy:cy,r:R,fill:'rgba(5,15,32,0.9)',stroke:col+'0.15)',strokeWidth:1,style:{cursor:'pointer'},onClick:function(){handleNodeClick(node);}}),
+            // Photo placeholder icon
+            !node.img&&React.createElement('text',{x:cx,y:cy,textAnchor:'middle',dominantBaseline:'middle',fontSize:28,style:{pointerEvents:'none'}},'📷'),
+            // Dark gradient overlay (bottom half) for text readability
+            React.createElement('defs',null,
+              React.createElement('radialGradient',{id:'og-'+node.id,cx:'50%',cy:'80%',r:'60%'},
+                React.createElement('stop',{offset:'0%',stopColor:'rgba(2,6,14,0.85)'}),
+                React.createElement('stop',{offset:'100%',stopColor:'rgba(2,6,14,0)'})
+              )
+            ),
+            node.img&&React.createElement('circle',{cx:cx,cy:cy,r:R-1,fill:'url(#og-'+node.id+')',clipPath:'url(#'+clipId+')',style:{pointerEvents:'none'}}),
+            // Dive-in hover overlay
+            React.createElement('circle',{cx:cx,cy:cy,r:R-1,fill:'rgba(3,9,18,0.0)',clipPath:'url(#'+clipId+')',
+              style:{cursor:'pointer',transition:'fill .2s'},
+              onClick:function(){handleNodeClick(node);},
+              onMouseOver:function(e){e.target.setAttribute('fill','rgba(3,9,18,0.55)');},
+              onMouseOut:function(e){e.target.setAttribute('fill','rgba(3,9,18,0.0)');}}),
+            // Dive in text (shown on hover via js — simple approach: always faint)
+            React.createElement('text',{x:cx,y:cy,textAnchor:'middle',dominantBaseline:'middle',
+              fill:'rgba(200,232,248,0.0)',fontFamily:'var(--D)',fontSize:9,fontWeight:700,letterSpacing:3,
+              style:{pointerEvents:'none',transition:'fill .2s'},
+              className:'node-dive-txt'},'DIVE IN ↗'),
+            // Border ring
+            React.createElement('circle',{cx:cx,cy:cy,r:R,fill:'none',stroke:col+'0.9)',strokeWidth:2,
+              style:{filter:'drop-shadow(0 0 10px '+col+'0.6))',pointerEvents:'none'}}),
+            // Inner dashed decorative ring
+            React.createElement('circle',{cx:cx,cy:cy,r:R-8,fill:'none',stroke:col+'0.3)',strokeWidth:0.5,strokeDasharray:'4 5',style:{pointerEvents:'none'}}),
+            // Node name — curved stamp text on top arc
+            React.createElement('text',{fill:'white',fontFamily:'var(--D)',fontSize:9.5,fontWeight:700,letterSpacing:2.5,style:{pointerEvents:'none'},
+              filter:'url(#txt-shadow)'},
+              React.createElement('textPath',{href:'#'+pathIdTop,startOffset:'50%',textAnchor:'middle'},node.name.toUpperCase().substring(0,16))
+            ),
+            // Status — curved text on bottom arc
+            React.createElement('text',{fill:col+'0.9)',fontFamily:'var(--M)',fontSize:7.5,letterSpacing:1.5,style:{pointerEvents:'none'}},
+              React.createElement('textPath',{href:'#'+pathIdBot,startOffset:'50%',textAnchor:'middle'},statusLabel)
+            ),
+            // Edit button — top right of circle
+            React.createElement('g',{onClick:function(e){openEdit(e,node);},style:{cursor:'pointer'}},
+              React.createElement('circle',{cx:cx+R*0.72,cy:cy-R*0.72,r:11,fill:'rgba(3,9,18,0.88)',stroke:'rgba(25,159,216,0.4)',strokeWidth:1}),
+              React.createElement('text',{x:cx+R*0.72,y:cy-R*0.72+1,textAnchor:'middle',dominantBaseline:'middle',fill:'rgba(25,159,216,0.8)',fontFamily:'var(--M)',fontSize:11},'✎')
+            ),
+            // VISIT button — bottom of circle if URL set
+            node.url&&React.createElement('g',{onClick:function(e){e.stopPropagation();window.open(node.url,'_blank');},style:{cursor:'pointer'}},
+              React.createElement('rect',{x:cx-26,y:cy+R-2,width:52,height:16,rx:8,fill:'rgba(25,159,216,0.15)',stroke:'rgba(25,159,216,0.5)',strokeWidth:1}),
+              React.createElement('text',{x:cx,y:cy+R+9,textAnchor:'middle',dominantBaseline:'middle',fill:'rgba(25,159,216,0.9)',fontFamily:'var(--D)',fontSize:7,fontWeight:700,letterSpacing:2},'VISIT ↗')
             )
           );
         })
