@@ -431,6 +431,9 @@ body::after{content:'';position:fixed;inset:0;z-index:0;background:repeating-lin
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
 <script src="https://unpkg.com/@babel/standalone@7.23.9/babel.min.js"></script>
 <script type="text/babel">
+const SUPABASE_URL='https://fmnnrxksbdyfiufpmoaq.supabase.co';
+const SUPABASE_ANON='sb_publishable_yCKTSVd2LJbaGnQ3W6ou3g_WF7b1EPI';
+const supabase=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON);
 const {useState,useEffect,useRef,useCallback}=React;
 const AGENTS=[
   {id:'chad',name:'CHAD',role:'CEO / Orchestrator',status:'active',dept:'command',task:'Coordinating all 14 agents. System alerts nominal.',model:'claude-sonnet-4-6',color:'#199FD8',metrics:{'Agents':'14','Tasks':'28','Alerts':'7','Status':'Nominal'},tools:['OpenClaw','Discord','All Agents'],caps:['Orchestration','Planning','Alert mgmt']},
@@ -2716,6 +2719,55 @@ function OfficeView(){
 }
 
 
+function LoginScreen({onLogin}){
+  var[email,setEmail]=React.useState('');
+  var[pass,setPass]=React.useState('');
+  var[loading,setLoading]=React.useState(false);
+  var[err,setErr]=React.useState('');
+  var mono={fontFamily:'monospace'};
+
+  async function handleLogin(e){
+    e.preventDefault();
+    setLoading(true);setErr('');
+    var res=await supabase.auth.signInWithPassword({email:email,password:pass});
+    if(res.error){setErr(res.error.message);setLoading(false);}
+    else{onLogin(res.data.session);}
+  }
+
+  return React.createElement('div',{style:{background:'#020b12',height:'100vh',display:'flex',alignItems:'center',justifyContent:'center',flexDirection:'column',gap:'0'}},
+    React.createElement('div',{style:{width:'320px',padding:'32px',border:'1px solid rgba(25,189,224,0.2)',borderRadius:'6px',background:'rgba(3,9,18,0.95)'}},
+      React.createElement('div',{style:{marginBottom:'28px',textAlign:'center'}},
+        React.createElement('div',{style:Object.assign({},mono,{fontSize:'20px',fontWeight:'bold',color:'#19bde0',letterSpacing:'6px',marginBottom:'6px'})},'ACE'),
+        React.createElement('div',{style:Object.assign({},mono,{fontSize:'8px',color:'rgba(255,255,255,0.3)',letterSpacing:'4px'})},'.AI MISSION CONTROL')
+      ),
+      React.createElement('form',{onSubmit:handleLogin,style:{display:'flex',flexDirection:'column',gap:'12px'}},
+        React.createElement('div',null,
+          React.createElement('div',{style:Object.assign({},mono,{fontSize:'8px',color:'rgba(255,255,255,0.4)',letterSpacing:'2px',marginBottom:'6px'})},'EMAIL'),
+          React.createElement('input',{
+            type:'email',value:email,onChange:function(e){setEmail(e.target.value);},
+            required:true,disabled:loading,
+            style:{width:'100%',padding:'8px 10px',background:'rgba(255,255,255,0.04)',border:'1px solid rgba(255,255,255,0.1)',borderRadius:'3px',color:'rgba(255,255,255,0.85)',fontFamily:'monospace',fontSize:'11px',boxSizing:'border-box',outline:'none'}
+          })
+        ),
+        React.createElement('div',null,
+          React.createElement('div',{style:Object.assign({},mono,{fontSize:'8px',color:'rgba(255,255,255,0.4)',letterSpacing:'2px',marginBottom:'6px'})},'PASSWORD'),
+          React.createElement('input',{
+            type:'password',value:pass,onChange:function(e){setPass(e.target.value);},
+            required:true,disabled:loading,
+            style:{width:'100%',padding:'8px 10px',background:'rgba(255,255,255,0.04)',border:'1px solid rgba(255,255,255,0.1)',borderRadius:'3px',color:'rgba(255,255,255,0.85)',fontFamily:'monospace',fontSize:'11px',boxSizing:'border-box',outline:'none'}
+          })
+        ),
+        err&&React.createElement('div',{style:Object.assign({},mono,{fontSize:'8px',color:'#f97316',letterSpacing:'1px'})},err),
+        React.createElement('button',{
+          type:'submit',disabled:loading,
+          style:{marginTop:'4px',padding:'10px',background:loading?'rgba(25,189,224,0.1)':'rgba(25,189,224,0.15)',border:'1px solid rgba(25,189,224,0.4)',borderRadius:'3px',color:'#19bde0',fontFamily:'monospace',fontSize:'9px',letterSpacing:'3px',cursor:loading?'not-allowed':'pointer',transition:'all .15s'}
+        },loading?'AUTHENTICATING...':'ENTER')
+      )
+    ),
+    React.createElement('div',{style:Object.assign({},mono,{fontSize:'7px',color:'rgba(255,255,255,0.1)',letterSpacing:'2px',marginTop:'20px'})},'OPENCLAW // SECURE ACCESS')
+  );
+}
+
 function NexusView(){
   var ce=React.createElement;
   var REPOS=[
@@ -2972,9 +3024,23 @@ function NexusView(){
 }
 
 function App(){
+  const[session,setSession]=React.useState(undefined);
   const[view,setView]=React.useState('mission');
   const[selAgent,setSelAgent]=React.useState(null);
   const[chatAgent,setChatAgent]=React.useState(null);
+
+  React.useEffect(function(){
+    supabase.auth.getSession().then(function(res){
+      setSession(res.data&&res.data.session?res.data.session:null);
+    }).catch(function(){setSession(null);});
+    var sub=supabase.auth.onAuthStateChange(function(_,s){setSession(s);});
+    return function(){if(sub&&sub.data&&sub.data.subscription)sub.data.subscription.unsubscribe();};
+  },[]);
+
+  if(session===undefined)return React.createElement('div',{style:{background:'#020b12',height:'100vh',display:'flex',alignItems:'center',justifyContent:'center'}},
+    React.createElement('div',{style:{fontFamily:'monospace',fontSize:'9px',letterSpacing:'3px',color:'rgba(25,189,224,0.5)'}},'●●●')
+  );
+  if(!session)return React.createElement(LoginScreen,{onLogin:function(s){setSession(s);}});
 
   function nav(v){if(!v.startsWith('agt-')&&v!=='agents')setSelAgent(null);setView(v);}
   function selectAgent(a){setSelAgent(a);setView('agent-profile');}
@@ -2997,7 +3063,7 @@ function App(){
     if(view==='monitor')return wrap(React.createElement(MonitorView));
     if(view==='journal')return wrap(React.createElement(JournalView));
     if(view==='tradr')return wrap(React.createElement(TradrView));
-    if(view==='map')return wrap(React.createElement(MapView,{supabase:null,session:null}));
+    if(view==='map')return wrap(React.createElement(MapView,{supabase:supabase,session:session}));
     if(view==='office')return wrap(React.createElement(OfficeView));
     if(view==='nexus')return React.createElement(NexusView);
     return wrap(React.createElement('div',{className:'fv'},React.createElement(Placeholder,{title:view.toUpperCase()})));
