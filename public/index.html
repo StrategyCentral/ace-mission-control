@@ -2632,7 +2632,7 @@ function MapView({supabase:sb,session}){sb=sb||null;session=session||null;
           var glowId2='glow2-'+node.id;
           var pathIdTop='np-top-'+node.id;
           var pathIdBot='np-bot-'+node.id;
-          var statusLabel=node.status==='live'?'\u25cf LIVE':node.status==='building'?'\u25cf BUILDING':'\u25cf NOT STARTED';
+          var statusLabel=node.status==='live'?'● LIVE':node.status==='building'?'● BUILDING':'● NOT STARTED';
           return React.createElement('svg',{
             key:node.id,
             width:SZ,height:SZ+22,
@@ -2666,7 +2666,7 @@ function MapView({supabase:sb,session}){sb=sb||null;session=session||null;
               ?React.createElement('image',{href:node.img,x:cx-R,y:cy-R,width:D,height:D,clipPath:'url(#'+clipId+')',preserveAspectRatio:'xMidYMid slice',style:{cursor:'pointer'},onClick:function(){handleNodeClick(node);}})
               :React.createElement('g',{style:{cursor:'pointer'},onClick:function(){handleNodeClick(node);}},
                 React.createElement('circle',{cx:cx,cy:cy,r:R-1,fill:'rgba(4,12,28,0.95)'}),
-                React.createElement('text',{x:cx,y:cy+2,textAnchor:'middle',dominantBaseline:'middle',fontSize:32,style:{pointerEvents:'none'}},'\ud83d\udcf7')
+                React.createElement('text',{x:cx,y:cy+2,textAnchor:'middle',dominantBaseline:'middle',fontSize:32,style:{pointerEvents:'none'}},'📷')
               ),
             // Outer halo ring
             React.createElement('circle',{cx:cx,cy:cy,r:R+14,fill:'none',stroke:hex,strokeWidth:1,opacity:0.18}),
@@ -2685,15 +2685,17 @@ function MapView({supabase:sb,session}){sb=sb||null;session=session||null;
             // Edit button
             React.createElement('g',{onClick:function(e){openEdit(e,node);},style:{cursor:'pointer'}},
               React.createElement('circle',{cx:cx+R*0.72,cy:cy-R*0.72,r:12,fill:'rgba(3,9,18,0.92)',stroke:'rgba(25,159,216,0.5)',strokeWidth:1}),
-              React.createElement('text',{x:cx+R*0.72,y:cy-R*0.72+1,textAnchor:'middle',dominantBaseline:'middle',fill:'rgba(25,159,216,0.9)',fontFamily:'var(--M)',fontSize:12},'\u270e')
+              React.createElement('text',{x:cx+R*0.72,y:cy-R*0.72+1,textAnchor:'middle',dominantBaseline:'middle',fill:'rgba(25,159,216,0.9)',fontFamily:'var(--M)',fontSize:12},'✎')
             ),
             // VISIT pill
             node.url&&React.createElement('g',{onClick:function(e){e.stopPropagation();window.open(node.url,'_blank');},style:{cursor:'pointer'}},
               React.createElement('rect',{x:cx-30,y:cy+R+4,width:60,height:17,rx:8,fill:'rgba('+rgb+',0.15)',stroke:hex,strokeWidth:1,opacity:0.85}),
-              React.createElement('text',{x:cx,y:cy+R+14,textAnchor:'middle',dominantBaseline:'middle',fill:hex,fontFamily:'var(--D)',fontSize:7.5,fontWeight:700,letterSpacing:2},'VISIT \u2197')
+              React.createElement('text',{x:cx,y:cy+R+14,textAnchor:'middle',dominantBaseline:'middle',fill:hex,fontFamily:'var(--D)',fontSize:7.5,fontWeight:700,letterSpacing:2},'VISIT ↗')
             )
           );
         })
+      )
+    ),
     React.createElement('div',{className:'map-zoom-ctrl'},
       React.createElement('button',{className:'map-zoom-btn',onClick:function(){zoomAround(1.25);}},'+'),
       React.createElement('div',{className:'map-zoom-label'},Math.round(zoom*100)+'%'),
