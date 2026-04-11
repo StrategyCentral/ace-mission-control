@@ -2923,21 +2923,21 @@ function NexusView(){
         var on=active===r.name;
         return ce('div',{key:r.name,onClick:function(){setActive(on?null:r.name);},
           style:{padding:'8px 12px',cursor:'pointer',borderLeft:'2px solid '+(on?r.color:'transparent'),background:on?r.color+'12':'transparent',transition:'all .12s'}},
-          ce('div',{style:Object.assign({},mono,{fontSize:'9px',color:on?r.color:'rgba(255,255,255,0.65)',marginBottom:'2px'})},(on?'\u25b6 ':'')+r.label),
-          ce('div',{style:Object.assign({},mono,{fontSize:'7px',color:dim})},r.empty?'\u26a0 awaiting code':r.sym.toLocaleString()+' sym')
+          ce('div',{style:Object.assign({},mono,{fontSize:'9px',color:on?r.color:'rgba(255,255,255,0.65)',marginBottom:'2px'})},(on?'▶ ':'')+r.label),
+          ce('div',{style:Object.assign({},mono,{fontSize:'7px',color:dim})},r.empty?'⚠ awaiting code':r.sym.toLocaleString()+' sym')
         );
       }),
       ce('div',{style:{marginTop:'auto',padding:'10px 12px',borderTop:'1px solid rgba(255,255,255,0.06)'}},
-        ce('div',{style:Object.assign({},mono,{fontSize:'7px',color:'rgba(255,255,255,0.18)',lineHeight:'2'})},'drag \u00b7 scroll zoom \u00b7 pan'),
-        ce('div',{style:Object.assign({},mono,{fontSize:'7px',color:'#22c55e',marginTop:'3px'})},'\u25cf MCP ACTIVE')
+        ce('div',{style:Object.assign({},mono,{fontSize:'7px',color:'rgba(255,255,255,0.18)',lineHeight:'2'})},'drag · scroll zoom · pan'),
+        ce('div',{style:Object.assign({},mono,{fontSize:'7px',color:'#22c55e',marginTop:'3px'})},'● MCP ACTIVE')
       )
     ),
     ce('div',{style:{flex:1,display:'flex',flexDirection:'column',overflow:'hidden',position:'relative'}},
       ce('div',{style:{padding:'8px 14px',borderBottom:'1px solid rgba(255,255,255,0.06)',display:'flex',gap:'16px',alignItems:'center',flexShrink:0}},
         ce('div',{style:Object.assign({},mono,{fontSize:'8px',letterSpacing:'3px',color:'#19bde0'})},'KNOWLEDGE GRAPH'),
-        ce('div',{style:Object.assign({},mono,{fontSize:'7px',color:dim})},'live sim \u00b7 drag nodes \u00b7 scroll to zoom \u00b7 drag to pan'),
+        ce('div',{style:Object.assign({},mono,{fontSize:'7px',color:dim})},'live sim · drag nodes · scroll to zoom · drag to pan'),
         ce('a',{href:'https://gitnexus.vercel.app',target:'_blank',
-          style:Object.assign({},mono,{marginLeft:'auto',fontSize:'8px',color:'#19bde0',textDecoration:'none',padding:'3px 9px',border:'1px solid rgba(25,189,224,0.35)',borderRadius:'2px'})},'\u2197 FULL GITNEXUS')
+          style:Object.assign({},mono,{marginLeft:'auto',fontSize:'8px',color:'#19bde0',textDecoration:'none',padding:'3px 9px',border:'1px solid rgba(25,189,224,0.35)',borderRadius:'2px'})},'↗ FULL GITNEXUS')
       ),
       ce('div',{style:{flex:1,position:'relative',overflow:'hidden'}},
         ce('canvas',{ref:canvasRef,style:{display:'block',width:'100%',height:'100%',cursor:'grab'}}),
@@ -2964,7 +2964,7 @@ function NexusView(){
           ),
           ce('div',{style:{marginBottom:'8px',padding:'6px 7px',background:'rgba(0,0,0,0.6)',borderRadius:'2px',fontFamily:'monospace',fontSize:'7px',color:'rgba(255,255,255,0.3)'}},'gitnexus_impact({repo:"'+activeRepo.name+'"})'),
           ce('a',{href:'https://github.com/'+activeRepo.gh,target:'_blank',
-            style:Object.assign({},mono,{display:'block',fontSize:'7px',color:activeRepo.color,textDecoration:'none',padding:'4px 8px',border:'1px solid '+activeRepo.color+'33',borderRadius:'2px',textAlign:'center'})},'\u2197 GITHUB')
+            style:Object.assign({},mono,{display:'block',fontSize:'7px',color:activeRepo.color,textDecoration:'none',padding:'4px 8px',border:'1px solid '+activeRepo.color+'33',borderRadius:'2px',textAlign:'center'})},'↗ GITHUB')
         ):null
       )
     )
