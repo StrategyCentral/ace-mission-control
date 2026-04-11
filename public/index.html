@@ -429,13 +429,25 @@ body::after{content:'';position:fixed;inset:0;z-index:0;background:repeating-lin
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
 <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script>
+// Initialize supabase client before Babel runs — handles both module and instance cases
+(function(){
+  var URL='https://fmnnrxksbdyfiufpmoaq.supabase.co';
+  var ANON='sb_publishable_yCKTSVd2LJbaGnQ3W6ou3g_WF7b1EPI';
+  var sb=window.supabase;
+  if(sb&&typeof sb.createClient==='function'){
+    window.__sb=sb.createClient(URL,ANON);
+  } else if(sb&&sb.auth){
+    window.__sb=sb;
+  } else {
+    window.__sb=null;
+    console.error('Supabase CDN not loaded');
+  }
+})();
+</script>
 <script src="https://unpkg.com/@babel/standalone@7.23.9/babel.min.js"></script>
 <script type="text/babel">
-const SUPABASE_URL='https://fmnnrxksbdyfiufpmoaq.supabase.co';
-const SUPABASE_ANON='sb_publishable_yCKTSVd2LJbaGnQ3W6ou3g_WF7b1EPI';
-// The supabase-js UMD CDN exposes window.supabase as an already-initialized client
-// when SUPABASE_URL/SUPABASE_ANON are present as globals — use it directly
-const supabase=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON);
+var supabase=window.__sb;
 const {useState,useEffect,useRef,useCallback}=React;
 const AGENTS=[
   {id:'chad',name:'CHAD',role:'CEO / Orchestrator',status:'active',dept:'command',task:'Coordinating all 14 agents. System alerts nominal.',model:'claude-sonnet-4-6',color:'#199FD8',metrics:{'Agents':'14','Tasks':'28','Alerts':'7','Status':'Nominal'},tools:['OpenClaw','Discord','All Agents'],caps:['Orchestration','Planning','Alert mgmt']},
