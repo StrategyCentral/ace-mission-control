@@ -901,7 +901,7 @@ function useVoice({onT,onS}){
   return{start,stop,speak};
 }
 
-function TopBar({onNav}){
+function TopBar({onNav,onSignOut}){
   const[clk,setClk]=useState('');const[profit,setProfit]=useState(11580);
   useEffect(function(){const i=setInterval(function(){setClk(ts());},1000);setClk(ts());return function(){clearInterval(i);};},[]);
   useEffect(function(){const i=setInterval(function(){setProfit(function(p){return p+Math.floor(Math.random()*90);});},9000);return function(){clearInterval(i);};},[]);
@@ -3056,6 +3056,7 @@ function App(){
   );
   if(!session)return React.createElement(LoginScreen,{onLogin:function(s){setSession(s);}});
 
+  async function handleSignOut(){try{await supabase.auth.signOut();}catch(e){}setSession(null);}
   function nav(v){if(!v.startsWith('agt-')&&v!=='agents')setSelAgent(null);setView(v);}
   function selectAgent(a){setSelAgent(a);setView('agent-profile');}
   function openChat(a){setChatAgent(a);}
@@ -3083,7 +3084,7 @@ function App(){
     return wrap(React.createElement('div',{className:'fv'},React.createElement(Placeholder,{title:view.toUpperCase()})));
   }
   return React.createElement(React.Fragment,null,
-    React.createElement(TopBar,{onNav:nav}),
+    React.createElement(TopBar,{onNav:nav,onSignOut:handleSignOut}),
     renderContent(),
     React.createElement(BotNav,{cur:view,onNav:nav}),
     chatAgent&&React.createElement(ChatPanel,{agent:chatAgent,onClose:closeChat})
