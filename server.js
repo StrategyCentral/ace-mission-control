@@ -15,7 +15,7 @@ app.get('/healthz', (req, res) =>
   res.json({ ok: true, ssoEnforced: auth.hasSecret(), roles: auth.ALLOWED_ROLES }));
 
 // ── SSO consume: the Hub redirects here with ?token=<jwt> ─────────────────────
-app.get('/sso/consume', (req, res) => {
+app.get('/sso/consume', async (req, res) => {
   // No secret configured yet -> fail open (app is still public, as before).
   if (!auth.hasSecret()) return res.redirect('/');
 
@@ -33,10 +33,19 @@ app.get('/sso/consume', (req, res) => {
       `${HUB_ORIGIN}/dashboard`, 'Back to Hub'));
   }
 
+  // Pass the server gate...
   auth.issueSession(res, payload);
-  const next = typeof req.query.next === 'string' && req.query.next.startsWith('/')
-    ? req.query.next : '/';
-  return res.redirect(next);
+
+  // ...and auto-login the app's OWN Supabase session via a one-time magic-link OTP.
+  // The browser redeems `#sso=` with supabase.auth.verifyOtp (boot hook in index.html).
+  // On any failure we land on '/', where MC shows its normal login (safe fallback).
+  let hash = '';
+  try {
+    const otp = await auth.mintLoginOtp(payload.email);
+    if (otp) hash = '#sso=' + encodeURIComponent(otp);
+  } catch (e) { console.error('consume otp', e && e.message); }
+
+  return res.redirect('/' + hash);
 });
 
 // ── Logout ───────────────────────────────────────────────────────────────────

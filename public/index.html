@@ -454,6 +454,19 @@ body::after{content:'';position:fixed;inset:0;z-index:0;background:repeating-lin
 <script src="/vendor/babel.min.js"></script>
 <script type="text/babel">
 var supabase=window.__sb;
+// ACE SSO auto-login: redeem a one-time magic-link OTP handed over by the Hub
+// (server set location to /#sso=<token_hash>). Logs into the app's own Supabase
+// session; onAuthStateChange then renders the app. No-op when absent.
+(function(){
+  try{
+    var m=(location.hash||'').match(/sso=([^&]+)/);
+    if(m && supabase && supabase.auth && typeof supabase.auth.verifyOtp==='function'){
+      supabase.auth.verifyOtp({type:'magiclink', token_hash: decodeURIComponent(m[1])})
+        .then(function(){ try{history.replaceState(null,document.title,location.pathname);}catch(e){} })
+        .catch(function(e){ console.error('ACE SSO OTP redeem failed', e); });
+    }
+  }catch(e){ console.error('ACE SSO hook error', e); }
+})();
 const {useState,useEffect,useRef,useCallback}=React;
 const AGENTS=[
   {id:'chad',name:'CHAD',role:'CEO / Orchestrator',status:'active',dept:'command',task:'Coordinating all 14 agents. System alerts nominal.',model:'claude-sonnet-4-6',color:'#199FD8',metrics:{'Agents':'14','Tasks':'28','Alerts':'7','Status':'Nominal'},tools:['OpenClaw','Discord','All Agents'],caps:['Orchestration','Planning','Alert mgmt']},
