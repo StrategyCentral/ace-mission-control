@@ -431,10 +431,10 @@ body::after{content:'';position:fixed;inset:0;z-index:0;background:repeating-lin
 </head>
 <body>
 <div id="root"></div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-<script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+<script src="/vendor/three.min.js"></script>
+<script src="/vendor/supabase.js"></script>
+<script src="/vendor/react.production.min.js"></script>
+<script src="/vendor/react-dom.production.min.js"></script>
 <script>
 // Initialize supabase client before Babel runs — handles both module and instance cases
 (function(){
@@ -451,7 +451,7 @@ body::after{content:'';position:fixed;inset:0;z-index:0;background:repeating-lin
   }
 })();
 </script>
-<script src="https://unpkg.com/@babel/standalone@7.23.9/babel.min.js"></script>
+<script src="/vendor/babel.min.js"></script>
 <script type="text/babel">
 var supabase=window.__sb;
 const {useState,useEffect,useRef,useCallback}=React;
