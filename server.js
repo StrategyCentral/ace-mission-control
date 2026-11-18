@@ -10,14 +10,25 @@ const HUB_LAUNCH_URL = `${HUB_ORIGIN}/api/sso/launch?to=mission-control`;
 
 app.disable('x-powered-by');
 
+// ── Security headers (staff-only app; launched top-level from the Hub, never framed) ──
+app.use((req, res, next) => {
+  res.set('Strict-Transport-Security', 'max-age=31536000');
+  res.set('X-Content-Type-Options', 'nosniff');
+  res.set('Referrer-Policy', 'strict-origin-when-cross-origin');
+  res.set('X-Frame-Options', 'DENY');
+  next();
+});
+
 // ── Health check (always open) ───────────────────────────────────────────────
-app.get('/healthz', (req, res) =>
-  res.json({ ok: true, ssoEnforced: auth.hasSecret(), roles: auth.ALLOWED_ROLES }));
+app.get('/healthz', (req, res) => res.json({ ok: true }));
 
 // ── SSO consume: the Hub redirects here with ?token=<jwt> ─────────────────────
 app.get('/sso/consume', async (req, res) => {
-  // No secret configured yet -> fail open (app is still public, as before).
-  if (!auth.hasSecret()) return res.redirect('/');
+  // No secret configured -> fail closed (dev escape hatch: MC_DEV_OPEN=1 outside production).
+  if (!auth.hasSecret()) {
+    if (auth.devOpen()) return res.redirect('/');
+    return res.status(503).send(notConfiguredPage());
+  }
 
   const payload = auth.verifyHubToken(req.query.token);
   if (!payload) {
@@ -56,7 +67,10 @@ app.get('/logout', (req, res) => {
 
 // ── Auth gate for everything else ────────────────────────────────────────────
 app.use((req, res, next) => {
-  if (!auth.hasSecret()) return next();           // fail open until configured
+  if (!auth.hasSecret()) {                        // fail closed when not configured
+    if (auth.devOpen()) return next();
+    return res.status(503).send(notConfiguredPage());
+  }
   const session = auth.readSession(req);
   if (session) { req.user = session; return next(); }
   return res.redirect(HUB_LAUNCH_URL);            // hand off to Hub login + SSO
@@ -70,10 +84,17 @@ app.get('*', (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`ACE Mission Control on :${PORT} — SSO ${auth.hasSecret() ? 'ENFORCED' : 'OPEN (set JWT_SECRET to lock down)'}; roles=${auth.ALLOWED_ROLES.join('/')}`);
+  const mode = auth.hasSecret() ? 'ENFORCED' : (auth.devOpen() ? 'OPEN (MC_DEV_OPEN=1, dev only)' : 'LOCKED (JWT_SECRET missing: every page returns 503)');
+  console.log(`ACE Mission Control on :${PORT} — SSO ${mode}; roles=${auth.ALLOWED_ROLES.join('/')}`);
 });
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
+function notConfiguredPage() {
+  return denyPage('Mission Control is not configured',
+    'Sign-in is switched off until the server is set up. Nothing is shown in the meantime.',
+    `${HUB_ORIGIN}/dashboard`, 'Back to Hub');
+}
+
 function escapeHtml(s) {
   return String(s).replace(/[&<>"']/g, (c) =>
     ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
